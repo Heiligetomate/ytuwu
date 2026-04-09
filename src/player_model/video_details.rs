@@ -1,0 +1,82 @@
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct VideoDetails {
+    video_id: String,
+    pub title: String,
+    length_seconds: String,
+    channel_id: String,
+    pub author: String,
+    short_description: String,
+    view_count: String,
+    is_live_content: bool,
+    pub thumbnail: Thumbnails,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct Thumbnails {
+    thumbnails: Vec<Thumbnail>,
+}
+
+#[derive(Debug)]
+pub struct Resolution {
+    pub width : u16, 
+    pub height: u16,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct Thumbnail {
+    url: String,
+    width: u16,
+    height: u16,
+}
+
+#[derive(Debug, PartialEq, Eq)]
+pub enum ThumbnailResolution {
+    Low, 
+    Medium,
+    High,
+    VeryHigh,
+}
+
+impl ThumbnailResolution {
+    pub fn from_width(width: u16) -> Option<Self> {
+        match width {
+            120 => Some(Self::Low),
+            320 => Some(Self::Medium),
+            480 => Some(Self::High),
+            640 => Some(Self::VeryHigh),
+            _   => None
+        }
+    } 
+    pub fn get_res(&self) -> Resolution {
+        match &self {
+            Self::Low      => Resolution::new(120, 90),
+            Self::Medium   => Resolution::new(320, 180),
+            Self::High     => Resolution::new(480, 360),
+            Self::VeryHigh => Resolution::new(640, 480),
+        }
+    }
+}
+
+impl Resolution {
+    fn new(width: u16, height: u16) -> Self {
+        Self { width, height }
+    }
+}
+
+impl Thumbnails {
+    pub fn url_by_resolution(&self, resolution: &ThumbnailResolution) -> Option<&str> {
+        for thumbnail in self.thumbnails.iter() {
+            if let Some(thumbnail_resolution) = ThumbnailResolution::from_width(thumbnail.width) {
+                if thumbnail_resolution == *resolution {
+                    return Some(&thumbnail.url)
+                }
+            } else {
+                return None
+            }
+        }
+        None
+    }
+}
