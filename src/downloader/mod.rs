@@ -1,4 +1,4 @@
 pub mod util;
-pub mod music_releases;
+pub mod downloader;
 pub mod media;
 pub mod playlist;
