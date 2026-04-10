@@ -19,12 +19,6 @@ pub struct Thumbnails {
     thumbnails: Vec<Thumbnail>,
 }
 
-#[derive(Debug)]
-pub struct Resolution {
-    pub width : u16, 
-    pub height: u16,
-}
-
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Thumbnail {
     url: String,
@@ -50,20 +44,6 @@ impl ThumbnailResolution {
             _   => None
         }
     } 
-    pub fn get_res(&self) -> Resolution {
-        match &self {
-            Self::Low      => Resolution::new(120, 90),
-            Self::Medium   => Resolution::new(320, 180),
-            Self::High     => Resolution::new(480, 360),
-            Self::VeryHigh => Resolution::new(640, 480),
-        }
-    }
-}
-
-impl Resolution {
-    fn new(width: u16, height: u16) -> Self {
-        Self { width, height }
-    }
 }
 
 impl Thumbnails {

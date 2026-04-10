@@ -10,7 +10,7 @@ pub trait Stream {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct StreamingData {
-    expires_in_Seconds: String,
+    expires_in_seconds: String,
     formats: Vec<MuxedStream>,
     adaptive_formats: Vec<AdaptiveStream>,
     server_abr_streaming_url: Option<String>,
@@ -69,7 +69,7 @@ pub struct AdaptiveStream {
 
     // audio only
     audio_quality: Option<String>,
-    audio_sampleRate: Option<String>,
+    audio_sample_rate: Option<String>,
     audio_channels: Option<u32>,
     loudness_db: Option<f64>,
     audio_track: Option<AudioTrack>,
@@ -122,12 +122,12 @@ impl StreamingData {
     pub fn get_url_by_itag(&self, itag: &Itag) -> Option<&str> {
         for format in self.adaptive_formats.iter() {
             if format.itag == itag.to_int() {
-                return Some(format.url.as_ref());
+                return Some(format.get_url());
             }
         }
         for adaptive_format in self.formats.iter() {
             if adaptive_format.itag == itag.to_int() {
-                return Some(adaptive_format.url.as_ref());
+                return Some(adaptive_format.get_url());
             }
         }
         None
