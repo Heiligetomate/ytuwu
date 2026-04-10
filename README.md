@@ -10,4 +10,5 @@ A youtube downloader written in rust
 ## todos: 
 - rate limiter
 - channel/artist browse and downlaod
+- should be a lib not a binary
 - eh other stuff too 
