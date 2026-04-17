@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use anyhow::{Result, anyhow};
 
@@ -40,3 +40,4 @@ pub fn file_ending_from_mime_type(mime_type: &str) -> &str {
     
     res[0]
 }
+

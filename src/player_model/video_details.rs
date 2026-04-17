@@ -26,7 +26,7 @@ pub struct Thumbnail {
     height: u16,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub enum ThumbnailResolution {
     Low, 
     Medium,

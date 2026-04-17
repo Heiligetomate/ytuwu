@@ -1,9 +1,9 @@
-use std::fs::File;
-use std::io::Write;
 use std::path::{Path, PathBuf};
 
 use anyhow::{Result, anyhow};
 use bytes::{BufMut, Bytes, BytesMut};
+use crate::downloader::media_stream::MediaStream;
+use crate::downloader::thumbnail::Thumbnail;
 use crate::downloader::util::*;
 use crate::{
     id_resolver::VideoId, 
@@ -28,7 +28,7 @@ pub struct MediaBrowse {
 
 #[derive(Debug)]
 pub struct Media {
-    title: String,  
+    pub title: String,  
     player_response: PlayerResponse,
 }
 
@@ -38,9 +38,8 @@ pub struct DownloadedMedia {
     pub file_name: Option<String>,
     pub album: Option<String>,
     pub artist: Option<String>,
-    pub thumbnail: Option<Bytes>,
-    pub stream: Bytes,
-    // file type & itag 
+    pub thumbnail: Thumbnail,
+    pub stream: MediaStream,
 }
 
 impl Media {
@@ -97,7 +96,7 @@ impl Media {
         Ok(chunk)
     }
 
-    pub async fn chunked_download(&self, itag: &Itag, chunk_count: u16) -> Result<Bytes> {
+    pub async fn download_media_stream(&self, itag: &Itag, chunk_count: u16) -> Result<MediaStream> {
         let url = self.get_streams()?.get_url_by_itag(&itag).ok_or(anyhow!("couldnt get url from itag"))?; 
         let size = extract_size(url)?;
         let mut downloaded_stream = BytesMut::new();
@@ -114,11 +113,17 @@ impl Media {
             downloaded_stream.put(chunk);
             current_position += chunk_size + 1
         }
-        Ok(downloaded_stream.into())
+        Ok(
+            MediaStream::new(
+                downloaded_stream.into(),
+                itag.clone(),
+                &self.title,
+            )
+        )
     }    
 
-    pub async fn download_thumbnail(&self, resolution: &ThumbnailResolution) -> Result<Bytes> {
-        let url = self.get_thumbnail_url(resolution)?;
+    pub async fn download_thumbnail(&self, resolution: &ThumbnailResolution) -> Result<Thumbnail> {
+        let url = self.get_thumbnail_url(&resolution)?;
         let client = reqwest::Client::new();
         let thumbnail = client. 
             get(url)
@@ -126,22 +131,21 @@ impl Media {
             .await?
             .bytes()
             .await?;
-        Ok(thumbnail)
+        Ok(
+            Thumbnail::new(thumbnail, resolution.clone(), &self.title)
+        )
     }
 
-    pub async fn full_download(self, itag: &Itag, chunk_count: u16, thumbnail_resolution: &Option<ThumbnailResolution>) -> Result<DownloadedMedia> {
-        let mut thumbnail_stream: Option<Bytes> = None;
-        if let Some(resolution) = thumbnail_resolution {
-            let thumbnail_bytes = self.download_thumbnail(resolution).await?;
-            thumbnail_stream = Some(thumbnail_bytes);
-        }
+    pub async fn download_full(self, itag: &Itag, chunk_count: u16, thumbnail_resolution: &ThumbnailResolution) -> Result<DownloadedMedia> {
         
-        let media_stream = self.chunked_download(itag, chunk_count).await?;
+        let thumbnail = self.download_thumbnail(&thumbnail_resolution).await?;
+        let media = self.download_media_stream(&itag, chunk_count).await?;
+        
         let downloaded_media = DownloadedMedia::new(
             &self.title, 
-            media_stream, 
-            self.generate_file_name(itag),
-            thumbnail_stream,
+            media, 
+            self.generate_file_name(&itag),
+            thumbnail,
             self.player_response.get_author(),
         );
 
@@ -172,7 +176,7 @@ impl MediaBrowse {
 
 impl DownloadedMedia {
     
-    fn new(title: &str, stream: Bytes, file_name: Option<String>, thumbnail: Option<Bytes>, author: Option<&str>) -> Self {
+    fn new(title: &str, stream: MediaStream, file_name: Option<String>, thumbnail: Thumbnail, author: Option<&str>) -> Self {
         let author = 
         {
             if let Some(auth) = author {
@@ -197,16 +201,13 @@ impl DownloadedMedia {
         } else {
             println!("using given path");
         }
-        let mut file = File::create_new(full_path)?;
-        file.write_all(&self.stream)?;
+        self.stream.save(&full_path)?;  
         Ok(())
     }
 
     #[allow(unused)]
-    pub fn save_thumbnail(&self) -> Result<()> {
-        let thumbnail_stream = self.thumbnail.as_ref().ok_or(anyhow!("no thumbnail stream found"))?;
-        let mut file = File::create_new("thumbnail.jpg")?;
-        file.write_all(&thumbnail_stream)?;
+    pub fn save_thumbnail(&self, path: &Path) -> Result<()> {
+        self.thumbnail.save(path);
         Ok(())
     }
 }
