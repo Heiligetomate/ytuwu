@@ -8,7 +8,7 @@ use crate::{
             DownloadedMedia, 
             Media, 
             MediaBrowse
-        }, 
+        }, thumbnail::{PlaylistThumbnail, Thumbnail}, 
     }, id_resolver::{
         BrowseId, 
         Id, 
@@ -92,14 +92,25 @@ impl PlaylistContentBrowse {
 }
 
 impl Playlist {
-    pub async fn download(mut self, itag: &Itag, thumbnail_resolution: &Option<ThumbnailResolution>) -> Result<DownloadedPlaylist> {
+    pub async fn download_full(mut self, itag: &Itag, thumbnail_resolution: ThumbnailResolution) -> Result<DownloadedPlaylist> {
         let mut downloaded: Vec<DownloadedMedia> = Vec::new();
         for item in self.media.drain(..) {
-            let downloaded_media = item.full_download(itag, 3, &thumbnail_resolution).await?; 
+            let downloaded_media = item.download_full(itag, 3, &thumbnail_resolution).await?; 
             downloaded.push(downloaded_media);
         }
         Ok(DownloadedPlaylist::new(&self.title, downloaded))
     }
+    
+    pub async fn download_thumbnails(&self, thumbnail_resolution: ThumbnailResolution) -> Result<PlaylistThumbnail> {
+        let mut thumbnails = Vec::new();
+        for item in self.media.iter() {
+            let downloaded_thumbnail = item.download_thumbnail(&thumbnail_resolution).await?;
+            thumbnails.push(downloaded_thumbnail);
+        }
+        Ok(
+            PlaylistThumbnail::new(thumbnails, thumbnail_resolution)
+        )
+    } 
 }
 
 impl DownloadedPlaylist {
