@@ -12,12 +12,3 @@ pub enum Status {
     Error,
 }
 
-// mhh
-impl Status {
-    pub fn is_err(&self) -> bool {
-        *self == Status::Error
-    }
-    pub fn is_success(&self) -> bool {
-        *self == Status::Success
-    }
-}
