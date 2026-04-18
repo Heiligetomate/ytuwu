@@ -29,10 +29,9 @@ async fn main() -> Result<()> {
     if let Some(ids) = id_collection {
         let media = downloader.download_full_media(
             ids.video_id.ok_or(anyhow!("no video id found"))?, 
-            &Itag::AacMedium, 
-            ThumbnailResolution::VeryHigh,
+            &Itag::OpusMedium, 
+            ThumbnailResolution::Low,
         ).await?;
-        println!("title: {} \nauthor: {:?}", media.title, media.artist);
         let path = Path::new("hallo");
         media.save(&path)?;
     
