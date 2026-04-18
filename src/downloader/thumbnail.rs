@@ -4,7 +4,7 @@ use std::{
     path::{Path, PathBuf}
 };
 
-use anyhow::Result;
+use anyhow::{Result, anyhow};
 use bytes::Bytes;
 
 use crate::{player_model::video_details::ThumbnailResolution};
@@ -26,10 +26,13 @@ impl Thumbnail {
     pub fn new(data: Bytes, size: ThumbnailResolution, name: &str) -> Self {
         Self { data, size, name: name.to_owned() }
     }
-
+    
+    /// the path is the directory where the file should be stored.  
     pub fn save(&self, path: &Path) -> Result<()> {
-        let mut file_path = PathBuf::from(path);
-        
+        if !path.is_dir() { 
+            return Err(anyhow!("expected a dir"))
+        }
+        let mut file_path = PathBuf::from(path); 
         let file_name = format!("{}.png", &self.name); 
         file_path.push(file_name);
 
@@ -45,7 +48,7 @@ impl PlaylistThumbnail {
     }
 
     pub fn save(&self, path: &Path) -> Result<()> {
-        fs::create_dir(path)?; 
+        fs::create_dir_all(path)?; 
         for thumbnail in self.data.iter() {
             thumbnail.save(&path)?    
         }

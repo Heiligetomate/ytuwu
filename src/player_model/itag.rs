@@ -82,4 +82,29 @@ impl Itag {
             Self::OpusMedium => 251,
         }
     }
+
+    pub fn get_mime_type(&self) -> &str {
+        match &self {
+            Self::MuxedMP4 => "mp4",
+            Self::MP41080p => "mp4",
+            Self::WebM1080p => "webm",
+            Self::MP4720p => "mp4",
+            Self::WebM720p => "webm",
+            Self::MP4480p => "mp4",
+            Self::Webm480p => "webm",
+            Self::MP4360p => "mp4",
+            Self::WebM360p => "webm",
+            Self::MP4240p => "mp4",
+            Self::WebM240p => "webm",
+            Self::MP4144p => "mp4",
+            Self::Webm144p => "webm",
+            Self::ShortLow => "mp4",
+            Self::Short => "mp4",
+            Self::AacLow => "m4a",
+            Self::AacMedium => "m4a",
+            Self::OpusLow => "webm",
+            Self::OpusMedium => "webm",
+        }
+        
+    }
 }

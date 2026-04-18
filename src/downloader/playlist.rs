@@ -3,12 +3,11 @@ use std::{fs, path::{Path, PathBuf}};
 use anyhow::{Result, anyhow};
 
 use crate::{
-    browse_model::{browse_response::BrowseResponse, playlist_renderer}, downloader::{
-        media::{
-            DownloadedMedia, 
+    browse_model::browse_response::BrowseResponse, downloader::{
+        full::{DownloadedMedia, DownloadedPlaylist}, media::{ 
             Media, 
             MediaBrowse
-        }, thumbnail::{PlaylistThumbnail, Thumbnail}, 
+        }, thumbnail::{PlaylistThumbnail, Thumbnail} 
     }, id_resolver::{
         BrowseId, 
         Id, 
@@ -37,21 +36,6 @@ pub struct Playlist {
     title: String,
     media: Vec<Media>,
 }
-
-#[derive(Debug)]
-pub struct DownloadedPlaylist {
-    pub title: Option<String>,
-    pub media: Vec<DownloadedMedia>,
-    pub artist: Option<String>,
-    pub thumbnail: Option<String>,
-}
-
-impl DownloadedPlaylist {
-    fn new(title: &str, media: Vec<DownloadedMedia>) -> Self {
-        Self { artist: None, thumbnail: None, media, title: Some(title.to_owned()) }
-    }
-}
-
 
 impl PlaylistBrowse {
     pub fn new(id: BrowseId) -> Self {
@@ -93,7 +77,7 @@ impl PlaylistContentBrowse {
 
 impl Playlist {
     pub async fn download_full(mut self, itag: &Itag, thumbnail_resolution: ThumbnailResolution) -> Result<DownloadedPlaylist> {
-        let mut downloaded: Vec<DownloadedMedia> = Vec::new();
+        let mut downloaded: Vec<DownloadedMedia> = Vec::new(); 
         for item in self.media.drain(..) {
             let downloaded_media = item.download_full(itag, 3, &thumbnail_resolution).await?; 
             downloaded.push(downloaded_media);
@@ -113,25 +97,4 @@ impl Playlist {
     } 
 }
 
-impl DownloadedPlaylist {
-    // ich kotze im strahl
-    pub fn save(&self, path: Option<&Path>) -> Result<()> {
-        let mut playlist = PathBuf::new(); 
-        if let Some(playlist_path) = path {
-            fs::create_dir(playlist_path)?;
-            playlist.push(playlist_path);
-        } else {
-            if let Some(title) = &self.title {
-                fs::create_dir(title)?;
-                playlist.push(title);
-            } else {
-                return Err(anyhow!("no valid dir or title"));
-            }
-        }
 
-        for media in self.media.iter() {
-            media.save_to_file(&playlist)?;
-        } 
-        Ok(())
-    }
-}

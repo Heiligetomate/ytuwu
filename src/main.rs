@@ -11,7 +11,8 @@ use std::path::Path;
 use crate::{
     downloader::downloader::Downloader, 
     id_resolver::IdCollection, 
-    player_model::video_details::ThumbnailResolution
+    player_model::video_details::ThumbnailResolution,
+    player_model::itag::Itag,
 };
 use anyhow::{Result, anyhow};
 
@@ -26,11 +27,15 @@ async fn main() -> Result<()> {
 
     let downloader = Downloader::new();
     if let Some(ids) = id_collection {
-        let thumbnail = downloader.download_thumbnail_media(
+        let media = downloader.download_full_media(
             ids.video_id.ok_or(anyhow!("no video id found"))?, 
+            &Itag::AacMedium, 
             ThumbnailResolution::VeryHigh,
         ).await?;
-        thumbnail.save(Path::new("hallo"))?;
+        println!("title: {} \nauthor: {:?}", media.title, media.artist);
+        let path = Path::new("hallo");
+        media.save(&path)?;
+    
     } else {
          println!("no ids found");
     }

@@ -1,6 +1,6 @@
 use std::{fs, io::Write, path::{Path, PathBuf}};
 
-use anyhow::Result;
+use anyhow::{Result, anyhow};
 use bytes::Bytes;
 
 use crate::player_model::itag::Itag;
@@ -9,7 +9,7 @@ use crate::player_model::itag::Itag;
 pub struct MediaStream {
     name: String,
     data: Bytes,
-    itag: Itag, 
+    itag: Itag,
 }
 
 pub struct PlaylistMediaStream {
@@ -17,15 +17,23 @@ pub struct PlaylistMediaStream {
     itag: Itag
 }
 
+
+
+
+
 impl MediaStream {
     pub fn new(data: Bytes, itag: Itag, name: &str) -> Self {
         Self { data, itag, name: name.to_owned() }
     }
-
+    
+    /// the path is the directory where the file should be stored.  
     pub fn save(&self, path: &Path) -> Result<()> {
+        if !path.is_dir() { 
+            return Err(anyhow!("expected a dir"))
+        }
         let mut file_path = PathBuf::from(path);
-        
-        let file_name = format!("{}.png", &self.name); 
+        let file_name = format!("{}.{}", &self.name, &self.itag.get_mime_type());
+        println!("generated file name: {}", &file_name);
         file_path.push(file_name);
 
         let mut file = fs::File::create(file_path)?;
@@ -44,7 +52,7 @@ impl PlaylistMediaStream {
     }
 
     pub fn save(&self, path: &Path) -> Result<()> {
-        fs::create_dir(path)?; 
+        fs::create_dir_all(path)?; 
         for stream in self.data.iter() {
             stream.save(&path)?    
         }

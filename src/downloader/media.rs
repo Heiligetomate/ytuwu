@@ -1,7 +1,6 @@
-use std::path::{Path, PathBuf};
-
 use anyhow::{Result, anyhow};
 use bytes::{BufMut, Bytes, BytesMut};
+use crate::downloader::full::DownloadedMedia;
 use crate::downloader::media_stream::MediaStream;
 use crate::downloader::thumbnail::Thumbnail;
 use crate::downloader::util::*;
@@ -30,16 +29,6 @@ pub struct MediaBrowse {
 pub struct Media {
     pub title: String,  
     player_response: PlayerResponse,
-}
-
-#[derive(Debug)]
-pub struct DownloadedMedia {
-    pub title: String,
-    pub file_name: Option<String>,
-    pub album: Option<String>,
-    pub artist: Option<String>,
-    pub thumbnail: Thumbnail,
-    pub stream: MediaStream,
 }
 
 impl Media {
@@ -153,7 +142,6 @@ impl Media {
     } 
 }
 
-
 impl MediaBrowse {
     pub fn new(id: VideoId) -> Self {
         Self {
@@ -174,40 +162,3 @@ impl MediaBrowse {
     }
 }
 
-impl DownloadedMedia {
-    
-    fn new(title: &str, stream: MediaStream, file_name: Option<String>, thumbnail: Thumbnail, author: Option<&str>) -> Self {
-        let author = 
-        {
-            if let Some(auth) = author {
-                Some(auth.to_owned())
-            } else {
-                None
-            }
-        };
-        Self { album: None, artist: author, thumbnail, stream, title: title.to_owned(), file_name }
-    }
-
-    #[allow(unused)]
-    pub fn save_to_file(&self, path: &Path) -> Result<()> {
-        let mut full_path = PathBuf::from(path);
-        if path.is_dir() {
-            if let Some(name) = &self.file_name {
-                full_path.push(name);
-            } else {
-                println!("no file name found.");
-                full_path.push(&self.title);
-            }
-        } else {
-            println!("using given path");
-        }
-        self.stream.save(&full_path)?;  
-        Ok(())
-    }
-
-    #[allow(unused)]
-    pub fn save_thumbnail(&self, path: &Path) -> Result<()> {
-        self.thumbnail.save(path);
-        Ok(())
-    }
-}
