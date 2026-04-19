@@ -2,21 +2,21 @@ use std::{fs::create_dir_all, path::{Path, PathBuf}};
 
 use anyhow::{Result, anyhow};
 
-use crate::{browse_model::full_response, downloader::{media_stream::MediaStream, thumbnail::Thumbnail}};
+use crate::{browse_model::full_response, downloader::{media_stream::MediaStream, thumbnail::Thumbnail}, player_model::itag::Itag};
 
 #[derive(Debug)]
-pub struct DownloadedMedia {
+pub struct DownloadedMedia<I: Itag> {
     // TODO: the file name thing is weird i think 
     pub title: String,
     pub file_name: Option<String>,
     pub artist: Option<String>,
     pub thumbnail: Thumbnail,
-    pub stream: MediaStream,
+    pub stream: MediaStream<I>,
 }
 
-impl DownloadedMedia {
+impl<I: Itag> DownloadedMedia<I> {
     
-    pub fn new(title: &str, stream: MediaStream, file_name: Option<String>, thumbnail: Thumbnail, author: Option<&str>) -> Self {
+    pub fn new(title: &str, stream: MediaStream<I>, file_name: Option<String>, thumbnail: Thumbnail, author: Option<&str>) -> Self {
         Self { artist: author.map(|s| s.to_owned()), thumbnail, stream, title: title.to_owned(), file_name }
     }
     
@@ -38,14 +38,14 @@ impl DownloadedMedia {
 }
 
 #[derive(Debug)]
-pub struct DownloadedPlaylist {
+pub struct DownloadedPlaylist<I: Itag> {
     pub title: Option<String>,
-    pub media: Vec<DownloadedMedia>,
+    pub media: Vec<DownloadedMedia<I>>,
     pub artist: Option<String>,
 }
 
-impl DownloadedPlaylist {
-    pub fn new(title: &str, media: Vec<DownloadedMedia>) -> Self {
+impl<I: Itag> DownloadedPlaylist<I> {
+    pub fn new(title: &str, media: Vec<DownloadedMedia<I>>) -> Self {
         Self { artist: None, media, title: Some(title.to_owned()) }
     }
     

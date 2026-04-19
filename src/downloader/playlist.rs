@@ -76,8 +76,8 @@ impl PlaylistContentBrowse {
 }
 
 impl Playlist {
-    pub async fn download_full(mut self, itag: &Itag, thumbnail_resolution: ThumbnailResolution) -> Result<DownloadedPlaylist> {
-        let mut downloaded: Vec<DownloadedMedia> = Vec::new(); 
+    pub async fn download_full<I: Itag + Copy>(mut self, itag: I, thumbnail_resolution: ThumbnailResolution) -> Result<DownloadedPlaylist<I>> {
+        let mut downloaded: Vec<DownloadedMedia<I>> = Vec::new(); 
         for item in self.media.drain(..) {
             let downloaded_media = item.download_full(itag, 3, &thumbnail_resolution).await?; 
             downloaded.push(downloaded_media);

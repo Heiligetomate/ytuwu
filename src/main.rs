@@ -11,8 +11,7 @@ use std::path::Path;
 use crate::{
     downloader::downloader::Downloader, 
     id_resolver::IdCollection, 
-    player_model::video_details::ThumbnailResolution,
-    player_model::itag::Itag,
+    player_model::{itag::{AudioItag, Itag, VideoItag}, video_details::ThumbnailResolution},
 };
 use anyhow::{Result, anyhow};
 
@@ -29,7 +28,7 @@ async fn main() -> Result<()> {
     if let Some(ids) = id_collection {
         let media = downloader.download_full_media(
             ids.video_id.ok_or(anyhow!("no video id found"))?, 
-            &Itag::OpusMedium, 
+            VideoItag::MP41080p, 
             ThumbnailResolution::Low,
         ).await?;
         let path = Path::new("hallo");
