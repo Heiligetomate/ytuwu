@@ -84,9 +84,20 @@ impl Media {
         let chunk = client.get(&chunk_url).send().await?.bytes().await?;
         Ok(chunk)
     }
+    
+    fn get_best_stream<I: Itag + Copy>(&self, itag: &I) -> Result<&str> {
+        let streams = self.get_streams()?;
+        let mut current_itag = *itag;
+        let mut url: Option<&str> = streams.get_url_by_itag(&current_itag);
+        while url.is_none() {
+            current_itag = current_itag.next_best()?;
+            url = streams.get_url_by_itag(&current_itag);
+        }
+        Ok(url.ok_or(anyhow!("no matching itag"))?)
+    }
 
-    pub async fn download_media_stream<I: Itag>(&self, itag: I, chunk_count: u16) -> Result<MediaStream<I>> {
-        let url = self.get_streams()?.get_url_by_itag(&itag).ok_or(anyhow!("couldnt get url from itag"))?; 
+    pub async fn download_media_stream<I: Itag + Copy>(&self, itag: I, chunk_count: u16) -> Result<MediaStream<I>> {
+        let url = self.get_best_stream(&itag)?; 
         let size = extract_size(url)?;
         let mut downloaded_stream = BytesMut::new();
         let chunk_size = size / chunk_count as u64;

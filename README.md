@@ -9,6 +9,7 @@ A youtube downloader written in rust
 - download thumbnails
 - download full playlists
 - most of the metadata
+- download lower audio stream when it fails for the current one
 
 ## todos: 
 - rate limiter
@@ -18,5 +19,3 @@ A youtube downloader written in rust
 - get the album for single songs (?)
 - dynamic chunk count 
 - save chunks when crashing while downloading and continue the download afterwards 
-- download both video and audio stream if its a video 
-- download lower audio stream when it fails for the current one
