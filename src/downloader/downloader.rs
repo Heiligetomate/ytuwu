@@ -40,7 +40,7 @@ impl Downloader {
     }
 
     #[allow(unused)]
-    pub async fn download_media_stream<I: Itag>(&self, video_id: VideoId, itag: I) -> Result<MediaStream<I>> {
+    pub async fn download_media_stream<I: Itag + Copy>(&self, video_id: VideoId, itag: I) -> Result<MediaStream<I>> {
         Ok(
             MediaBrowse::new(video_id)
                 .browse()
