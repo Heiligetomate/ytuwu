@@ -61,17 +61,17 @@ impl Media {
         Ok(url)
     }
     
-    fn get_mime_type_by_itag(&self, itag: &Itag) -> Result<&str> {
-        if let Some(stream) = self.get_streams()?.get_stream_by_itag(&itag) {
+    fn get_mime_type_by_itag(&self, itag: &impl Itag) -> Result<&str> {
+        if let Some(stream) = self.get_streams()?.get_stream_by_itag(itag) {
             return Ok(stream.get_mime_type())
         }
         Err(anyhow!("could not extract mime type"))
     }
     
-    pub fn generate_file_name(&self, itag: &Itag) -> Option<String> {
+    pub fn generate_file_name<I: Itag>(&self, itag: I) -> Option<String> {
         if let Some(mime_type) = self.get_mime_type_by_itag(&itag).ok() {
             let file_name = file_name(mime_type, &self.title);
-            println!("generated file name: {}", &file_name);
+
             return Some(file_name);
         } 
         
@@ -85,7 +85,7 @@ impl Media {
         Ok(chunk)
     }
 
-    pub async fn download_media_stream(&self, itag: &Itag, chunk_count: u16) -> Result<MediaStream> {
+    pub async fn download_media_stream<I: Itag>(&self, itag: I, chunk_count: u16) -> Result<MediaStream<I>> {
         let url = self.get_streams()?.get_url_by_itag(&itag).ok_or(anyhow!("couldnt get url from itag"))?; 
         let size = extract_size(url)?;
         let mut downloaded_stream = BytesMut::new();
@@ -105,7 +105,7 @@ impl Media {
         Ok(
             MediaStream::new(
                 downloaded_stream.into(),
-                itag.clone(),
+                itag,
                 &self.title,
             )
         )
@@ -125,15 +125,15 @@ impl Media {
         )
     }
 
-    pub async fn download_full(self, itag: &Itag, chunk_count: u16, thumbnail_resolution: &ThumbnailResolution) -> Result<DownloadedMedia> {
+    pub async fn download_full<I: Itag + Copy>(self, itag: I, chunk_count: u16, thumbnail_resolution: &ThumbnailResolution) -> Result<DownloadedMedia<I>> {
         
         let thumbnail = self.download_thumbnail(&thumbnail_resolution).await?;
-        let media = self.download_media_stream(&itag, chunk_count).await?;
+        let media = self.download_media_stream(itag, chunk_count).await?;
         
         let downloaded_media = DownloadedMedia::new(
             &self.title, 
             media, 
-            self.generate_file_name(&itag),
+            self.generate_file_name(itag),
             thumbnail,
             self.player_response.get_author(),
         );

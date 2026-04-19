@@ -6,23 +6,23 @@ use bytes::Bytes;
 use crate::player_model::itag::Itag;
 
 #[derive(Debug)]
-pub struct MediaStream {
+pub struct MediaStream<I: Itag> {
     name: String,
     data: Bytes,
-    itag: Itag,
+    itag: I,
 }
 
-pub struct PlaylistMediaStream {
-    data: Vec<MediaStream>, 
-    itag: Itag
+pub struct PlaylistMediaStream<I: Itag> {
+    data: Vec<MediaStream<I>>, 
+    itag: I
 }
 
 
 
 
 
-impl MediaStream {
-    pub fn new(data: Bytes, itag: Itag, name: &str) -> Self {
+impl<I> MediaStream<I> where I: Itag {
+    pub fn new(data: Bytes, itag: I, name: &str) -> Self {
         Self { data, itag, name: name.to_owned() }
     }
     
@@ -46,8 +46,8 @@ impl MediaStream {
     }
 }
 
-impl PlaylistMediaStream {
-    pub fn new(data: Vec<MediaStream>, itag: Itag) -> Self {
+impl<I> PlaylistMediaStream<I> where I: Itag {
+    pub fn new(data: Vec<MediaStream<I>>, itag: I) -> Self {
         Self { data, itag }
     }
 

@@ -119,7 +119,7 @@ impl Stream for AdaptiveStream {
 }
 
 impl StreamingData {
-    pub fn get_url_by_itag(&self, itag: &Itag) -> Option<&str> {
+    pub fn get_url_by_itag(&self, itag: &impl Itag) -> Option<&str> {
         for format in self.adaptive_formats.iter() {
             if format.itag == itag.to_int() {
                 return Some(format.get_url());
@@ -133,7 +133,7 @@ impl StreamingData {
         None
     }
 
-    pub fn get_stream_by_itag(&self, itag: &Itag) -> Option<&dyn Stream> {
+    pub fn get_stream_by_itag(&self, itag: &impl Itag) -> Option<&dyn Stream> {
         for muxed_stream in &self.formats {
             if muxed_stream.itag == itag.to_int() { 
                 return Some(muxed_stream as &dyn Stream); 

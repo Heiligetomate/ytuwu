@@ -40,7 +40,7 @@ impl Downloader {
     }
 
     #[allow(unused)]
-    pub async fn download_media_stream(&self, video_id: VideoId, itag: &Itag) -> Result<MediaStream> {
+    pub async fn download_media_stream<I: Itag>(&self, video_id: VideoId, itag: I) -> Result<MediaStream<I>> {
         Ok(
             MediaBrowse::new(video_id)
                 .browse()
@@ -51,7 +51,7 @@ impl Downloader {
     }
     
     #[allow(unused)]
-    pub async fn download_full_media(&self, video_id: VideoId, itag: &Itag, thumbnail_resolution: ThumbnailResolution) -> Result<DownloadedMedia> {
+    pub async fn download_full_media<I: Itag + Copy>(&self, video_id: VideoId, itag: I, thumbnail_resolution: ThumbnailResolution) -> Result<DownloadedMedia<I>> {
         Ok(
             MediaBrowse::new(video_id)
                 .browse()
@@ -75,7 +75,7 @@ impl Downloader {
     }
     
     #[allow(unused)]
-    pub async fn download_full_playlist(&self, browse_id: BrowseId, itag: &Itag, thumbnail_resolution: ThumbnailResolution) -> Result<DownloadedPlaylist> {
+    pub async fn download_full_playlist<I: Itag + Copy>(&self, browse_id: BrowseId, itag: I, thumbnail_resolution: ThumbnailResolution) -> Result<DownloadedPlaylist<I>> {
         Ok(
             PlaylistBrowse::new(browse_id)
                 .browse()
