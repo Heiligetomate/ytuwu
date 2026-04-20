@@ -62,7 +62,7 @@ impl<I: Itag> DownloadedPlaylist<I> {
 
 #[derive(Debug)]
 pub struct DownloadedVideo {
-    
+    metadata:  
 }
 
 
