@@ -7,7 +7,7 @@ use crate::{
         full::{DownloadedMedia, DownloadedPlaylist}, media::{ 
             Media, 
             MediaBrowse
-        }, thumbnail::{PlaylistThumbnail, Thumbnail} 
+        }, thumbnail::{PlaylistThumbnail} 
     }, id_resolver::{
         BrowseId, 
         Id, 

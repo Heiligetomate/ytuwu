@@ -1,5 +1,8 @@
+use bytes::Bytes;
 use serde::{Deserialize, Serialize};
 use anyhow::{anyhow, Result, Error};
+
+use crate::downloader::media_stream::{MediaStream, VideoStream};
 
 pub trait Itag {
     fn highest() -> Self;
@@ -7,6 +10,8 @@ pub trait Itag {
 
     fn to_int(&self) -> u16;
     fn get_mime_type(&self) -> &str;
+
+    fn new_stream(&self) -> Box<&dyn MediaStream>;
 }
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone, Copy)]
@@ -124,7 +129,10 @@ impl Itag for VideoItag {
             Self::MP4144p   => "mp4",
         }
     }
-}
+
+    fn new_stream<M: MediaStream>(&self) -> Box<&dyn MediaStream> {
+        Box::new(VideoStream::new(*self) as &dyn MediaStream)
+    }
 
 impl Itag for AudioItag {
     
