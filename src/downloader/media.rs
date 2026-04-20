@@ -96,7 +96,7 @@ impl Media {
         Ok(url.ok_or(anyhow!("no matching itag"))?)
     }
 
-    pub async fn download_media_stream<I: Itag + Copy>(&self, itag: I, chunk_count: u16) -> Result<MediaStream<I>> {
+    pub async fn download_media_stream<I: Itag + Copy, M: MediaStream>(&self, itag: I, chunk_count: u16) -> Result<M> {
         let url = self.get_best_stream(&itag)?; 
         let size = extract_size(url)?;
         let mut downloaded_stream = BytesMut::new();

@@ -1,22 +1,22 @@
-use std::{fs::create_dir_all, path::{Path, PathBuf}};
+use std::{fmt::Debug, fs::create_dir_all, path::{Path, PathBuf}};
 
 use anyhow::{Result, anyhow};
 
 use crate::{browse_model::full_response, downloader::{media_stream::MediaStream, metadata::PlaylistMetadata, playlist::Playlist, thumbnail::Thumbnail}, player_model::itag::Itag};
 
 #[derive(Debug)]
-pub struct DownloadedMedia<I: Itag> {
+pub struct DownloadedMedia<M: MediaStream + Debug> {
     // TODO: the file name thing is weird i think 
     pub title: String,
     pub file_name: Option<String>,
     pub artist: Option<String>,
     pub thumbnail: Thumbnail,
-    pub stream: MediaStream<I>,
+    pub stream: M,
 }
 
-impl<I: Itag> DownloadedMedia<I> {
+impl<M: MediaStream + Debug> DownloadedMedia<M> {
     
-    pub fn new(title: &str, stream: MediaStream<I>, file_name: Option<String>, thumbnail: Thumbnail, author: Option<&str>) -> Self {
+    pub fn new(title: &str, stream: M, file_name: Option<String>, thumbnail: Thumbnail, author: Option<&str>) -> Self {
         Self { artist: author.map(|s| s.to_owned()), thumbnail, stream, title: title.to_owned(), file_name }
     }
     
@@ -26,7 +26,7 @@ impl<I: Itag> DownloadedMedia<I> {
     }
 
     pub fn save_media_stream(&self, path: &Path) -> Result<()> {
-        self.stream.save(path)?;
+        self.stream.save(path, &self.title)?;
         Ok(())
     }
 
@@ -38,20 +38,20 @@ impl<I: Itag> DownloadedMedia<I> {
 }
 
 #[derive(Debug)]
-pub struct DownloadedPlaylist<I: Itag> {
-    pub media: Vec<DownloadedMedia<I>>,
+pub struct DownloadedPlaylist<M: MediaStream + Debug> {
+    pub media: Vec<DownloadedMedia<M>>,
     pub metadata: PlaylistMetadata,
 }
 
-impl<I: Itag> DownloadedPlaylist<I> {
-    pub fn new(title: &str, author: &str, media: Vec<DownloadedMedia<I>>) -> Self {
+impl<M: MediaStream + Debug> DownloadedPlaylist<M> {
+    pub fn new(title: &str, author: &str, media: Vec<DownloadedMedia<M>>) -> Self {
         let metadata = PlaylistMetadata::new(title, author);
         Self { media, metadata }
     }
     
     pub fn save(&self, path: &Path) -> Result<()> {
         let mut full_path = PathBuf::from(path);
-        full_path.push(self.metadata.title.as_ref().ok_or(anyhow!("no album title found"))?);
+        full_path.push(&self.metadata.title);
         create_dir_all(&full_path)?;
         for media in self.media.iter() {
             media.save(&full_path)?
@@ -59,10 +59,4 @@ impl<I: Itag> DownloadedPlaylist<I> {
         Ok(())
     }
 }
-
-#[derive(Debug)]
-pub struct DownloadedVideo {
-    metadata:  
-}
-
 

@@ -1,70 +1,88 @@
 use std::{fs, io::Write, path::{Path, PathBuf}};
 
 use anyhow::{Result, anyhow};
-use bytes::Bytes;
+use bytes::{BufMut, Bytes, BytesMut};
 
-use crate::{downloader::metadata::MediaMetadata, player_model::itag::{AudioItag, Itag, VideoItag}};
+use crate::{player_model::itag::{AudioItag, Itag, VideoItag}};
 
 pub trait MediaStream {
+    //fn new<I: Itag>(itag: I) -> Self;
     fn save(&self, path: &Path, file_name: &str) -> Result<()>;
     fn get_itag(&self) -> impl Itag;
-    fn get_data(&self) -> &Bytes;
+    fn get_data(&self) -> &BytesMut;
+    fn push_data(&mut self, data: Bytes);
 }
 
 #[derive(Debug)]
 pub struct AudioStream {
-    data: Bytes,
+    data: BytesMut,
     itag: AudioItag,
 }
 
 #[derive(Debug)]
 pub struct VideoStream {
-    data: Bytes, 
-    itag: VideoItag
+    data: BytesMut, 
+    itag: VideoItag,
 }
 
-pub struct PlaylistMediaStream<I: Itag> {
-    data: Vec<MediaStream<I>>, 
+pub struct PlaylistMediaStream<I: Itag, M: MediaStream> {
+    data: Vec<M>, 
     itag: I
 }
 
 impl MediaStream for AudioStream {
-    
-    fn get_data(&self) -> &Bytes {
+
+    fn get_data(&self) -> &BytesMut {
         &self.data
     }
 
     fn save(&self, path: &Path, file_name: &str) -> Result<()> {
-        let file_name = format!("{}.{}", file_name, self.itag.get_mime_type());
-        save_media_stream(path, &file_name, &self)?;
+        save_media_stream(path, &file_name, self)?;
         Ok(())
     }
 
     fn get_itag(&self) -> impl Itag {
         self.itag
     }
+
+    fn push_data(&mut self, data: Bytes) {
+        self.data.put(data);
+    }
 }
 
 impl MediaStream for VideoStream {
 
+    fn get_data(&self) -> &BytesMut {
+        &self.data
+    } 
+
     fn save(&self, path: &Path, file_name: &str) -> Result<()> {
-        let file_name = format!("{}.{}", file_name, self.itag.get_mime_type());
+        save_media_stream(path, &file_name, self)?;
+        Ok(())
+    }
+
+    fn get_itag(&self) -> impl Itag {
+        self.itag
+    }
+
+    fn push_data(&mut self, data: Bytes) {
+        self.data.put(data);
     }
 }
 
 impl AudioStream {
-    fn new(data: Bytes, itag: AudioItag) -> Self {
+    pub fn new(itag: AudioItag) -> Self {
         Self {
-            data, 
+            data: BytesMut::new(), 
             itag
         }
     }
 }
 
 impl VideoStream {
-    fn new(data: Bytes, itag: VideoItag) -> Self {
+    pub fn new(itag: VideoItag) -> Self {
         Self {
-            data, 
+            data: BytesMut::new(), 
             itag
         }
     }
@@ -82,6 +100,23 @@ fn save_media_stream(path: &Path, file_name: &str, media_stream: &impl MediaStre
     file.write_all(&media_stream.get_data())?;
     Ok(())
 }
+
+// impl<I, M> PlaylistMediaStream<I, M> 
+// where I: Itag,
+//       M: MediaStream 
+// {
+//     pub fn new(data: Vec<M>, itag: I) -> Self {
+//         Self { data, itag }
+//     }
+// 
+//     pub fn save(&self, path: &Path) -> Result<()> {
+//         fs::create_dir_all(path)?; 
+//         for stream in self.data.iter() {
+//             stream.save(&path)?    
+//         }
+//         Ok(())
+//     }
+//  }
 
 // impl<I> MediaStream<I> where I: Itag {
 //     pub fn new(data: Bytes, itag: I, name: &str) -> Self {
@@ -110,16 +145,4 @@ fn save_media_stream(path: &Path, file_name: &str, media_stream: &impl MediaStre
 
 
 
-// impl<I> PlaylistMediaStream<I> where I: Itag {
-//     pub fn new(data: Vec<MediaStream<I>>, itag: I) -> Self {
-//         Self { data, itag }
-//     }
-// 
-//     pub fn save(&self, path: &Path) -> Result<()> {
-//         fs::create_dir_all(path)?; 
-//         for stream in self.data.iter() {
-//             stream.save(&path)?    
-//         }
-//         Ok(())
-//     }
-//  }
+
