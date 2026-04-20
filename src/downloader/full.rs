@@ -2,7 +2,7 @@ use std::{fs::create_dir_all, path::{Path, PathBuf}};
 
 use anyhow::{Result, anyhow};
 
-use crate::{browse_model::full_response, downloader::{media_stream::MediaStream, thumbnail::Thumbnail}, player_model::itag::Itag};
+use crate::{browse_model::full_response, downloader::{media_stream::MediaStream, metadata::PlaylistMetadata, playlist::Playlist, thumbnail::Thumbnail}, player_model::itag::Itag};
 
 #[derive(Debug)]
 pub struct DownloadedMedia<I: Itag> {
@@ -39,19 +39,19 @@ impl<I: Itag> DownloadedMedia<I> {
 
 #[derive(Debug)]
 pub struct DownloadedPlaylist<I: Itag> {
-    pub title: Option<String>,
     pub media: Vec<DownloadedMedia<I>>,
-    pub artist: Option<String>,
+    pub metadata: PlaylistMetadata,
 }
 
 impl<I: Itag> DownloadedPlaylist<I> {
-    pub fn new(title: &str, media: Vec<DownloadedMedia<I>>) -> Self {
-        Self { artist: None, media, title: Some(title.to_owned()) }
+    pub fn new(title: &str, author: &str, media: Vec<DownloadedMedia<I>>) -> Self {
+        let metadata = PlaylistMetadata::new(title, author);
+        Self { media, metadata }
     }
     
     pub fn save(&self, path: &Path) -> Result<()> {
         let mut full_path = PathBuf::from(path);
-        full_path.push(self.title.as_ref().ok_or(anyhow!("no album title found"))?);
+        full_path.push(self.metadata.title.as_ref().ok_or(anyhow!("no album title found"))?);
         create_dir_all(&full_path)?;
         for media in self.media.iter() {
             media.save(&full_path)?
@@ -59,4 +59,10 @@ impl<I: Itag> DownloadedPlaylist<I> {
         Ok(())
     }
 }
+
+#[derive(Debug)]
+pub struct DownloadedVideo {
+    
+}
+
 

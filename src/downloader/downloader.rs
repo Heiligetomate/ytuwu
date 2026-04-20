@@ -3,23 +3,18 @@ use anyhow::{Ok, Result};
 use crate::{
     downloader::{
         full::{DownloadedMedia, DownloadedPlaylist},
-        media::{
-            MediaBrowse
-        }, media_stream::MediaStream, playlist::{
-            PlaylistBrowse,
-        }, thumbnail::{PlaylistThumbnail, Thumbnail}
+        media::MediaBrowse, media_stream::MediaStream, playlist::PlaylistBrowse, thumbnail::{PlaylistThumbnail, Thumbnail}
     },
     id_resolver::{
         BrowseId, VideoId
     }, player_model::{
-        itag::Itag, video_details::ThumbnailResolution 
+        itag::{Itag, VideoItag}, video_details::ThumbnailResolution 
 
     }, 
 };
 
 #[derive(Debug)]
-pub struct Downloader {
-}
+pub struct Downloader {}
 
 impl Downloader {
 
@@ -86,6 +81,8 @@ impl Downloader {
                 .await?
         )
     }
+
+    pub async fn download_full_video(&self, browse_id: BrowseId, itag: VideoItag, thumbnail_resolution: ThumbnailResolution) -> Result<> 
 }
 
 
