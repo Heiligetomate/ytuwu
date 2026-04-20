@@ -1,3 +1,4 @@
+pub mod metadata;
 pub mod full;
 pub mod media_stream;
 pub mod thumbnail;
