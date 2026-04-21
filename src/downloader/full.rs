@@ -2,22 +2,66 @@ use std::{fmt::Debug, fs::create_dir_all, path::{Path, PathBuf}};
 
 use anyhow::{Result, anyhow};
 
-use crate::{browse_model::full_response, downloader::{media_stream::MediaStream, metadata::PlaylistMetadata, playlist::Playlist, thumbnail::Thumbnail}, player_model::itag::Itag};
+use crate::{browse_model::full_response, downloader::{media_stream::{AudioStream, MediaStream, VideoStream}, metadata::{MediaMetadata, PlaylistMetadata}, playlist::Playlist, thumbnail::Thumbnail}, player_model::itag::Itag};
 
 #[derive(Debug)]
 pub struct DownloadedMedia<M: MediaStream + Debug> {
     // TODO: the file name thing is weird i think 
-    pub title: String,
-    pub file_name: Option<String>,
-    pub artist: Option<String>,
+    pub metadata: MediaMetadata,
     pub thumbnail: Thumbnail,
     pub stream: M,
 }
 
+pub struct DownloadedDualStreamMedia {
+    pub metadata: MediaMetadata, 
+    pub thumbnail: Thumbnail,
+    pub audio_stream: AudioStream,
+    pub video_stream: VideoStream,
+}
+
+impl DownloadedDualStreamMedia {
+
+    pub fn new(audio_stream: AudioStream, video_stream: VideoStream, thumbnail: Thumbnail, title: &str, author: &str) -> Self {
+        let metadata = MediaMetadata::new(title, author, None);
+        Self {
+            metadata,
+            thumbnail,
+            audio_stream,
+            video_stream,
+        }
+    }
+
+    fn save_thumbnail(&self, path: &Path) -> Result<()> {
+        let mut full_path = PathBuf::from(path);
+        full_path.push("thumbnail.png");
+        self.thumbnail.save_file(&full_path)?;
+        Ok(())
+    } 
+        
+    fn save_audio_stream(&self, path: &Path) -> Result<()> {
+        self.audio_stream.save(path, "audio_stream")
+    }
+
+    fn save_video_stream(&self, path: &Path) -> Result<()> {
+        self.video_stream.save(path, "video_stream")
+    }
+
+    pub fn save(&self, path: &Path) -> Result<()> {
+        let mut full_path = PathBuf::from(path);
+        full_path.push(&self.metadata.title);
+        create_dir_all(&full_path)?;
+        self.save_thumbnail(&full_path)?;
+        self.save_video_stream(&full_path)?;
+        self.save_audio_stream(&full_path)?;
+        Ok(())
+    }
+}
+
 impl<M: MediaStream + Debug> DownloadedMedia<M> {
     
-    pub fn new(title: &str, stream: M, file_name: Option<String>, thumbnail: Thumbnail, author: Option<&str>) -> Self {
-        Self { artist: author.map(|s| s.to_owned()), thumbnail, stream, title: title.to_owned(), file_name }
+    pub fn new(stream: M, title: &str, thumbnail: Thumbnail, author: &str) -> Self {
+        let metadata = MediaMetadata::new(title, author, None);
+        Self { thumbnail, stream, metadata }
     }
     
     pub fn save_thumbnail(&self, path: &Path) -> Result<()> {
@@ -26,7 +70,7 @@ impl<M: MediaStream + Debug> DownloadedMedia<M> {
     }
 
     pub fn save_media_stream(&self, path: &Path) -> Result<()> {
-        self.stream.save(path, &self.title)?;
+        self.stream.save(path, &self.metadata.title)?;
         Ok(())
     }
 

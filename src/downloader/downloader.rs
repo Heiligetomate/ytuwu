@@ -4,13 +4,13 @@ use anyhow::{Ok, Result};
 
 use crate::{
     downloader::{
-        full::{DownloadedMedia, DownloadedPlaylist},
-        media::MediaBrowse, media_stream::MediaStream, playlist::PlaylistBrowse, thumbnail::{PlaylistThumbnail, Thumbnail}
+        full::{DownloadedDualStreamMedia, DownloadedMedia, DownloadedPlaylist},
+        media::MediaBrowse, playlist::PlaylistBrowse, thumbnail::{PlaylistThumbnail, Thumbnail}
     },
     id_resolver::{
         BrowseId, VideoId
     }, player_model::{
-        itag::{Itag, VideoItag}, video_details::ThumbnailResolution 
+        itag::{AudioItag, Itag, VideoItag}, video_details::ThumbnailResolution 
 
     }, 
 };
@@ -62,6 +62,17 @@ impl Downloader {
     }
 
     #[allow(unused)]
+    pub async fn download_dual_media_stream(&self, video_id: VideoId, video_itag: VideoItag, audio_itag: AudioItag, thumbnail_resolution: ThumbnailResolution) -> Result<DownloadedDualStreamMedia> {
+        Ok(
+            MediaBrowse::new(video_id)
+            .browse()
+            .await?
+            .download_dual_stream(video_itag, audio_itag, &thumbnail_resolution)
+            .await?
+        )
+    }
+
+    #[allow(unused)]
     pub async fn download_playlist_thumbnails(&self, browse_id: BrowseId, thumbnail_resolution: ThumbnailResolution) -> Result<PlaylistThumbnail> {
         Ok(
             PlaylistBrowse::new(browse_id) 
@@ -90,6 +101,8 @@ impl Downloader {
                 .await?
         )
     }
+    
+    
 
     //pub async fn download_full_video(&self, browse_id: BrowseId, itag: VideoItag, thumbnail_resolution: ThumbnailResolution) -> Result<> 
 }

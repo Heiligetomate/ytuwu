@@ -9,7 +9,7 @@ mod name_trimmer;
 use std::path::Path;
 
 use crate::{
-    downloader::downloader::Downloader, 
+    downloader::{downloader::Downloader, media_stream}, 
     id_resolver::IdCollection, 
     player_model::{itag::{AudioItag, Itag, VideoItag}, video_details::ThumbnailResolution},
 };
@@ -22,12 +22,13 @@ async fn main() -> Result<()> {
     let playlist_url = "https://music.youtube.com/playlist?list=OLAK5uy_nVY7Ekmu-3gJilFDUz8xrjkzmVmVnQSMQ";
     let mixed_url = "https://music.youtube.com/watch?v=lndG8BiZCmM&list=OLAK5uy_mrUmnJrX4QzJd6GeOuqcqT8EUMH1C0eTU";
 
-    let id_collection = IdCollection::from_url(mixed_url);
+    let id_collection = IdCollection::from_url(media_url);
 
     let downloader = Downloader::new();
     if let Some(ids) = id_collection {
-        let media = downloader.download_full_media(
+        let media = downloader.download_dual_media_stream(
             ids.video_id.ok_or(anyhow!("no video id found"))?, 
+            VideoItag::MP4240p,
             AudioItag::highest(), 
             ThumbnailResolution::Low,
         ).await?;
