@@ -1,7 +1,9 @@
+use std::fmt::Debug;
+
 use anyhow::{Result, anyhow};
 use bytes::{BufMut, Bytes, BytesMut};
 use crate::downloader::full::DownloadedMedia;
-use crate::downloader::media_stream::MediaStream;
+use crate::downloader::media_stream::{MediaStream, StreamWrapper};
 use crate::downloader::thumbnail::Thumbnail;
 use crate::downloader::util::*;
 use crate::{
@@ -96,12 +98,14 @@ impl Media {
         Ok(url.ok_or(anyhow!("no matching itag"))?)
     }
 
-    pub async fn download_media_stream<I: Itag + Copy, M: MediaStream>(&self, itag: I, chunk_count: u16) -> Result<M> {
+    pub async fn download_media_stream<I: Itag + Copy>(&self, itag: I, chunk_count: u16) -> Result<I::Stream> {
         let url = self.get_best_stream(&itag)?; 
         let size = extract_size(url)?;
-        let mut downloaded_stream = BytesMut::new();
+        let mut downloaded_stream = itag.new_stream();
+
         let chunk_size = size / chunk_count as u64;
         let mut current_position: u64 = 0;
+        
         while size > current_position {
             println!(
                 "downloading chunk {} to {}",
@@ -110,16 +114,10 @@ impl Media {
             );
             let chunk = self.download_chunk(current_position, current_position + chunk_size, url)
                 .await?;
-            downloaded_stream.put(chunk);
+            downloaded_stream.push_data(chunk);
             current_position += chunk_size + 1
         }
-        Ok(
-            MediaStream::new(
-                downloaded_stream.into(),
-                itag,
-                &self.title,
-            )
-        )
+        Ok(downloaded_stream)
     }    
 
     pub async fn download_thumbnail(&self, resolution: &ThumbnailResolution) -> Result<Thumbnail> {
@@ -136,7 +134,11 @@ impl Media {
         )
     }
 
-    pub async fn download_full<I: Itag + Copy>(self, itag: I, chunk_count: u16, thumbnail_resolution: &ThumbnailResolution) -> Result<DownloadedMedia<I>> {
+    pub async fn download_full<I>(self, itag: I, chunk_count: u16, thumbnail_resolution: &ThumbnailResolution) -> Result<DownloadedMedia<I::Stream>> 
+    where 
+        I: Itag + Copy + Debug, 
+        I::Stream: Debug,    
+    {
         
         let thumbnail = self.download_thumbnail(&thumbnail_resolution).await?;
         let media = self.download_media_stream(itag, chunk_count).await?;

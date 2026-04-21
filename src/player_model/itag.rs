@@ -2,16 +2,18 @@ use bytes::Bytes;
 use serde::{Deserialize, Serialize};
 use anyhow::{anyhow, Result, Error};
 
-use crate::downloader::media_stream::{MediaStream, VideoStream};
+use crate::downloader::media_stream::{AudioStream, MediaStream, MuxedStream, ShortVideoStream, VideoStream};
 
 pub trait Itag {
+    type Stream: MediaStream;
+
     fn highest() -> Self;
     fn next_best(self) -> Result<Self> where Self: Sized;
 
     fn to_int(&self) -> u16;
     fn get_mime_type(&self) -> &str;
 
-    fn new_stream(&self) -> Box<&dyn MediaStream>;
+    fn new_stream(self) -> Self::Stream;
 }
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone, Copy)]
@@ -82,6 +84,8 @@ fn no_high_itag_found() -> Error {
 
 impl Itag for VideoItag {
 
+    type Stream = VideoStream;
+
     fn highest() -> Self {
         Self::WebM1080p
     }
@@ -130,12 +134,15 @@ impl Itag for VideoItag {
         }
     }
 
-    fn new_stream<M: MediaStream>(&self) -> Box<&dyn MediaStream> {
-        Box::new(VideoStream::new(*self) as &dyn MediaStream)
+    fn new_stream(self) -> Self::Stream {
+        VideoStream::new(self)
     }
+}
 
 impl Itag for AudioItag {
     
+    type Stream = AudioStream;
+
     fn highest() -> Self {
         Self::OpusMedium
     }
@@ -167,10 +174,16 @@ impl Itag for AudioItag {
             Self::AacLow     => "m4a",
         }
     }
+
+    fn new_stream(self) -> Self::Stream {
+        AudioStream::new(self)
+    }
 }
 
 impl Itag for ShortVideoItag {
-    
+   
+    type Stream = ShortVideoStream;
+
     fn highest() -> Self {
         Self::High
     }
@@ -195,9 +208,15 @@ impl Itag for ShortVideoItag {
     fn get_mime_type(&self) -> &str {
         "mp4" 
     }
+
+    fn new_stream(self) -> Self::Stream {
+        ShortVideoStream::new(self)
+    }
 }
 
 impl Itag for MuxedItag {
+    
+    type Stream = MuxedStream;
 
     fn highest() -> Self {
         Self::MuxedMP4
@@ -213,6 +232,10 @@ impl Itag for MuxedItag {
     
     fn get_mime_type(&self) -> &str {
         "mp4" 
+    }
+
+    fn new_stream(self) -> Self::Stream {
+        MuxedStream::new(self)
     }
 }
 

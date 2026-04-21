@@ -26,8 +26,8 @@ async fn main() -> Result<()> {
 
     let downloader = Downloader::new();
     if let Some(ids) = id_collection {
-        let media = downloader.download_full_playlist(
-            ids.browse_id.ok_or(anyhow!("no video id found"))?, 
+        let media = downloader.download_full_media(
+            ids.video_id.ok_or(anyhow!("no video id found"))?, 
             AudioItag::highest(), 
             ThumbnailResolution::Low,
         ).await?;

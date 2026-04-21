@@ -47,6 +47,7 @@ struct ListRendererContent {
 }
 
 impl FullResponse {
+    
     pub fn get_ids(&self) -> Result<Vec<&str>> {
         let ids = self
             .single_column_browse_results_renderer
