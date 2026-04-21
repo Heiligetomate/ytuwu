@@ -44,8 +44,8 @@ pub struct DownloadedPlaylist<M: MediaStream + Debug> {
 }
 
 impl<M: MediaStream + Debug> DownloadedPlaylist<M> {
-    pub fn new(title: &str, author: &str, media: Vec<DownloadedMedia<M>>) -> Self {
-        let metadata = PlaylistMetadata::new(title, author);
+    pub fn new(title: &str, media: Vec<DownloadedMedia<M>>) -> Self {
+        let metadata = PlaylistMetadata::new(title, media.len() as u16);
         Self { media, metadata }
     }
     

@@ -1,4 +1,4 @@
-use std::{fs, path::{Path, PathBuf}};
+use std::{fmt::Debug, fs, path::{Path, PathBuf}};
 
 use anyhow::{Result, anyhow};
 
@@ -7,7 +7,7 @@ use crate::{
         full::{DownloadedMedia, DownloadedPlaylist}, media::{ 
             Media, 
             MediaBrowse
-        }, thumbnail::{PlaylistThumbnail} 
+        }, media_stream::MediaStream, thumbnail::PlaylistThumbnail 
     }, id_resolver::{
         BrowseId, 
         Id, 
@@ -76,8 +76,13 @@ impl PlaylistContentBrowse {
 }
 
 impl Playlist {
-    pub async fn download_full<I: Itag + Copy>(mut self, itag: I, thumbnail_resolution: ThumbnailResolution) -> Result<DownloadedPlaylist<I>> {
-        let mut downloaded: Vec<DownloadedMedia<I>> = Vec::new(); 
+    pub async fn download_full<I>(mut self, itag: I, thumbnail_resolution: ThumbnailResolution) -> Result<DownloadedPlaylist<I::Stream>> 
+    where 
+        I: Itag + Copy + Debug, 
+        I::Stream: Debug,
+    {
+        let mut downloaded: Vec<DownloadedMedia<I::Stream>> = Vec::new();
+
         for item in self.media.drain(..) {
             let downloaded_media = item.download_full(itag, 3, &thumbnail_resolution).await?; 
             downloaded.push(downloaded_media);

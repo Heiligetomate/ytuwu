@@ -1,3 +1,5 @@
+use std::fmt::Debug;
+
 use anyhow::{Ok, Result};
 
 use crate::{
@@ -35,7 +37,7 @@ impl Downloader {
     }
 
     #[allow(unused)]
-    pub async fn download_media_stream<I: Itag + Copy>(&self, video_id: VideoId, itag: I) -> Result<MediaStream<I>> {
+    pub async fn download_media_stream<I: Itag + Copy>(&self, video_id: VideoId, itag: I) -> Result<I::Stream> {
         Ok(
             MediaBrowse::new(video_id)
                 .browse()
@@ -46,7 +48,10 @@ impl Downloader {
     }
     
     #[allow(unused)]
-    pub async fn download_full_media<I: Itag + Copy>(&self, video_id: VideoId, itag: I, thumbnail_resolution: ThumbnailResolution) -> Result<DownloadedMedia<I>> {
+    pub async fn download_full_media<I>(&self, video_id: VideoId, itag: I, thumbnail_resolution: ThumbnailResolution) -> Result<DownloadedMedia<I::Stream>> 
+    where I: Itag + Copy + Debug,
+          I::Stream: Debug,
+    {
         Ok(
             MediaBrowse::new(video_id)
                 .browse()
@@ -70,7 +75,11 @@ impl Downloader {
     }
     
     #[allow(unused)]
-    pub async fn download_full_playlist<I: Itag + Copy>(&self, browse_id: BrowseId, itag: I, thumbnail_resolution: ThumbnailResolution) -> Result<DownloadedPlaylist<I>> {
+    pub async fn download_full_playlist<I>(&self, browse_id: BrowseId, itag: I, thumbnail_resolution: ThumbnailResolution) -> Result<DownloadedPlaylist<I::Stream>> 
+    where 
+        I: Itag + Copy + Debug, 
+        I::Stream: Debug,
+    {
         Ok(
             PlaylistBrowse::new(browse_id)
                 .browse()
@@ -82,7 +91,7 @@ impl Downloader {
         )
     }
 
-    pub async fn download_full_video(&self, browse_id: BrowseId, itag: VideoItag, thumbnail_resolution: ThumbnailResolution) -> Result<> 
+    //pub async fn download_full_video(&self, browse_id: BrowseId, itag: VideoItag, thumbnail_resolution: ThumbnailResolution) -> Result<> 
 }
 
 
