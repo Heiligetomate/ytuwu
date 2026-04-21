@@ -2,10 +2,11 @@ use std::fmt::Debug;
 
 use anyhow::{Result, anyhow};
 use bytes::{BufMut, Bytes, BytesMut};
-use crate::downloader::full::DownloadedMedia;
+use crate::downloader::full::{DownloadedDualStreamMedia, DownloadedMedia};
 use crate::downloader::media_stream::{MediaStream, StreamWrapper};
 use crate::downloader::thumbnail::Thumbnail;
 use crate::downloader::util::*;
+use crate::player_model::itag::{AudioItag, VideoItag};
 use crate::{
     id_resolver::VideoId, 
     name_trimmer::trim, 
@@ -119,6 +120,21 @@ impl Media {
         }
         Ok(downloaded_stream)
     }    
+    
+    pub async fn download_dual_stream(&self, video_itag: VideoItag, audio_itag: AudioItag, thumbnail_resolution: &ThumbnailResolution) -> Result<DownloadedDualStreamMedia> {
+        let video_stream = self.download_media_stream(video_itag, 3).await?;
+        let audio_stream = self.download_media_stream(audio_itag, 3).await?;
+        let thumbnail = self.download_thumbnail(thumbnail_resolution).await?;
+        Ok(
+            DownloadedDualStreamMedia::new(
+                audio_stream, 
+                video_stream, 
+                thumbnail, 
+                &self.title, 
+                &self.player_response.get_author().ok_or(anyhow!("no author found. fix this shit"))?,
+            )
+        )
+    }
 
     pub async fn download_thumbnail(&self, resolution: &ThumbnailResolution) -> Result<Thumbnail> {
         let url = self.get_thumbnail_url(&resolution)?;
@@ -144,11 +160,10 @@ impl Media {
         let media = self.download_media_stream(itag, chunk_count).await?;
         
         let downloaded_media = DownloadedMedia::new(
-            &self.title, 
-            media, 
-            self.generate_file_name(itag),
+            media,
+            &self.title,  
             thumbnail,
-            self.player_response.get_author(),
+            self.player_response.get_author().ok_or(anyhow!("no author found. fix this shit"))?,
         );
 
         Ok(downloaded_media)
