@@ -43,14 +43,14 @@ fn builder_headers(endpoint: &Endpoint) -> Result<RequestBuilder> {
             .header("Origin", endpoint.origin())
     )
 }
-fn build_body(endpoint: &Endpoint, visitor_data: Option<String>) -> RequestBody {
+fn build_body<'de>(endpoint: &Endpoint, visitor_data: Option<String>) -> RequestBody<'de> {
     match endpoint {
         Endpoint::Player(video_id)  => RequestBody::new_player_request(video_id.clone(), visitor_data),
         Endpoint::Browse(browse_id) => RequestBody::new_browse_request(browse_id.clone(), visitor_data),
     }
 } 
 
-async fn make_request<R>(body: &RequestBody, endpoint: &Endpoint) -> Result<R>
+async fn make_request<'de, R>(body: &RequestBody<'de>, endpoint: &Endpoint) -> Result<R>
 where 
     R: Response + DeserializeOwned + Debug, 
 {
