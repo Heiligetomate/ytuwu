@@ -1,13 +1,13 @@
-use std::{fmt::Debug, fs, path::{Path, PathBuf}};
+use std::fmt::Debug;
 
-use anyhow::{Result, anyhow};
+use anyhow::Result;
 
 use crate::{
     browse_model::browse_response::BrowseResponse, downloader::{
-        full::{DownloadedMedia, DownloadedPlaylist}, media::{ 
+        downloaded::{DownloadedMedia, DownloadedPlaylist}, media::{ 
             Media, 
             MediaBrowse
-        }, media_stream::MediaStream, thumbnail::PlaylistThumbnail 
+        }, thumbnail::PlaylistThumbnail 
     }, id_resolver::{
         BrowseId, 
         Id, 

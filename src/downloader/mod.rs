@@ -1,5 +1,5 @@
 pub mod metadata;
-pub mod full;
+pub mod downloaded;
 pub mod media_stream;
 pub mod thumbnail;
 pub mod util;
