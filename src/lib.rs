@@ -12,7 +12,7 @@ pub use player_model::{
 };
 
 pub use downloader::{
-    core, 
+    core::Downloader, 
     downloaded,
     metadata,
 };

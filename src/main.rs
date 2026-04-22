@@ -9,7 +9,7 @@ mod name_trimmer;
 use std::path::Path;
 
 use ytuwu::id_resolver::IdCollection;
-use ytuwu::core::Downloader;
+use ytuwu::Downloader;
 use ytuwu::itag::{VideoItag, AudioItag, Itag};
 use ytuwu::ThumbnailResolution;
 
