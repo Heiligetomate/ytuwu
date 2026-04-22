@@ -84,7 +84,7 @@ impl Playlist {
         let mut downloaded: Vec<DownloadedMedia<I::Stream>> = Vec::new();
 
         for item in self.media.drain(..) {
-            let downloaded_media = item.download_full(itag, 3, &thumbnail_resolution).await?; 
+            let downloaded_media = item.download_full(itag, &thumbnail_resolution).await?; 
             downloaded.push(downloaded_media);
         }
         Ok(DownloadedPlaylist::new(&self.title, downloaded))

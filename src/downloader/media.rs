@@ -22,6 +22,7 @@ use crate::{
     request::shared::captcha_bypass
 };
 
+const CHUNK_SIZE: u32 = 1024 * 1024; 
 
 #[derive(Debug)]
 pub struct MediaBrowse {
@@ -81,7 +82,7 @@ impl Media {
         None
     }
     
-    pub async fn download_chunk(&self, from: u64, to: u64, url: &str) -> Result<Bytes> {
+    pub async fn download_chunk(&self, from: u32, to: u32, url: &str) -> Result<Bytes> {
         let client = reqwest::Client::new();
         let chunk_url = format!("{}&range={}-{}", url, from, to);
         let chunk = client.get(&chunk_url).send().await?.bytes().await?;
@@ -99,31 +100,29 @@ impl Media {
         Ok(url.ok_or(anyhow!("no matching itag"))?)
     }
 
-    pub async fn download_media_stream<I: Itag + Copy>(&self, itag: I, chunk_count: u16) -> Result<I::Stream> {
+    pub async fn download_media_stream<I: Itag + Copy>(&self, itag: I) -> Result<I::Stream> {
         let url = self.get_best_stream(&itag)?; 
         let size = extract_size(url)?;
         let mut downloaded_stream = itag.new_stream();
-
-        let chunk_size = size / chunk_count as u64;
-        let mut current_position: u64 = 0;
+        let mut current_position: u32 = 0;
         
         while size > current_position {
             println!(
                 "downloading chunk {} to {}",
                 current_position,
-                current_position + chunk_size
+                current_position + CHUNK_SIZE
             );
-            let chunk = self.download_chunk(current_position, current_position + chunk_size, url)
+            let chunk = self.download_chunk(current_position, current_position + CHUNK_SIZE, url)
                 .await?;
             downloaded_stream.push_data(chunk);
-            current_position += chunk_size + 1
+            current_position += CHUNK_SIZE + 1
         }
         Ok(downloaded_stream)
     }    
     
     pub async fn download_dual_stream(&self, video_itag: VideoItag, audio_itag: AudioItag, thumbnail_resolution: &ThumbnailResolution) -> Result<DownloadedDualStreamMedia> {
-        let video_stream = self.download_media_stream(video_itag, 3).await?;
-        let audio_stream = self.download_media_stream(audio_itag, 3).await?;
+        let video_stream = self.download_media_stream(video_itag).await?;
+        let audio_stream = self.download_media_stream(audio_itag).await?;
         let thumbnail = self.download_thumbnail(thumbnail_resolution).await?;
         Ok(
             DownloadedDualStreamMedia::new(
@@ -150,14 +149,14 @@ impl Media {
         )
     }
 
-    pub async fn download_full<I>(self, itag: I, chunk_count: u16, thumbnail_resolution: &ThumbnailResolution) -> Result<DownloadedMedia<I::Stream>> 
+    pub async fn download_full<I>(self, itag: I, thumbnail_resolution: &ThumbnailResolution) -> Result<DownloadedMedia<I::Stream>> 
     where 
         I: Itag + Copy + Debug, 
         I::Stream: Debug,    
     {
         
         let thumbnail = self.download_thumbnail(&thumbnail_resolution).await?;
-        let media = self.download_media_stream(itag, chunk_count).await?;
+        let media = self.download_media_stream(itag).await?;
         
         let downloaded_media = DownloadedMedia::new(
             media,
