@@ -8,17 +8,11 @@ mod name_trimmer;
 
 use std::path::Path;
 
-use crate::{
-    downloader::downloader::Downloader, 
-    id_resolver::IdCollection, 
-    player_model::{
-        itag::{
-            AudioItag, 
-            Itag, 
-            VideoItag
-        }, 
-        video_details::ThumbnailResolution},
-};
+use ytuwu::id_resolver::IdCollection;
+use ytuwu::core::Downloader;
+use ytuwu::itag::{VideoItag, AudioItag, Itag};
+use ytuwu::ThumbnailResolution;
+
 use anyhow::{Result, anyhow};
 
 #[tokio::main]

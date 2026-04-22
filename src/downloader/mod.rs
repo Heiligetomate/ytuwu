@@ -1,8 +1,8 @@
 pub mod metadata;
 pub mod downloaded;
 pub mod media_stream;
-pub mod thumbnail;
-pub mod util;
-pub mod downloader;
-pub mod media;
-pub mod playlist;
+mod thumbnail;
+mod util;
+pub mod core;
+mod media;
+mod playlist;

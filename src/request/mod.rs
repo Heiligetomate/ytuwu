@@ -1,3 +1,3 @@
-pub mod request_builder;
-pub mod parameters;
+mod request_builder;
+mod parameters;
 pub mod shared;
