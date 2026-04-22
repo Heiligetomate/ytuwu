@@ -1,26 +1,25 @@
-use serde::{Deserialize, Serialize};
-
+use serde::Serialize;
+use crate::request::parameters::*;
 use crate::id_resolver::{BrowseId, Id, VideoId};
-
  
-#[derive(Serialize, Debug, Deserialize)]
+#[derive(Serialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct RequestBody {
-    context: Context,
+pub struct RequestBody<'de> {
+    context: Context<'de>,
     video_id: Option<String>,
     browse_id: Option<String>,
     content_check_ok: bool,
     racy_check_ok: bool,
 }
 
-impl RequestBody {
+impl<'de> RequestBody<'de> {
     fn new(video_id: Option<String>, browse_id: Option<String>, visitor_data: Option<String>) -> Self { 
         Self {
-            context          : Context::default_downloader_body(visitor_data),
-            video_id         : video_id,
-            browse_id        : browse_id,
-            content_check_ok : true,
-            racy_check_ok    : true,
+            context         : Context::default_downloader_body(visitor_data),
+            video_id        : video_id,
+            browse_id       : browse_id,
+            content_check_ok: true,
+            racy_check_ok   : true,
         }
     }
     pub fn new_browse_request(browse_id: BrowseId, visitor_data: Option<String>) -> Self {
@@ -31,42 +30,40 @@ impl RequestBody {
     }
 }
 
-#[derive(Deserialize, Serialize, Debug)]
-pub struct Context {
-    client: Client,
+#[derive(Serialize, Debug)]
+pub struct Context<'de> {
+    client: Client<'de>,
 }
 
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Serialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct Client {
-    client_name: String,
-    client_version: String,
-    device_make: String,
-    device_model: String,
+pub struct Client<'de> {
+    client_name: &'de str,
+    client_version: &'de str,
+    device_make: &'de str,
+    device_model: &'de str,
     android_sdk_version: u16,
-    hl: String,
-    gl: String,
-    time_zone: String,
+    hl: &'de str,
+    gl: &'de str,
+    time_zone: &'de str,
     utc_offset_minutes: u16,
     visitor_data: Option<String>,
 }
 
-
-
-impl Context {
+impl<'de> Context<'de> {
     pub fn default_downloader_body(visitor_data: Option<String>) -> Self {
         Self {
             client: Client {             
-                client_name: String::from("ANDROID_VR"),
-                client_version: String::from("1.60.19"),
-                device_make: String::from("Oculus"),
-                device_model: String::from("Quest 2"),
-                android_sdk_version: 29,
-                hl: String::from("en"),
-                gl: String::from("US"),
-                time_zone: String::from("UTC"),
-                utc_offset_minutes: 0,
+                client_name: CLIENT_NAME,
+                client_version: CLIENT_VERSION,
+                device_make: DEVICE_MAKE,
+                device_model: DEVICE_MODEL,
+                android_sdk_version: ANDROID_SDK_VERSION,
+                hl: HL,
+                gl: GL,
+                time_zone: TIMEZONE,
+                utc_offset_minutes: UTC_OFFSET_MINUTES,
                 visitor_data: visitor_data,
             }
         }
