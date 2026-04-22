@@ -9,18 +9,25 @@ mod name_trimmer;
 use std::path::Path;
 
 use crate::{
-    downloader::{downloader::Downloader, media_stream}, 
+    downloader::downloader::Downloader, 
     id_resolver::IdCollection, 
-    player_model::{itag::{AudioItag, Itag, VideoItag}, video_details::ThumbnailResolution},
+    player_model::{
+        itag::{
+            AudioItag, 
+            Itag, 
+            VideoItag
+        }, 
+        video_details::ThumbnailResolution},
 };
 use anyhow::{Result, anyhow};
 
 #[tokio::main]
 async fn main() -> Result<()> {
 
-    let media_url = "https://music.youtube.com/watch?v=lndG8BiZCmM";
     let playlist_url = "https://music.youtube.com/playlist?list=OLAK5uy_nVY7Ekmu-3gJilFDUz8xrjkzmVmVnQSMQ";
     let mixed_url = "https://music.youtube.com/watch?v=lndG8BiZCmM&list=OLAK5uy_mrUmnJrX4QzJd6GeOuqcqT8EUMH1C0eTU";
+
+    let media_url = "https://music.youtube.com/watch?v=lndG8BiZCmM";
 
     let id_collection = IdCollection::from_url(media_url);
 
@@ -32,14 +39,12 @@ async fn main() -> Result<()> {
             AudioItag::highest(), 
             ThumbnailResolution::Low,
         ).await?;
-        let path = Path::new("hallo");
+        let path = Path::new("teehee");
         media.save(&path)?;
-    
+        println!("{}", media.metadata.author);
     } else {
          println!("no ids found");
     }
-    
-
     Ok(())
 }
 
