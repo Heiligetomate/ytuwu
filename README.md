@@ -35,7 +35,6 @@ example usage for downloading video, audio and thumbnail and printing basic meta
 ## todos: 
 - rate limiter
 - channel/artist browse and downlaod
-- should be a lib not a binary
 - more metadata
 - save chunks when crashing while downloading and continue the download afterwards
 - cache 
