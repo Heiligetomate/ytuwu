@@ -1,9 +1,9 @@
 use std::fmt::Debug;
 
 use anyhow::{Result, anyhow};
-use bytes::{BufMut, Bytes, BytesMut};
-use crate::downloader::full::{DownloadedDualStreamMedia, DownloadedMedia};
-use crate::downloader::media_stream::{MediaStream, StreamWrapper};
+use bytes::Bytes;
+use crate::downloader::downloaded::{DownloadedDualStreamMedia, DownloadedMedia};
+use crate::downloader::media_stream::{MediaStream};
 use crate::downloader::thumbnail::Thumbnail;
 use crate::downloader::util::*;
 use crate::player_model::itag::{AudioItag, VideoItag};
