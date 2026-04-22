@@ -1,8 +1,9 @@
 use std::fmt::Debug;
 
-use reqwest::RequestBuilder;
+
+use reqwest::{RequestBuilder};
 use serde::de::DeserializeOwned;
-use crate::{id_resolver::{BrowseId, Id, VideoId}, request::request_builder::RequestBody, shared_traits::{Response, Status}};
+use crate::{id_resolver::{BrowseId, Id, VideoId}, request::{parameters::*, request_builder::RequestBody}, shared_traits::{Response, Status}};
 use anyhow::{Result, anyhow};
 
 #[derive(Debug)]
@@ -14,14 +15,14 @@ pub enum Endpoint {
 impl Endpoint {
     pub fn as_str(&self) -> &str {
         match &self {
-            Self::Browse(_) => "https://music.youtube.com/youtubei/v1/browse", // music? music!
-            Self::Player(_) => "https://www.youtube.com/youtubei/v1/player",
+            Self::Browse(_) => BROWSE_ENDPOINT,
+            Self::Player(_) => PLAYER_ENDPOINT,
         }
     }
-    pub fn origin(&self) -> &str {
+    pub fn origin(&self) -> Header {
         match &self {
-            Self::Browse(_) => "https://music.youtube.com",
-            Self::Player(_) => "https://www.youtube.com",
+            Self::Browse(_) => BROWSE_ORIGIN_HEADER,
+            Self::Player(_) => PLAYER_ORIGIN_HEADER,
         } 
     }
     pub fn get_id(&self) -> &str {
@@ -34,13 +35,14 @@ impl Endpoint {
 
 fn builder_headers(endpoint: &Endpoint) -> Result<RequestBuilder> {
     let client = reqwest::Client::new();
+    let origin = endpoint.origin();
     Ok(
         client.post(endpoint.as_str())
-            .header("Content-Type", "application/json")
-            .header("User-Agent", "User-Agent: Mozilla/5.0 (Linux; Android 10; Quest 2) AppleWebKit/537.36 (KHTML, like Gecko) OculusBrowser/32.0.0.3.65 SamsungBrowser/4.3 Chrome/137.0.7151.61 Mobile VR Safari/537.36")
-            .header("X-YouTube-Client-Name", "28")
-            .header("X-YouTube-Client-Version", "1.60.19")
-            .header("Origin", endpoint.origin())
+            .header(CONTENT_TYPE_HEADER.0, CONTENT_TYPE_HEADER.1)
+            .header(USER_AGENT_HEADER.0, USER_AGENT_HEADER.1)
+            .header(CLIENT_NAME_HEADER.0, CLIENT_NAME_HEADER.1)
+            .header(CLIENT_VERSION_HEADER.0, CLIENT_VERSION_HEADER.1)
+            .header(origin.0, origin.1)
     )
 }
 fn build_body<'de>(endpoint: &Endpoint, visitor_data: Option<String>) -> RequestBody<'de> {
