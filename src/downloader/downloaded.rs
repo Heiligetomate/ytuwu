@@ -1,8 +1,21 @@
 use std::{fmt::Debug, fs::create_dir_all, path::{Path, PathBuf}};
 
-use anyhow::{Result, anyhow};
+use anyhow::Result;
 
-use crate::{browse_model::full_response, downloader::{media_stream::{AudioStream, MediaStream, VideoStream}, metadata::{MediaMetadata, PlaylistMetadata}, playlist::Playlist, thumbnail::Thumbnail}, player_model::itag::Itag};
+use crate::{
+    downloader::{
+        media_stream::{
+            AudioStream, 
+            MediaStream, 
+            VideoStream
+        }, 
+        metadata::{
+            MediaMetadata, 
+            PlaylistMetadata
+        }, 
+        thumbnail::Thumbnail
+    }
+};
 
 #[derive(Debug)]
 pub struct DownloadedMedia<M: MediaStream + Debug> {

@@ -4,13 +4,29 @@ use anyhow::{Ok, Result};
 
 use crate::{
     downloader::{
-        full::{DownloadedDualStreamMedia, DownloadedMedia, DownloadedPlaylist},
-        media::MediaBrowse, playlist::PlaylistBrowse, thumbnail::{PlaylistThumbnail, Thumbnail}
+        downloaded::{
+            DownloadedDualStreamMedia, 
+            DownloadedMedia, 
+            DownloadedPlaylist
+        },
+        media::MediaBrowse, 
+        playlist::PlaylistBrowse, 
+        thumbnail::{
+            PlaylistThumbnail, 
+            Thumbnail
+        }
     },
     id_resolver::{
-        BrowseId, VideoId
-    }, player_model::{
-        itag::{AudioItag, Itag, VideoItag}, video_details::ThumbnailResolution 
+        BrowseId, 
+        VideoId
+    }, 
+    player_model::{
+        itag::{
+            AudioItag, 
+            Itag, 
+            VideoItag
+        }, 
+        video_details::ThumbnailResolution 
 
     }, 
 };
@@ -42,7 +58,7 @@ impl Downloader {
             MediaBrowse::new(video_id)
                 .browse()
                 .await?
-                .download_media_stream(itag, 3)
+                .download_media_stream(itag)
                 .await?
         )
     }
@@ -56,7 +72,7 @@ impl Downloader {
             MediaBrowse::new(video_id)
                 .browse()
                 .await?
-                .download_full(itag, 3, &thumbnail_resolution)
+                .download_full(itag, &thumbnail_resolution)
                 .await?
         )
     }
@@ -101,10 +117,6 @@ impl Downloader {
                 .await?
         )
     }
-    
-    
-
-    //pub async fn download_full_video(&self, browse_id: BrowseId, itag: VideoItag, thumbnail_resolution: ThumbnailResolution) -> Result<> 
 }
 
 

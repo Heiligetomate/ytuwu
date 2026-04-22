@@ -1,7 +1,7 @@
 use anyhow::{Result, anyhow};
 
-pub fn extract_size(url: &str) -> Result<u64> {
-    let size: u64 = url
+pub fn extract_size(url: &str) -> Result<u32> {
+    let size: u32 = url
         .split("clen=")
         .nth(1)
         .ok_or(anyhow!("failed to get size from url"))?
