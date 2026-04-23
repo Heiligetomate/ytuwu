@@ -16,6 +16,4 @@ pub enum PlayabilityStatusValue {
 pub struct PlayabilityStatus {
     pub status: PlayabilityStatusValue,
     reason: Option<String>,
-    playable_in_embed: Option<bool>,
-    context_params: Option<String>,
 }

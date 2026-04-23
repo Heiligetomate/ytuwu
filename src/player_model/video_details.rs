@@ -1,30 +1,21 @@
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize};
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(rename_all = "camelCase")]
+#[derive(Deserialize, Debug)]
 pub struct VideoDetails {
-    video_id: String,
     pub title: String,
-    length_seconds: String,
-    channel_id: String,
     pub author: String,
-    short_description: String,
-    view_count: String,
-    is_live_content: bool,
     pub thumbnail: Thumbnails,
-    keywords: Option<Vec<String>>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Deserialize, Debug)]
 pub struct Thumbnails {
     thumbnails: Vec<Thumbnail>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Deserialize, Debug)]
 pub struct Thumbnail {
     url: String,
     width: u16,
-    height: u16,
 }
 
 #[derive(Debug, PartialEq, Eq, Clone)]
@@ -34,23 +25,6 @@ pub enum ThumbnailResolution {
     High,
     VeryHigh,
 }
-
-pub struct BasicMetaData {
-    author: String, 
-    album_title: String, 
-    media_title: String,
-}
-
-impl VideoDetails {
-
-    pub fn get_title(&self) -> &str {
-        &self.title
-    }
-    
-    pub fn get_author(&self) -> &str {
-        &self.author
-    }
- }
 
 impl ThumbnailResolution {
     pub fn from_width(width: u16) -> Option<Self> {

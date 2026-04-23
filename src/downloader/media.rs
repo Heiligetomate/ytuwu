@@ -65,23 +65,6 @@ impl Media {
         Ok(url)
     }
     
-    fn get_mime_type_by_itag(&self, itag: &impl Itag) -> Result<&str> {
-        if let Some(stream) = self.get_streams()?.get_stream_by_itag(itag) {
-            return Ok(stream.get_mime_type())
-        }
-        Err(anyhow!("could not extract mime type"))
-    }
-    
-    pub fn generate_file_name<I: Itag>(&self, itag: I) -> Option<String> {
-        if let Some(mime_type) = self.get_mime_type_by_itag(&itag).ok() {
-            let file_name = file_name(mime_type, &self.title);
-
-            return Some(file_name);
-        } 
-        
-        None
-    }
-    
     pub async fn download_chunk(&self, from: u32, to: u32, url: &str) -> Result<Bytes> {
         let client = reqwest::Client::new();
         let chunk_url = format!("{}&range={}-{}", url, from, to);
