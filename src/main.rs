@@ -29,9 +29,9 @@ async fn main() -> Result<()> {
     if let Some(ids) = id_collection {
         let media = downloader.download_dual_media_stream(
             ids.video_id.ok_or(anyhow!("no video id found"))?, 
-            VideoItag::MP4240p,
+            VideoItag::highest(),
             AudioItag::highest(), 
-            ThumbnailResolution::Low,
+            ThumbnailResolution::VeryHigh,
         ).await?;
         let path = Path::new("teehee");
         media.save(&path)?;

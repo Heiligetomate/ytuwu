@@ -13,18 +13,18 @@ pub enum Endpoint {
 }
 
 impl Endpoint {
-    pub fn as_str(&self) -> &str {
-        match &self {
-            Self::Browse(_) => BROWSE_ENDPOINT,
-            Self::Player(_) => PLAYER_ENDPOINT,
-        }
-    }
-    pub fn origin(&self) -> Header {
-        match &self {
-            Self::Browse(_) => BROWSE_ORIGIN_HEADER,
-            Self::Player(_) => PLAYER_ORIGIN_HEADER,
-        } 
-    }
+    // pub fn as_str(&self) -> &str {
+    //     match &self {
+    //         Self::Browse(_) => BROWSE_ENDPOINT,
+    //         Self::Player(_) => PLAYER_ENDPOINT,
+    //     }
+    // }
+    // pub fn origin(&self) -> Header {
+    //     match &self {
+    //         Self::Browse(_) => BROWSE_ORIGIN_HEADER,
+    //         Self::Player(_) => PLAYER_ORIGIN_HEADER,
+    //     } 
+    // }
     pub fn get_id(&self) -> &str {
         match &self {
             Self::Player(id) => id.as_str(),
@@ -33,16 +33,15 @@ impl Endpoint {
     }
 }
 
-fn builder_headers(endpoint: &Endpoint) -> Result<RequestBuilder> {
+fn builder_headers() -> Result<RequestBuilder> {
     let client = reqwest::Client::new();
-    let origin = endpoint.origin();
     Ok(
-        client.post(endpoint.as_str())
+        client.post(ENDPOINT)
             .header(CONTENT_TYPE_HEADER.0, CONTENT_TYPE_HEADER.1)
             .header(USER_AGENT_HEADER.0, USER_AGENT_HEADER.1)
             .header(CLIENT_NAME_HEADER.0, CLIENT_NAME_HEADER.1)
             .header(CLIENT_VERSION_HEADER.0, CLIENT_VERSION_HEADER.1)
-            .header(origin.0, origin.1)
+            .header(ORIGIN_HEADER.0, ORIGIN_HEADER.1)
     )
 }
 fn build_body<'de>(endpoint: &Endpoint, visitor_data: Option<String>) -> RequestBody<'de> {
@@ -52,11 +51,11 @@ fn build_body<'de>(endpoint: &Endpoint, visitor_data: Option<String>) -> Request
     }
 } 
 
-async fn make_request<'de, R>(body: &RequestBody<'de>, endpoint: &Endpoint) -> Result<R>
+async fn make_request<'de, R>(body: &RequestBody<'de>) -> Result<R>
 where 
     R: Response + DeserializeOwned + Debug, 
 {
-    let headers = builder_headers(endpoint)?;
+    let headers = builder_headers()?;
     let response: &str = &headers
         .json(body)
         .send()
@@ -77,7 +76,7 @@ where
     while tries < max_tries {
         let body = build_body(&endpoint, visitor_data);
         tries += 1;
-        let resp: R = make_request(&body, &endpoint).await?;
+        let resp: R = make_request(&body).await?;
         match resp.get_status() {
             Status::Error => return Err(anyhow!(format!("Returned an error"))),
             Status::Success => return Ok(resp),
