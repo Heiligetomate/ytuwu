@@ -1,19 +1,24 @@
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize};
 
 use crate::{player_model::{
     playability_status::{PlayabilityStatus, PlayabilityStatusValue},
-    response_context::ResponseContext,
     streaming_data::StreamingData,
     video_details::VideoDetails,
 }, shared_traits::{self, Response}};
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct PlayerResponse { // has too many useless fields
+pub struct PlayerResponse { 
     response_context: Option<ResponseContext>,
     pub playability_status: Option<PlayabilityStatus>,
     pub streaming_data: Option<StreamingData>,
     pub video_details: Option<VideoDetails>,
+}
+
+#[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct ResponseContext {
+    pub visitor_data: Option<String>,
 }
 
 impl PlayerResponse {

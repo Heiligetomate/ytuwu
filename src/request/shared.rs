@@ -13,18 +13,6 @@ pub enum Endpoint {
 }
 
 impl Endpoint {
-    // pub fn as_str(&self) -> &str {
-    //     match &self {
-    //         Self::Browse(_) => BROWSE_ENDPOINT,
-    //         Self::Player(_) => PLAYER_ENDPOINT,
-    //     }
-    // }
-    // pub fn origin(&self) -> Header {
-    //     match &self {
-    //         Self::Browse(_) => BROWSE_ORIGIN_HEADER,
-    //         Self::Player(_) => PLAYER_ORIGIN_HEADER,
-    //     } 
-    // }
     pub fn get_id(&self) -> &str {
         match &self {
             Self::Player(id) => id.as_str(),
