@@ -5,6 +5,7 @@ mod request;
 pub mod id_resolver;
 mod name_trimmer;
 mod shared_traits;
+mod test;
 
 pub use player_model::{
     itag,
