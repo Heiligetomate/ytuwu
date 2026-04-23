@@ -13,11 +13,11 @@ pub const UTC_OFFSET_MINUTES: u16  = 0;
 
 
 
-pub const BROWSE_ENDPOINT: StStr        = "https://music.youtube.com/youtubei/v1/browse";
-pub const PLAYER_ENDPOINT: StStr        = "https://www.youtube.com/youtubei/v1/player";
+pub const ENDPOINT: StStr        = "https://music.youtube.com/youtubei/v1/browse";
+// pub const PLAYER_ENDPOINT: StStr        = "https://music.youtube.com/youtubei/v1/player";
 
-pub const BROWSE_ORIGIN_HEADER: Header  = ("Origin", "https://music.youtube.com");
-pub const PLAYER_ORIGIN_HEADER: Header  = ("Origin", "https://www.youtube.com");
+pub const ORIGIN_HEADER: Header  = ("Origin", "https://music.youtube.com");
+// pub const PLAYER_ORIGIN_HEADER: Header  = ("Origin", "https://music.youtube.com");
 
 pub const CONTENT_TYPE_HEADER: Header   = ("Content-Type", "application/json"); 
 pub const CLIENT_NAME_HEADER: Header    = ("X-YouTube-Client-Name", "28");
