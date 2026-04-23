@@ -3,7 +3,7 @@ pub trait Response {
     fn get_status(&self)        -> Status;
 }
 
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub enum Status {
     Login,
     Success,

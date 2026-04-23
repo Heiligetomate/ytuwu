@@ -1,5 +1,4 @@
 use std::fmt;
-use anyhow::{Result, anyhow};
 use serde::{Deserialize, Serialize};
 
 pub trait Id {
@@ -9,17 +8,17 @@ pub trait Id {
     //fn new_valid<T>(id: T) -> Self where T: Into<String>;
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct BrowseId {
     id: String,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct VideoId {
     id: String,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct ChannelId {
     id: String
 }
@@ -113,17 +112,17 @@ impl IdCollection {
             }
         )
     }
-    pub fn get_video_id(self) -> Option<VideoId> {
-        self.video_id
+    pub fn get_video_id(&self) -> Option<&VideoId> {
+        self.video_id.as_ref()
     }
-    pub fn get_browse_id(self) -> Option<BrowseId> {
-        self.browse_id
+    pub fn get_browse_id(&self) -> Option<&BrowseId> {
+        self.browse_id.as_ref()
     }
 }
 
 
 fn video_id_from_raw_url(raw_url: &str) -> Option<VideoId> {
-    // youtu.be (weird url but has a video id in it)
+    //TODO: youtu.be (weird url but has a video id in it)
     let parts: Vec<&str> = raw_url.split("v=").collect();
     let part_res = if let Some(part) = parts.get(1) {
         part
@@ -147,5 +146,5 @@ fn playlist_id_from_raw_url(raw_url: &str) -> Option<BrowseId> {
 }
 
 
-
+// TODO: Implement Short video ids 
 
