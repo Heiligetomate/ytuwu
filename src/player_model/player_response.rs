@@ -1,18 +1,21 @@
 use serde::{Deserialize};
+use anyhow::{Result, anyhow};
+
 
 use crate::{player_model::{
+    itag::Itag,
     playability_status::{PlayabilityStatus, PlayabilityStatusValue},
     streaming_data::StreamingData,
-    video_details::VideoDetails,
+    video_details::{ThumbnailResolution, VideoDetails},
 }, shared_traits::{self, Response}};
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct PlayerResponse { 
     response_context: Option<ResponseContext>,
-    pub playability_status: Option<PlayabilityStatus>,
-    pub streaming_data: Option<StreamingData>,
-    pub video_details: Option<VideoDetails>,
+    playability_status: Option<PlayabilityStatus>,
+    streaming_data: Option<StreamingData>,
+    video_details: Option<VideoDetails>,
 }
 
 #[derive(Deserialize, Debug)]
@@ -22,9 +25,49 @@ pub struct ResponseContext {
 }
 
 impl PlayerResponse {
-    pub fn get_title(&self) -> &str {
-        // ughh
-        &self.video_details.as_ref().unwrap().title
+
+    pub fn get_best_stream<I: Itag + Copy>(&self, itag: &I) -> Result<&str> {
+        let streams = self.get_streaming_data()?;         
+        let mut current_itag = *itag;
+        let mut url: Option<&str> = streams.get_url_by_itag(&current_itag);
+        while url.is_none() {
+            current_itag = current_itag.next_best()?;
+            url = streams.get_url_by_itag(&current_itag);
+        }
+        Ok(url.ok_or(anyhow!("no matching itag"))?)
+    }
+
+    fn get_streaming_data(&self) -> Result<&StreamingData> {
+        Ok(
+            self
+                .streaming_data
+                .as_ref()
+                .ok_or(anyhow!("no streaming data found"))?
+        )
+    }
+
+    fn get_video_deatails(&self) -> Result<&VideoDetails> {
+        Ok(
+            self.
+                video_details
+                .as_ref()
+                .ok_or(anyhow!("no video details found"))?
+        )
+    }
+
+    pub fn get_thumbnail_url_by_res(&self, resolution: &ThumbnailResolution) -> Result<&str> {
+        let url = self
+            .get_video_deatails()?
+            .thumbnail
+            .url_by_resolution(resolution)
+            .ok_or(anyhow!("no thumbnail found"))?;
+        Ok(url)
+    } 
+
+    pub fn get_title(&self) -> Result<&str> {
+        Ok(
+            &self.get_video_deatails()?.title
+        )
     }
     
     pub fn get_author(&self) -> Option<&str> {
