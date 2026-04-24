@@ -3,7 +3,6 @@ use serde::Deserialize;
 use crate::{
     error::{Result, YtuwuError},
     browse_model::{
-        error_response::ErrorResponse, 
         full_response::FullResponse, 
         header::BrowseHeader, 
         response_context::ResponseContext
@@ -19,6 +18,9 @@ pub struct BrowseResponse {
     response_context: Option<ResponseContext>,
     header: Option<BrowseHeader>
 }
+
+#[derive(Deserialize, Debug)]
+pub struct ErrorResponse {}
 
 impl BrowseResponse {
     pub fn get_ids(&self) -> Result<Vec<&str>> {
