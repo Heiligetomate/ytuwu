@@ -13,13 +13,6 @@ pub trait MediaStream {
     fn push_data(&mut self, data: Bytes);
 }
 
-pub enum StreamWrapper {
-    AudioStream(AudioStream),
-    VideoStream(VideoStream),
-    ShortVideoStream(ShortVideoStream),
-    MuxedStream(MuxedStream),
-}
-
 #[derive(Debug)]
 pub struct AudioStream {
     data: BytesMut,

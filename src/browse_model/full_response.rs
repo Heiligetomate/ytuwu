@@ -1,6 +1,6 @@
 use serde::Deserialize;
 
-use crate::error::{YtuwuError, Result};
+use crate::error::{Result, YtuwuError};
 use crate::browse_model::playlist_renderer::PlaylistVideoListRenderer;
 
 #[derive(Deserialize, Debug)]
