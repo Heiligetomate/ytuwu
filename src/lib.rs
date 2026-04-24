@@ -6,11 +6,14 @@ pub mod id_resolver;
 mod name_trimmer;
 mod shared_traits;
 mod test;
+pub mod error;
 
 pub use player_model::{
     itag,
     video_details::ThumbnailResolution,
 };
+
+pub use error::Result;
 
 pub use downloader::{
     core::Downloader, 

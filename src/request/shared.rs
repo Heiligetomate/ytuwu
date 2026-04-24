@@ -3,7 +3,21 @@ use std::fmt::Debug;
 
 use reqwest::{RequestBuilder};
 use serde::de::DeserializeOwned;
-use crate::{id_resolver::{BrowseId, Id, VideoId}, request::{parameters::*, request_builder::RequestBody}, shared_traits::{Response, Status}};
+use crate::{
+    id_resolver::{
+        BrowseId, 
+        Id, 
+        VideoId
+    }, 
+    request::{
+        parameters::*, 
+        request_builder::RequestBody
+    }, 
+    shared_traits::{
+        Response, 
+        Status
+    }
+};
 use anyhow::{Result, anyhow};
 
 #[derive(Debug)]
@@ -21,17 +35,18 @@ impl Endpoint {
     }
 }
 
-fn builder_headers() -> Result<RequestBuilder> {
+fn builder_headers() -> RequestBuilder {
     let client = reqwest::Client::new();
-    Ok(
-        client.post(ENDPOINT)
-            .header(CONTENT_TYPE_HEADER.0, CONTENT_TYPE_HEADER.1)
-            .header(USER_AGENT_HEADER.0, USER_AGENT_HEADER.1)
-            .header(CLIENT_NAME_HEADER.0, CLIENT_NAME_HEADER.1)
-            .header(CLIENT_VERSION_HEADER.0, CLIENT_VERSION_HEADER.1)
-            .header(ORIGIN_HEADER.0, ORIGIN_HEADER.1)
-    )
+    
+    client.post(ENDPOINT)
+        .header(CONTENT_TYPE_HEADER.0, CONTENT_TYPE_HEADER.1)
+        .header(USER_AGENT_HEADER.0, USER_AGENT_HEADER.1)
+        .header(CLIENT_NAME_HEADER.0, CLIENT_NAME_HEADER.1)
+        .header(CLIENT_VERSION_HEADER.0, CLIENT_VERSION_HEADER.1)
+        .header(ORIGIN_HEADER.0, ORIGIN_HEADER.1)
+    
 }
+
 fn build_body<'de>(endpoint: &Endpoint, visitor_data: Option<String>) -> RequestBody<'de> {
     match endpoint {
         Endpoint::Player(video_id)  => RequestBody::new_player_request(video_id.clone(), visitor_data),
@@ -43,7 +58,7 @@ async fn make_request<'de, R>(body: &RequestBody<'de>) -> Result<R>
 where 
     R: Response + DeserializeOwned + Debug, 
 {
-    let headers = builder_headers()?;
+    let headers = builder_headers();
     let response: &str = &headers
         .json(body)
         .send()

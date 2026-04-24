@@ -1,19 +1,18 @@
-pub type StStr = &'static str;
-pub type Header = (StStr, StStr);
+pub type Header = (&'static str, &'static str);
 
-pub const CLIENT_NAME: StStr       = "ANDROID_VR"; 
-pub const CLIENT_VERSION: StStr    = "1.60.19";
-pub const DEVICE_MAKE: StStr       = "Oculus";
-pub const DEVICE_MODEL: StStr      = "Quest 2";
-pub const HL: StStr                = "en";
-pub const GL: StStr                = "US";
-pub const TIMEZONE: StStr          = "UTC";
+pub const CLIENT_NAME:        &str = "ANDROID_VR"; 
+pub const CLIENT_VERSION:     &str = "1.60.19";
+pub const DEVICE_MAKE:        &str = "Oculus";
+pub const DEVICE_MODEL:       &str = "Quest 2";
+pub const HL:                 &str = "en";
+pub const GL:                 &str = "US";
+pub const TIMEZONE:           &str = "UTC";
 pub const ANDROID_SDK_VERSION: u16 = 29;
-pub const UTC_OFFSET_MINUTES: u16  = 0; 
+pub const UTC_OFFSET_MINUTES:  u16 = 0; 
 
 
 
-pub const ENDPOINT: StStr               = "https://music.youtube.com/youtubei/v1/player";
+pub const ENDPOINT: &str               = "https://music.youtube.com/youtubei/v1/player";
 
 pub const ORIGIN_HEADER: Header         = ("Origin", "https://music.youtube.com");
 
