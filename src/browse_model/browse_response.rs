@@ -1,7 +1,13 @@
-use anyhow::{Result, anyhow};
 use serde::Deserialize;
 
-use crate::{browse_model::{error_response::ErrorResponse, full_response::FullResponse, header::BrowseHeader, response_context::ResponseContext}, shared_traits::Response};
+use crate::{
+    Result, browse_model::{
+        error_response::ErrorResponse, 
+        full_response::FullResponse, 
+        header::BrowseHeader, 
+        response_context::ResponseContext
+    }, error::YtuwuError, shared_traits::Response
+};
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
@@ -17,7 +23,7 @@ impl BrowseResponse {
         let ids = self
             .contents
             .as_ref()
-            .ok_or(anyhow!("no contents found"))?
+            .ok_or(YtuwuError::NoIdsFound)?
             .get_ids()?;
 
         Ok(ids)
