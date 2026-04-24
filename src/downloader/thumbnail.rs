@@ -4,7 +4,7 @@ use std::{
     path::{Path, PathBuf}
 };
 
-use anyhow::{Result, anyhow};
+use crate::error::{YtuwuError, Result};
 use bytes::Bytes;
 
 use crate::{player_model::video_details::ThumbnailResolution};
@@ -29,15 +29,15 @@ impl Thumbnail {
     
     // dont use this lmao
     pub fn save_file(&self, path: &Path) -> Result<()> {
-        let mut file = fs::File::create(path)?;
-        file.write_all(&self.data)?;
+        let mut file = fs::File::create(path).map_err(|_| YtuwuError::CreateFile)?;
+        file.write_all(&self.data).map_err(|_| YtuwuError::WriteToFile);
         Ok(())
     }
 
     /// the path is the directory where the file should be stored.  
     pub fn save(&self, path: &Path) -> Result<()> {
         if !path.is_dir() { 
-            return Err(anyhow!("expected a dir"))
+            return Err(YtuwuError::InvalidPath)
         }
         let mut file_path = PathBuf::from(path); 
         let file_name = format!("{}.png", &self.name); 
@@ -54,7 +54,7 @@ impl PlaylistThumbnail {
     }
 
     pub fn save(&self, path: &Path) -> Result<()> {
-        fs::create_dir_all(path)?; 
+        fs::create_dir_all(path).map_err(|_| YtuwuError::CreateDir); 
         for thumbnail in self.data.iter() {
             thumbnail.save(&path)?    
         }

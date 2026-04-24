@@ -1,7 +1,7 @@
 use std::fmt::Debug;
 
-use anyhow::{Result, anyhow};
 use bytes::Bytes;
+use crate::error::{Result};
 use crate::downloader::downloaded::{DownloadedDualStreamMedia, DownloadedMedia};
 use crate::downloader::media_stream::{MediaStream};
 use crate::downloader::thumbnail::Thumbnail;
@@ -72,7 +72,7 @@ impl Media {
                 video_stream, 
                 thumbnail, 
                 &self.title, 
-                &self.player_response.get_author().ok_or(anyhow!("no author found. fix this shit"))?,
+                &self.player_response.get_author()?,
             )
         )
     }
@@ -104,7 +104,7 @@ impl Media {
             media,
             &self.title,  
             thumbnail,
-            self.player_response.get_author().ok_or(anyhow!("no author found. fix this shit"))?,
+            self.player_response.get_author()?,
         );
 
         Ok(downloaded_media)

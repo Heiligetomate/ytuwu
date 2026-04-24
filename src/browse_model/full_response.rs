@@ -1,6 +1,6 @@
-use anyhow::{Result, anyhow};
 use serde::Deserialize;
 
+use crate::error::{YtuwuError, Result};
 use crate::browse_model::playlist_renderer::PlaylistVideoListRenderer;
 
 #[derive(Deserialize, Debug)]
@@ -47,28 +47,27 @@ struct ListRendererContent {
 }
 
 impl FullResponse {
-    
     pub fn get_ids(&self) -> Result<Vec<&str>> {
         let ids = self
             .single_column_browse_results_renderer
             .tabs
             .get(0)
             .as_ref()
-            .ok_or(anyhow!("first element of tabs doesnt exist"))?
+            .ok_or(YtuwuError::BrowseDataNotFound("tabs"))?
             .tab_renderer
             .as_ref()
-            .ok_or(anyhow!("no tabrenderer found"))?
+            .ok_or(YtuwuError::BrowseDataNotFound("tab renderer"))?
             .content
             .section_list_renderer
             .contents
             .as_ref()
-            .ok_or(anyhow!("no section list renderer contents found"))?
+            .ok_or(YtuwuError::BrowseDataNotFound("section list renderer contents"))?
             .get(0)
             .as_ref()
-            .ok_or(anyhow!("first element of section list renderer doesnt exit"))?
+            .ok_or(YtuwuError::BrowseDataNotFound("first section list renderer element"))?
             .playlist_video_list_renderer
             .as_ref()
-            .ok_or(anyhow!("no shelf renderer found"))?
+            .ok_or(YtuwuError::BrowseDataNotFound("playlist video list renderer"))?
             .get_ids(); 
         Ok(ids)    
     }

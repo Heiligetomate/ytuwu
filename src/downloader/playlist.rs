@@ -1,8 +1,7 @@
 use std::fmt::Debug;
 
-use anyhow::Result;
-
 use crate::{
+    error::Result,
     browse_model::browse_response::BrowseResponse, downloader::{
         downloaded::{DownloadedMedia, DownloadedPlaylist}, media::{ 
             Media, 

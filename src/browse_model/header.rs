@@ -1,5 +1,5 @@
-use anyhow::{Result, anyhow};
 use serde::Deserialize;
+use crate::{error::{YtuwuError, Result}};
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
@@ -28,7 +28,12 @@ struct AlbumTitle {
 impl BrowseHeader {
     pub fn get_album_title(&self) -> Result<&str> {
         let title_object = &self.playlist_header_renderer.title;
-        let title = title_object.runs.get(0).ok_or(anyhow!("title was not found"))?.text.as_str();
+        let title = title_object
+            .runs
+            .get(0)
+            .ok_or(YtuwuError::BrowseDataNotFound("album title"))?
+            .text
+            .as_str();
         Ok(title)
     }
 }

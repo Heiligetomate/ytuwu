@@ -1,6 +1,6 @@
 use std::{fmt::Debug, fs::create_dir_all, path::{Path, PathBuf}};
 
-use anyhow::Result;
+use crate::error::*;
 
 use crate::{
     downloader::{
@@ -62,7 +62,7 @@ impl DownloadedDualStreamMedia {
     pub fn save(&self, path: &Path) -> Result<()> {
         let mut full_path = PathBuf::from(path);
         full_path.push(&self.metadata.title);
-        create_dir_all(&full_path)?;
+        create_dir_all(&full_path).map_err(|_| YtuwuError::CreateDir)?;
         self.save_thumbnail(&full_path)?;
         self.save_video_stream(&full_path)?;
         self.save_audio_stream(&full_path)?;
@@ -109,7 +109,7 @@ impl<M: MediaStream + Debug> DownloadedPlaylist<M> {
     pub fn save(&self, path: &Path) -> Result<()> {
         let mut full_path = PathBuf::from(path);
         full_path.push(&self.metadata.title);
-        create_dir_all(&full_path)?;
+        create_dir_all(&full_path).map_err(|_| YtuwuError::CreateDir)?;
         for media in self.media.iter() {
             media.save(&full_path)?
         }
