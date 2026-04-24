@@ -1,14 +1,15 @@
-use anyhow::{Result, anyhow};
+use crate::error::{YtuwuError, Result};
 
 pub fn extract_size(url: &str) -> Result<u32> {
     let size: u32 = url
         .split("clen=")
         .nth(1)
-        .ok_or(anyhow!("failed to get size from url"))?
+        .ok_or(YtuwuError::UrlSizeExtract)?
         .split('&')
         .next()
-        .ok_or(anyhow!("failed to get size from url"))?
-        .parse()?;
+        .ok_or(YtuwuError::UrlSizeExtract)?
+        .parse()
+        .map_err(|_| YtuwuError::UrlSizeExtract)?;
     Ok(size)
 }
 

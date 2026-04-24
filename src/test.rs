@@ -1,7 +1,23 @@
-#[cfg(test)]
-    use anyhow::Result;
-
-    use crate::{id_resolver::{self, BrowseId, Id, VideoId}, player_model::player_response::PlayerResponse, request::{shared::{Endpoint, captcha_bypass}}, shared_traits::{Response, Status}};
+use crate::{
+    error::Result,
+    id_resolver::{
+        self, 
+        BrowseId, 
+        Id, 
+        VideoId
+    }, 
+    player_model::player_response::PlayerResponse, 
+    request::{
+        shared::{
+            Endpoint, 
+            captcha_bypass
+        }
+    }, 
+    shared_traits::{
+        Response, 
+        Status
+    }
+};
 
 #[test]
 fn test_id_resolver() {

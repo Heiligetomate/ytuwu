@@ -1,12 +1,14 @@
 use serde::Deserialize;
 
 use crate::{
-    Result, browse_model::{
+    error::{Result, YtuwuError},
+    browse_model::{
         error_response::ErrorResponse, 
         full_response::FullResponse, 
         header::BrowseHeader, 
         response_context::ResponseContext
-    }, error::YtuwuError, shared_traits::Response
+    }, 
+    shared_traits::Response
 };
 
 #[derive(Deserialize, Debug)]
@@ -23,13 +25,13 @@ impl BrowseResponse {
         let ids = self
             .contents
             .as_ref()
-            .ok_or(YtuwuError::NoIdsFound)?
+            .ok_or(YtuwuError::BrowseDataNotFound("video ids"))?
             .get_ids()?;
 
         Ok(ids)
     }
     pub fn get_album_title(&self) -> Result<&str> {
-        let header = self.header.as_ref().ok_or(anyhow!("no header found"))?;
+        let header = self.header.as_ref().ok_or(YtuwuError::BrowseDataNotFound("album title"))?;
         let title = &header.get_album_title()?;
         Ok(title)
     }

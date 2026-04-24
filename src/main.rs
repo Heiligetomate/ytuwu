@@ -12,8 +12,7 @@ use ytuwu::id_resolver::IdCollection;
 use ytuwu::Downloader;
 use ytuwu::itag::{VideoItag, AudioItag, Itag};
 use ytuwu::ThumbnailResolution;
-
-use anyhow::{Result, anyhow};
+use ytuwu::Result;
 
 #[tokio::main]
 async fn main() -> Result<()> {

@@ -4,6 +4,7 @@ use std::fmt::Debug;
 use reqwest::{RequestBuilder};
 use serde::de::DeserializeOwned;
 use crate::{
+    error::{Result, YtuwuError},
     id_resolver::{
         BrowseId, 
         Id, 
@@ -18,7 +19,6 @@ use crate::{
         Status
     }
 };
-use anyhow::{Result, anyhow};
 
 #[derive(Debug)]
 pub enum Endpoint {
@@ -81,13 +81,13 @@ where
         tries += 1;
         let resp: R = make_request(&body).await?;
         match resp.get_status() {
-            Status::Error => return Err(anyhow!(format!("Returned an error"))),
+            Status::Error => return Err(YtuwuError::YoutubeAPIReturn),
             Status::Success => return Ok(resp),
             Status::Login => println!("trying to bypass captcha for {}", endpoint.get_id()),
         }
         visitor_data = resp.get_visitor_data();
     }
-    Err(anyhow!(format!("Couldnt bypass captcha after {} tries", max_tries)))
+    Err(YtuwuError::CaptchaBypassFailed(max_tries))
 }
 
 

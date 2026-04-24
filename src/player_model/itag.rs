@@ -1,8 +1,6 @@
-use bytes::Bytes;
 use serde::{Deserialize, Serialize};
-use anyhow::{anyhow, Result, Error};
 
-use crate::downloader::media_stream::{AudioStream, MediaStream, MuxedStream, ShortVideoStream, VideoStream};
+use crate::{error::Result, downloader::media_stream::{AudioStream, MediaStream, MuxedStream, ShortVideoStream, VideoStream}, error::YtuwuError};
 
 pub trait Itag {
     type Stream: MediaStream;
@@ -78,10 +76,6 @@ const VIDEO_ORDER: [VideoItag; 12] = [
     VideoItag::MP4144p
 ];
 
-fn no_high_itag_found() -> Error {
-    anyhow!("No higher itag found.")
-}
-
 impl Itag for VideoItag {
 
     type Stream = VideoStream;
@@ -93,7 +87,7 @@ impl Itag for VideoItag {
     fn next_best(self) -> Result<Self> where Self: Sized {
         for (i, itag) in VIDEO_ORDER.iter().enumerate() {
             if *itag == self {
-                let next_itag = VIDEO_ORDER.get(i + 1).ok_or(no_high_itag_found())?;
+                let next_itag = VIDEO_ORDER.get(i + 1).ok_or(YtuwuError::NoLowerItagFound)?;
                 return Ok(*next_itag);
             }
         }
@@ -150,7 +144,7 @@ impl Itag for AudioItag {
     fn next_best(self) -> Result<Self> where Self: Sized {
         for (i, itag) in AUDIO_ORDER.iter().enumerate() {
             if *itag == self {
-                let next_itag = AUDIO_ORDER.get(i + 1).ok_or(no_high_itag_found())?;
+                let next_itag = AUDIO_ORDER.get(i + 1).ok_or(YtuwuError::NoLowerItagFound)?;
                 return Ok(*next_itag)
             }
         }
@@ -191,7 +185,7 @@ impl Itag for ShortVideoItag {
     fn next_best(self) -> Result<Self> where Self: Sized {
         for (i, itag) in SHORT_ORDER.iter().enumerate() {
             if *itag == self {
-                let next_itag = SHORT_ORDER.get(i + 1).ok_or(no_high_itag_found())?;
+                let next_itag = SHORT_ORDER.get(i + 1).ok_or(YtuwuError::NoLowerItagFound)?;
                 return Ok(*next_itag)
             }
         } 
@@ -227,7 +221,7 @@ impl Itag for MuxedItag {
     }
     
     fn next_best(self) -> Result<Self> {
-        Err(no_high_itag_found())
+        Err(YtuwuError::NoLowerItagFound)
     }
     
     fn get_mime_type(&self) -> &str {

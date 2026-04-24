@@ -1,8 +1,7 @@
 use serde::{Deserialize};
-use anyhow::{Result, anyhow};
 
 
-use crate::{player_model::{
+use crate::{error::{YtuwuError, Result}, player_model::{
     itag::Itag,
     playability_status::{PlayabilityStatus, PlayabilityStatusValue},
     streaming_data::StreamingData,
@@ -34,7 +33,7 @@ impl PlayerResponse {
             current_itag = current_itag.next_best()?;
             url = streams.get_url_by_itag(&current_itag);
         }
-        Ok(url.ok_or(anyhow!("no matching itag"))?)
+        Ok(url.ok_or(YtuwuError::NoMatchingItag)?)
     }
 
     fn get_streaming_data(&self) -> Result<&StreamingData> {
@@ -42,7 +41,7 @@ impl PlayerResponse {
             self
                 .streaming_data
                 .as_ref()
-                .ok_or(anyhow!("no streaming data found"))?
+                .ok_or(YtuwuError::PlayerDataNotFound("streaming data"))?
         )
     }
 
@@ -51,7 +50,7 @@ impl PlayerResponse {
             self.
                 video_details
                 .as_ref()
-                .ok_or(anyhow!("no video details found"))?
+                .ok_or(YtuwuError::PlayerDataNotFound("video details"))?
         )
     }
 
@@ -60,7 +59,7 @@ impl PlayerResponse {
             .get_video_deatails()?
             .thumbnail
             .url_by_resolution(resolution)
-            .ok_or(anyhow!("no thumbnail found"))?;
+            .ok_or(YtuwuError::PlayerDataNotFound("thumbnails"))?;
         Ok(url)
     } 
 
@@ -70,11 +69,11 @@ impl PlayerResponse {
         )
     }
     
-    pub fn get_author(&self) -> Option<&str> {
+    pub fn get_author(&self) -> Result<&str> {
         if let Some(video_details) = &self.video_details {
-            return Some(&video_details.author)
+            return Ok(&video_details.author)
         }
-        None
+        Err(YtuwuError::PlayerDataNotFound("author"))
     }
 }
 
