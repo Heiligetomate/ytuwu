@@ -22,6 +22,8 @@ pub enum YtuwuError {
     WriteToFile,
     InvalidPath,
     NoIdFound,
+
+    UrlParsing(&'static str),
 }
 
 impl Display for YtuwuError {
@@ -45,6 +47,7 @@ impl Display for YtuwuError {
             Self::WriteToFile => write!(f, "Failed to write bytes to the file."),
             Self::InvalidPath => write!(f, "Invalid path format."),
             &Self::NoIdFound => write!(f, "Could not get id from collection"),
+            Self::UrlParsing(e) => write!(f, "Error while parsing the url: {e}"),
         }
     }
 }
