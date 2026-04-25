@@ -33,6 +33,7 @@ pub struct DownloadedPlaylist<M: MediaStream + Debug> {
 }
 
 impl DownloadedDualStreamMedia {
+    #[rustfmt::skip]
     pub fn new(audio_stream: AudioStream, video_stream: VideoStream, thumbnail: Thumbnail, title: &str, author: &str) -> Self {
         let metadata = MediaMetadata::new(title, author, None);
         Self {
@@ -46,16 +47,19 @@ impl DownloadedDualStreamMedia {
     fn save_thumbnail(&self, path: &Path) -> Result<()> {
         let mut full_path = PathBuf::from(path);
         full_path.push("thumbnail.png");
-        self.thumbnail.save_file(&full_path)?;
+        self.thumbnail
+            .save_file(&full_path)?;
         Ok(())
     }
 
     fn save_audio_stream(&self, path: &Path) -> Result<()> {
-        self.audio_stream.save(path, "audio_stream")
+        self.audio_stream
+            .save(path, "audio_stream")
     }
 
     fn save_video_stream(&self, path: &Path) -> Result<()> {
-        self.video_stream.save(path, "video_stream")
+        self.video_stream
+            .save(path, "video_stream")
     }
 
     pub fn save(&self, path: &Path) -> Result<()> {
@@ -72,7 +76,11 @@ impl DownloadedDualStreamMedia {
 impl<M: MediaStream + Debug> DownloadedMedia<M> {
     pub fn new(stream: M, title: &str, thumbnail: Thumbnail, author: &str) -> Self {
         let metadata = MediaMetadata::new(title, author, None);
-        Self { thumbnail, stream, metadata }
+        Self {
+            thumbnail,
+            stream,
+            metadata,
+        }
     }
 
     pub fn save_thumbnail(&self, path: &Path) -> Result<()> {
@@ -81,7 +89,8 @@ impl<M: MediaStream + Debug> DownloadedMedia<M> {
     }
 
     pub fn save_media_stream(&self, path: &Path) -> Result<()> {
-        self.stream.save(path, &self.metadata.title)?;
+        self.stream
+            .save(path, &self.metadata.title)?;
         Ok(())
     }
 
