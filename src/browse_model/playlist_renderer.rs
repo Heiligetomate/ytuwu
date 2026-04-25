@@ -23,7 +23,11 @@ impl PlaylistVideoListRenderer {
         let items = &self.contents;
         let ids = items
             .iter()
-            .filter_map(|item| item.playlist_video_renderer.video_id.as_ref())
+            .filter_map(|item| {
+                item.playlist_video_renderer
+                    .video_id
+                    .as_ref()
+            })
             .map(|id| id.as_str())
             .collect();
         ids

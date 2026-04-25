@@ -1,6 +1,5 @@
 const DEFAULT_REPLACE_CHARS: [char; 8] = ['(', ')', '[', ']', '{', '}', '/', '\''];
-const ERASE_DUPLICATES     : [char; 2] = ['-', '_']; 
-
+const ERASE_DUPLICATES: [char; 2] = ['-', '_'];
 
 pub fn trim(mut input: String, space: &str) -> String {
     input = input.replace(" ", space);

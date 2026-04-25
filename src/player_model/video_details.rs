@@ -1,4 +1,4 @@
-use serde::{Deserialize};
+use serde::Deserialize;
 
 #[derive(Deserialize, Debug)]
 pub struct VideoDetails {
@@ -20,7 +20,7 @@ pub struct Thumbnail {
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub enum ThumbnailResolution {
-    Low, 
+    Low,
     Medium,
     High,
     VeryHigh,
@@ -33,9 +33,9 @@ impl ThumbnailResolution {
             320 => Some(Self::Medium),
             480 => Some(Self::High),
             640 => Some(Self::VeryHigh),
-            _   => None
+            _ => None,
         }
-    } 
+    }
 }
 
 impl Thumbnails {
@@ -43,10 +43,10 @@ impl Thumbnails {
         for thumbnail in self.thumbnails.iter() {
             if let Some(thumbnail_resolution) = ThumbnailResolution::from_width(thumbnail.width) {
                 if thumbnail_resolution == *resolution {
-                    return Some(&thumbnail.url)
+                    return Some(&thumbnail.url);
                 }
             } else {
-                return None
+                return None;
             }
         }
         None

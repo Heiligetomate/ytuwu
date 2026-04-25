@@ -28,9 +28,13 @@ impl Display for YtuwuError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::BrowseDataNotFound(e) => write!(f, "Could not get data from response: {}.", e),
-            Self::PlayerDataNotFound(e) => write!(f, "Could not get data from player response: {}.", e),
+            Self::PlayerDataNotFound(e) => {
+                write!(f, "Could not get data from player response: {}.", e)
+            }
             Self::ReqwestError(e) => write!(f, "Reqwest failed: {e}"),
-            Self::CaptchaBypassFailed(e) => write!(f, "The captcha bypass failed after {} tries.", e),
+            Self::CaptchaBypassFailed(e) => {
+                write!(f, "The captcha bypass failed after {} tries.", e)
+            }
             Self::YoutubeAPIReturn => write!(f, "Youtube API gave an unexpected reply."),
             Self::Deserialize => write!(f, "Could not deserialize the response."),
             Self::NoLowerItagFound => write!(f, "Could not find any lower itag."),

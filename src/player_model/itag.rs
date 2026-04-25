@@ -1,14 +1,21 @@
 use serde::{Deserialize, Serialize};
 
-use crate::{error::Result, downloader::media_stream::{AudioStream, MediaStream, MuxedStream, ShortVideoStream, VideoStream}, error::YtuwuError};
-
+use crate::{
+    downloader::media_stream::{
+        AudioStream, MediaStream, MuxedStream, ShortVideoStream, VideoStream,
+    },
+    error::Result,
+    error::YtuwuError,
+};
 
 //TODO: Different name
 pub trait Itag {
     type Stream: MediaStream;
 
     fn highest() -> Self;
-    fn next_best(self) -> Result<Self> where Self: Sized;
+    fn next_best(self) -> Result<Self>
+    where
+        Self: Sized;
 
     fn to_int(&self) -> u16;
     fn get_mime_type(&self) -> &str;
@@ -18,7 +25,7 @@ pub trait Itag {
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone, Copy)]
 pub enum MuxedItag {
-    MuxedMP4
+    MuxedMP4,
 }
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone, Copy)]
@@ -39,8 +46,8 @@ pub enum VideoItag {
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone, Copy)]
 pub enum ShortVideoItag {
-    Low, // 779
-    High,      // 780
+    Low,  // 779
+    High, // 780
 }
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone, Copy)]
@@ -51,45 +58,46 @@ pub enum AudioItag {
     OpusMedium, // 251
 }
 
-const SHORT_ORDER: [ShortVideoItag; 2] = [
-    ShortVideoItag::High, 
-    ShortVideoItag::Low
-]; 
+const SHORT_ORDER: [ShortVideoItag; 2] = [ShortVideoItag::High, ShortVideoItag::Low];
 
 const AUDIO_ORDER: [AudioItag; 4] = [
-    AudioItag::OpusMedium, 
-    AudioItag::AacMedium, 
-    AudioItag::OpusLow, 
-    AudioItag::AacLow
+    AudioItag::OpusMedium,
+    AudioItag::AacMedium,
+    AudioItag::OpusLow,
+    AudioItag::AacLow,
 ];
 
 const VIDEO_ORDER: [VideoItag; 12] = [
-    VideoItag::WebM1080p, 
-    VideoItag::MP41080p, 
-    VideoItag::WebM720p, 
-    VideoItag::MP4720p, 
-    VideoItag::Webm480p, 
-    VideoItag::MP4480p, 
-    VideoItag::WebM360p, 
-    VideoItag::MP4360p, 
-    VideoItag::WebM240p, 
-    VideoItag::MP4240p, 
-    VideoItag::MP4144p, 
-    VideoItag::MP4144p
+    VideoItag::WebM1080p,
+    VideoItag::MP41080p,
+    VideoItag::WebM720p,
+    VideoItag::MP4720p,
+    VideoItag::Webm480p,
+    VideoItag::MP4480p,
+    VideoItag::WebM360p,
+    VideoItag::MP4360p,
+    VideoItag::WebM240p,
+    VideoItag::MP4240p,
+    VideoItag::MP4144p,
+    VideoItag::MP4144p,
 ];
 
 impl Itag for VideoItag {
-
     type Stream = VideoStream;
 
     fn highest() -> Self {
         Self::WebM1080p
     }
 
-    fn next_best(self) -> Result<Self> where Self: Sized {
+    fn next_best(self) -> Result<Self>
+    where
+        Self: Sized,
+    {
         for (i, itag) in VIDEO_ORDER.iter().enumerate() {
             if *itag == self {
-                let next_itag = VIDEO_ORDER.get(i + 1).ok_or(YtuwuError::NoLowerItagFound)?;
+                let next_itag = VIDEO_ORDER
+                    .get(i + 1)
+                    .ok_or(YtuwuError::NoLowerItagFound)?;
                 return Ok(*next_itag);
             }
         }
@@ -98,35 +106,35 @@ impl Itag for VideoItag {
 
     fn to_int(&self) -> u16 {
         match &self {
-            Self::WebM1080p => 248, 
-            Self::MP41080p  => 137, 
-            Self::WebM720p  => 247, 
-            Self::MP4720p   => 136, 
-            Self::Webm480p  => 244, 
-            Self::MP4480p   => 135, 
-            Self::WebM360p  => 243, 
-            Self::MP4360p   => 134, 
-            Self::WebM240p  => 242,
-            Self::MP4240p   => 133, 
-            Self::Webm144p  => 278, 
-            Self::MP4144p   => 160,
+            Self::WebM1080p => 248,
+            Self::MP41080p => 137,
+            Self::WebM720p => 247,
+            Self::MP4720p => 136,
+            Self::Webm480p => 244,
+            Self::MP4480p => 135,
+            Self::WebM360p => 243,
+            Self::MP4360p => 134,
+            Self::WebM240p => 242,
+            Self::MP4240p => 133,
+            Self::Webm144p => 278,
+            Self::MP4144p => 160,
         }
     }
 
     fn get_mime_type(&self) -> &str {
         match &self {
-            Self::WebM1080p => "webm", 
-            Self::MP41080p  => "mp4", 
-            Self::WebM720p  => "webm", 
-            Self::MP4720p   => "mp4", 
-            Self::Webm480p  => "webm", 
-            Self::MP4480p   => "mp4", 
-            Self::WebM360p  => "webm", 
-            Self::MP4360p   => "mp4", 
-            Self::WebM240p  => "webm",
-            Self::MP4240p   => "mp4", 
-            Self::Webm144p  => "webm", 
-            Self::MP4144p   => "mp4",
+            Self::WebM1080p => "webm",
+            Self::MP41080p => "mp4",
+            Self::WebM720p => "webm",
+            Self::MP4720p => "mp4",
+            Self::Webm480p => "webm",
+            Self::MP4480p => "mp4",
+            Self::WebM360p => "webm",
+            Self::MP4360p => "mp4",
+            Self::WebM240p => "webm",
+            Self::MP4240p => "mp4",
+            Self::Webm144p => "webm",
+            Self::MP4144p => "mp4",
         }
     }
 
@@ -136,18 +144,22 @@ impl Itag for VideoItag {
 }
 
 impl Itag for AudioItag {
-    
     type Stream = AudioStream;
 
     fn highest() -> Self {
         Self::OpusMedium
     }
-    
-    fn next_best(self) -> Result<Self> where Self: Sized {
+
+    fn next_best(self) -> Result<Self>
+    where
+        Self: Sized,
+    {
         for (i, itag) in AUDIO_ORDER.iter().enumerate() {
             if *itag == self {
-                let next_itag = AUDIO_ORDER.get(i + 1).ok_or(YtuwuError::NoLowerItagFound)?;
-                return Ok(*next_itag)
+                let next_itag = AUDIO_ORDER
+                    .get(i + 1)
+                    .ok_or(YtuwuError::NoLowerItagFound)?;
+                return Ok(*next_itag);
             }
         }
         panic!("Itag doesnt exit")
@@ -156,18 +168,18 @@ impl Itag for AudioItag {
     fn to_int(&self) -> u16 {
         match &self {
             Self::OpusMedium => 251,
-            Self::OpusLow    => 249,
-            Self::AacMedium  => 140, 
-            Self::AacLow     => 139,
+            Self::OpusLow => 249,
+            Self::AacMedium => 140,
+            Self::AacLow => 139,
         }
     }
 
     fn get_mime_type(&self) -> &str {
         match &self {
             Self::OpusMedium => "webm",
-            Self::OpusLow    => "webm",
-            Self::AacMedium  => "m4a",
-            Self::AacLow     => "m4a",
+            Self::OpusLow => "webm",
+            Self::AacMedium => "m4a",
+            Self::AacLow => "m4a",
         }
     }
 
@@ -177,32 +189,36 @@ impl Itag for AudioItag {
 }
 
 impl Itag for ShortVideoItag {
-   
     type Stream = ShortVideoStream;
 
     fn highest() -> Self {
         Self::High
     }
 
-    fn next_best(self) -> Result<Self> where Self: Sized {
+    fn next_best(self) -> Result<Self>
+    where
+        Self: Sized,
+    {
         for (i, itag) in SHORT_ORDER.iter().enumerate() {
             if *itag == self {
-                let next_itag = SHORT_ORDER.get(i + 1).ok_or(YtuwuError::NoLowerItagFound)?;
-                return Ok(*next_itag)
+                let next_itag = SHORT_ORDER
+                    .get(i + 1)
+                    .ok_or(YtuwuError::NoLowerItagFound)?;
+                return Ok(*next_itag);
             }
-        } 
-        panic!("Itag doesnt exit") 
+        }
+        panic!("Itag doesnt exit")
     }
-    
+
     fn to_int(&self) -> u16 {
         match &self {
             Self::Low => 779,
             Self::High => 780,
-        } 
+        }
     }
 
     fn get_mime_type(&self) -> &str {
-        "mp4" 
+        "mp4"
     }
 
     fn new_stream(self) -> Self::Stream {
@@ -211,7 +227,6 @@ impl Itag for ShortVideoItag {
 }
 
 impl Itag for MuxedItag {
-    
     type Stream = MuxedStream;
 
     fn highest() -> Self {
@@ -221,17 +236,16 @@ impl Itag for MuxedItag {
     fn to_int(&self) -> u16 {
         18
     }
-    
+
     fn next_best(self) -> Result<Self> {
         Err(YtuwuError::NoLowerItagFound)
     }
-    
+
     fn get_mime_type(&self) -> &str {
-        "mp4" 
+        "mp4"
     }
 
     fn new_stream(self) -> Self::Stream {
         MuxedStream::new(self)
     }
 }
-

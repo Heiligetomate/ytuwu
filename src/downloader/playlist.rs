@@ -37,7 +37,8 @@ impl PlaylistBrowse {
         Self { browse_id: id }
     }
     pub async fn browse(self) -> Result<PlaylistContentBrowse> {
-        let response: BrowseResponse = captcha_bypass(crate::request::shared::Endpoint::Browse(self.browse_id), 2).await?;
+        let response: BrowseResponse =
+            captcha_bypass(crate::request::shared::Endpoint::Browse(self.browse_id), 2).await?;
         let ids = response.get_ids()?;
         let title = response
             .get_album_title()?
@@ -50,7 +51,10 @@ impl PlaylistBrowse {
                 MediaBrowse::new(video_id)
             })
             .collect();
-        Ok(PlaylistContentBrowse { title: trimmed_title, media })
+        Ok(PlaylistContentBrowse {
+            title: trimmed_title,
+            media,
+        })
     }
 }
 
@@ -58,17 +62,21 @@ impl PlaylistContentBrowse {
     pub async fn browse(mut self) -> Result<Playlist> {
         let mut media_items: Vec<Media> = Vec::new();
         for item in self.media.drain(..) {
-            media_items.push(
-                item.browse()
-                    .await?,
-            );
+            media_items.push(item.browse().await?);
         }
-        Ok(Playlist { media: media_items, title: self.title })
+        Ok(Playlist {
+            media: media_items,
+            title: self.title,
+        })
     }
 }
 
 impl Playlist {
-    pub async fn download_full<I>(mut self, itag: I, thumbnail_resolution: ThumbnailResolution) -> Result<DownloadedPlaylist<I::Stream>>
+    pub async fn download_full<I>(
+        mut self,
+        itag: I,
+        thumbnail_resolution: ThumbnailResolution,
+    ) -> Result<DownloadedPlaylist<I::Stream>>
     where
         I: Itag + Copy + Debug,
         I::Stream: Debug,
@@ -84,7 +92,10 @@ impl Playlist {
         Ok(DownloadedPlaylist::new(&self.title, downloaded))
     }
 
-    pub async fn download_thumbnails(&self, thumbnail_resolution: ThumbnailResolution) -> Result<PlaylistThumbnail> {
+    pub async fn download_thumbnails(
+        &self,
+        thumbnail_resolution: ThumbnailResolution,
+    ) -> Result<PlaylistThumbnail> {
         let mut thumbnails = Vec::new();
         for item in self.media.iter() {
             let downloaded_thumbnail = item

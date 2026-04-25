@@ -9,7 +9,9 @@ use crate::player_model::itag::{AudioItag, VideoItag};
 use crate::{
     id_resolver::VideoId,
     name_trimmer::trim,
-    player_model::{itag::Itag, player_response::PlayerResponse, video_details::ThumbnailResolution},
+    player_model::{
+        itag::Itag, player_response::PlayerResponse, video_details::ThumbnailResolution,
+    },
     request::shared::captcha_bypass,
 };
 use bytes::Bytes;
@@ -49,7 +51,11 @@ impl Media {
         let mut current_position: u32 = 0;
 
         while size > current_position {
-            println!("downloading chunk {} to {}", current_position, current_position + CHUNK_SIZE);
+            println!(
+                "downloading chunk {} to {}",
+                current_position,
+                current_position + CHUNK_SIZE
+            );
             let chunk = self
                 .download_chunk(current_position, current_position + CHUNK_SIZE, url)
                 .await?;
@@ -59,7 +65,12 @@ impl Media {
         Ok(downloaded_stream)
     }
 
-    pub async fn download_dual_stream(&self, video_itag: VideoItag, audio_itag: AudioItag, thumbnail_resolution: &ThumbnailResolution) -> Result<DownloadedDualStreamMedia> {
+    pub async fn download_dual_stream(
+        &self,
+        video_itag: VideoItag,
+        audio_itag: AudioItag,
+        thumbnail_resolution: &ThumbnailResolution,
+    ) -> Result<DownloadedDualStreamMedia> {
         let video_stream = self
             .download_media_stream(video_itag)
             .await?;
@@ -94,7 +105,11 @@ impl Media {
         Ok(Thumbnail::new(thumbnail, &self.title))
     }
 
-    pub async fn download_full<I>(self, itag: I, thumbnail_resolution: &ThumbnailResolution) -> Result<DownloadedMedia<I::Stream>>
+    pub async fn download_full<I>(
+        self,
+        itag: I,
+        thumbnail_resolution: &ThumbnailResolution,
+    ) -> Result<DownloadedMedia<I::Stream>>
     where
         I: Itag + Copy + Debug,
         I::Stream: Debug,
@@ -124,7 +139,8 @@ impl MediaBrowse {
     }
 
     pub async fn browse(self) -> Result<Media> {
-        let response: PlayerResponse = captcha_bypass(crate::request::shared::Endpoint::Player(self.video_id), 2).await?;
+        let response: PlayerResponse =
+            captcha_bypass(crate::request::shared::Endpoint::Player(self.video_id), 2).await?;
         let title = response
             .get_title()?
             .to_owned();
