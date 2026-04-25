@@ -40,17 +40,6 @@ pub struct MuxedStream {
     itag: MuxedItag,
 }
 
-#[derive(Debug)]
-pub struct PlaylistMediaStream<M: MediaStream> {
-    pub data: Vec<M>,
-}
-
-impl<M: MediaStream> PlaylistMediaStream<M> {
-    pub fn new(data: Vec<M>) -> Self {
-        Self { data }
-    }
-}
-
 impl MediaStream for AudioStream {
     fn get_data(&self) -> &BytesMut {
         &self.data
@@ -152,7 +141,13 @@ impl MuxedStream {
 }
 
 fn save_media_stream(path: &Path, file_name: &str, media_stream: &impl MediaStream) -> Result<()> {
-    let file_name = format!("{}.{}", file_name, media_stream.get_itag().get_mime_type());
+    let file_name = format!(
+        "{}.{}",
+        file_name,
+        media_stream
+            .get_itag()
+            .get_mime_type()
+    );
     if !path.is_dir() {
         return Err(YtuwuError::InvalidPath);
     }
@@ -160,6 +155,7 @@ fn save_media_stream(path: &Path, file_name: &str, media_stream: &impl MediaStre
     file_path.push(file_name);
 
     let mut file = fs::File::create(file_path).map_err(|_| YtuwuError::CreateFile)?;
-    file.write_all(&media_stream.get_data()).map_err(|_| YtuwuError::WriteToFile)?;
+    file.write_all(&media_stream.get_data())
+        .map_err(|_| YtuwuError::WriteToFile)?;
     Ok(())
 }

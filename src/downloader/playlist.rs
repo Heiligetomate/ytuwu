@@ -39,7 +39,9 @@ impl PlaylistBrowse {
     pub async fn browse(self) -> Result<PlaylistContentBrowse> {
         let response: BrowseResponse = captcha_bypass(crate::request::shared::Endpoint::Browse(self.browse_id), 2).await?;
         let ids = response.get_ids()?;
-        let title = response.get_album_title()?.to_owned();
+        let title = response
+            .get_album_title()?
+            .to_owned();
         let trimmed_title = name_trimmer::trim(title, "-");
         let media: Vec<MediaBrowse> = ids
             .iter()
@@ -56,7 +58,10 @@ impl PlaylistContentBrowse {
     pub async fn browse(mut self) -> Result<Playlist> {
         let mut media_items: Vec<Media> = Vec::new();
         for item in self.media.drain(..) {
-            media_items.push(item.browse().await?);
+            media_items.push(
+                item.browse()
+                    .await?,
+            );
         }
         Ok(Playlist { media: media_items, title: self.title })
     }
@@ -71,7 +76,9 @@ impl Playlist {
         let mut downloaded: Vec<DownloadedMedia<I::Stream>> = Vec::new();
 
         for item in self.media.drain(..) {
-            let downloaded_media = item.download_full(itag, &thumbnail_resolution).await?;
+            let downloaded_media = item
+                .download_full(itag, &thumbnail_resolution)
+                .await?;
             downloaded.push(downloaded_media);
         }
         Ok(DownloadedPlaylist::new(&self.title, downloaded))
@@ -80,9 +87,11 @@ impl Playlist {
     pub async fn download_thumbnails(&self, thumbnail_resolution: ThumbnailResolution) -> Result<PlaylistThumbnail> {
         let mut thumbnails = Vec::new();
         for item in self.media.iter() {
-            let downloaded_thumbnail = item.download_thumbnail(&thumbnail_resolution).await?;
+            let downloaded_thumbnail = item
+                .download_thumbnail(&thumbnail_resolution)
+                .await?;
             thumbnails.push(downloaded_thumbnail);
         }
-        Ok(PlaylistThumbnail::new(thumbnails, thumbnail_resolution))
+        Ok(PlaylistThumbnail::new(thumbnails))
     }
 }
