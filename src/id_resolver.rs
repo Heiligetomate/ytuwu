@@ -1,7 +1,12 @@
 use serde::{Deserialize, Serialize};
 use std::fmt;
+use url::Url;
 
 use crate::{Result, error::YtuwuError};
+
+pub trait GetId<T: Id> {
+    fn get_id(&self) -> Result<T>;
+}
 
 pub trait Id {
     fn new<T: Into<String>>(id: T) -> Self;
@@ -19,15 +24,22 @@ pub struct VideoId {
     id: String,
 }
 
-#[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct ChannelId {
+    id: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
+pub struct ShortId {
     id: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct IdCollection {
-    pub video_id: Option<VideoId>,
-    pub browse_id: Option<BrowseId>,
+    video_id: Option<VideoId>,
+    browse_id: Option<BrowseId>,
+    short_id: Option<ShortId>,
+    channel_id: Option<ChannelId>,
 }
 
 impl Id for BrowseId {
@@ -74,6 +86,56 @@ impl Id for ChannelId {
     }
 }
 
+impl Id for ShortId {
+    fn new<T: Into<String>>(id: T) -> Self {
+        Self { id: id.into() }
+    }
+
+    fn get_id(self) -> String {
+        self.id
+    }
+
+    fn as_str(&self) -> &str {
+        &self.id
+    }
+}
+
+impl GetId<VideoId> for IdCollection {
+    fn get_id(&self) -> Result<VideoId> {
+        Ok(self
+            .video_id
+            .clone()
+            .ok_or(YtuwuError::NoIdFound)?)
+    }
+}
+
+impl GetId<BrowseId> for IdCollection {
+    fn get_id(&self) -> Result<BrowseId> {
+        Ok(self
+            .browse_id
+            .clone()
+            .ok_or(YtuwuError::NoIdFound)?)
+    }
+}
+
+impl GetId<ChannelId> for IdCollection {
+    fn get_id(&self) -> Result<ChannelId> {
+        Ok(self
+            .channel_id
+            .clone()
+            .ok_or(YtuwuError::NoIdFound)?)
+    }
+}
+
+impl GetId<ShortId> for IdCollection {
+    fn get_id(&self) -> Result<ShortId> {
+        Ok(self
+            .short_id
+            .clone()
+            .ok_or(YtuwuError::NoIdFound)?)
+    }
+}
+
 impl fmt::Display for IdCollection {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let browse_display: String = {
@@ -99,65 +161,63 @@ impl fmt::Display for IdCollection {
 }
 
 impl IdCollection {
-    pub fn from_url<T: Into<String>>(raw_url: T) -> Option<Self> {
-        let url: String = raw_url.into();
-        let mut video_id: Option<VideoId> = None;
-        let mut browse_id: Option<BrowseId> = None;
-        if let Some(vid_id) = video_id_from_raw_url(&url) {
-            video_id = Some(vid_id);
-        }
-        if let Some(br_id) = playlist_id_from_raw_url(&url) {
-            browse_id = Some(br_id);
-        }
-        if video_id.is_none() && browse_id.is_none() {
-            return None;
-        }
-        Some(Self {
-            video_id,
-            browse_id,
-        })
-    }
+    pub fn from_url<T: Into<String>>(raw_url: T) -> Result<Self> {
+        let mut result = Self {
+            video_id: None,
+            browse_id: None,
+            channel_id: None,
+            short_id: None,
+        };
 
-    pub fn get_video_id(&self) -> Result<VideoId> {
-        Ok(self
-            .video_id
-            .clone()
-            .ok_or(YtuwuError::NoIdFound)?)
-    }
+        let url_string: String = raw_url.into();
+        let url: Url = Url::parse(&url_string)
+            .map_err(|_| YtuwuError::UrlParsing("could not parse the url"))?;
 
-    pub fn get_browse_id(&self) -> Result<BrowseId> {
-        Ok(self
-            .browse_id
-            .clone()
-            .ok_or(YtuwuError::NoIdFound)?)
+        match url
+            .host_str()
+            .ok_or(YtuwuError::UrlParsing("host not found"))?
+        {
+            "youtu.be" => {}
+            "youtube.com" => {}
+            "music.youtube.com" => {}
+            _ => return Err(YtuwuError::UrlParsing("invalid host")),
+        }
+
+        let mut params: Vec<(String, String)> = url
+            .query_pairs()
+            .map(|(k, v)| (k.into_owned(), v.into_owned()))
+            .collect();
+
+        for param in params.drain(..) {
+            match param.0.as_ref() {
+                "v" => result.video_id = Some(VideoId::new(param.1)),
+                "list" => result.browse_id = Some(BrowseId::new(param.1)),
+                _ => {}
+            }
+        }
+
+        let segments: Option<Vec<&str>> = url
+            .path_segments()
+            .map(|c| c.collect())
+            .ok_or("no")
+            .ok();
+
+        if let Some(url_parts) = segments {
+            if let Some(first_segment) = url_parts.get(0) {
+                match *first_segment {
+                    "channel" => {
+                        let id = url_parts
+                            .get(1)
+                            .ok_or(YtuwuError::UrlParsing("no channel id found"))
+                            .unwrap();
+                        result.channel_id = Some(ChannelId::new(*id));
+                    }
+                    "media" | "watch" => {}
+                    _ => result.short_id = Some(ShortId::new(*first_segment)),
+                }
+            }
+        }
+
+        Ok(result)
     }
 }
-
-fn video_id_from_raw_url(raw_url: &str) -> Option<VideoId> {
-    //TODO: youtu.be (weird url but has a video id in it)
-    let parts: Vec<&str> = raw_url.split("v=").collect();
-    let part_res = if let Some(part) = parts.get(1) {
-        part
-    } else {
-        return None;
-    };
-    let res: Vec<&str> = part_res.split('&').collect();
-    if res.is_empty() {
-        return None;
-    }
-    Some(VideoId::new(res[0]))
-}
-
-fn playlist_id_from_raw_url(raw_url: &str) -> Option<BrowseId> {
-    let parts: Vec<&str> = raw_url
-        .split("list=")
-        .collect();
-    let res = parts.get(1);
-    if res.is_none() {
-        return None;
-    }
-    let id = res.unwrap();
-    Some(BrowseId::new(id.to_owned()))
-}
-
-// TODO: Implement Short video ids
