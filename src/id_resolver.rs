@@ -1,11 +1,12 @@
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
+use crate::{Result, error::YtuwuError};
+
 pub trait Id {
     fn new<T: Into<String>>(id: T) -> Self;
     fn get_id(self) -> String;
     fn as_str(&self) -> &str;
-    //fn new_valid<T>(id: T) -> Self where T: Into<String>;
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
@@ -33,9 +34,11 @@ impl Id for BrowseId {
     fn new<T: Into<String>>(id: T) -> Self {
         Self { id: id.into() }
     }
+
     fn get_id(self) -> String {
         self.id
     }
+
     fn as_str(&self) -> &str {
         &self.id
     }
@@ -45,9 +48,11 @@ impl Id for VideoId {
     fn new<T: Into<String>>(id: T) -> Self {
         Self { id: id.into() }
     }
+
     fn get_id(self) -> String {
         self.id
     }
+
     fn as_str(&self) -> &str {
         &self.id
     }
@@ -57,9 +62,11 @@ impl Id for ChannelId {
     fn new<T: Into<String>>(id: T) -> Self {
         Self { id: id.into() }
     }
+
     fn get_id(self) -> String {
         self.id
     }
+
     fn as_str(&self) -> &str {
         &self.id
     }
@@ -103,13 +110,19 @@ impl IdCollection {
         }
         Some(Self { video_id, browse_id })
     }
-    pub fn get_video_id(&self) -> Option<&VideoId> {
-        self.video_id
-            .as_ref()
+
+    pub fn get_video_id(&self) -> Result<VideoId> {
+        Ok(self
+            .video_id
+            .clone()
+            .ok_or(YtuwuError::NoIdFound)?)
     }
-    pub fn get_browse_id(&self) -> Option<&BrowseId> {
-        self.browse_id
-            .as_ref()
+
+    pub fn get_browse_id(&self) -> Result<BrowseId> {
+        Ok(self
+            .browse_id
+            .clone()
+            .ok_or(YtuwuError::NoIdFound)?)
     }
 }
 

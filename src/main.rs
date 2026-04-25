@@ -18,13 +18,7 @@ async fn main() -> Result<()> {
     let downloader = Downloader::new();
     if let Some(ids) = id_collection {
         let media = downloader
-            .download_dual_media_stream(
-                ids.video_id
-                    .ok_or(YtuwuError::CreateDir)?,
-                VideoItag::highest(),
-                AudioItag::highest(),
-                ThumbnailResolution::VeryHigh,
-            )
+            .download_dual_media_stream(ids.get_video_id()?, VideoItag::highest(), AudioItag::highest(), ThumbnailResolution::VeryHigh)
             .await?;
         let path = Path::new("teehee");
         media.save(&path)?;
