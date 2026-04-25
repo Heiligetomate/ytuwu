@@ -1,6 +1,6 @@
 use std::{fmt::Debug, fs::create_dir_all, path::{Path, PathBuf}};
 
-use crate::error::*;
+use crate::{downloader::media_stream::PlaylistMediaStream, error::*};
 
 use crate::{
     downloader::{
@@ -19,7 +19,6 @@ use crate::{
 
 #[derive(Debug)]
 pub struct DownloadedMedia<M: MediaStream + Debug> {
-    // TODO: the file name thing is weird i think 
     pub metadata: MediaMetadata,
     pub thumbnail: Thumbnail,
     pub stream: M,
@@ -96,22 +95,23 @@ impl<M: MediaStream + Debug> DownloadedMedia<M> {
 
 #[derive(Debug)]
 pub struct DownloadedPlaylist<M: MediaStream + Debug> {
-    pub media: Vec<DownloadedMedia<M>>,
+    pub media: PlaylistMediaStream<M>,
     pub metadata: PlaylistMetadata,
 }
 
 impl<M: MediaStream + Debug> DownloadedPlaylist<M> {
-    pub fn new(title: &str, media: Vec<DownloadedMedia<M>>) -> Self {
+    pub fn new(title: &str, media: Vec<M>) -> Self {
         let metadata = PlaylistMetadata::new(title, media.len() as u16);
-        Self { media, metadata }
+        let playalist_media_stream = PlaylistMediaStream::new(media);
+        Self { media: playalist_media_stream, metadata }
     }
     
     pub fn save(&self, path: &Path) -> Result<()> {
         let mut full_path = PathBuf::from(path);
         full_path.push(&self.metadata.title);
         create_dir_all(&full_path).map_err(|_| YtuwuError::CreateDir)?;
-        for media in self.media.iter() {
-            media.save(&full_path)?
+        for media in self.media.data.iter() {
+            media.save(&full_path, media.metadata.title)?
         }
         Ok(())
     }

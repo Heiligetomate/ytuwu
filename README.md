@@ -38,3 +38,4 @@ example usage for downloading video, audio and thumbnail and printing basic meta
 - more metadata
 - save chunks when crashing while downloading and continue the download afterwards
 - cache 
+- Yt shorts download 
