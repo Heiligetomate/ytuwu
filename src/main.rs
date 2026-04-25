@@ -1,8 +1,8 @@
 use std::path::Path;
 
 use ytuwu::Downloader;
+use ytuwu::Result;
 use ytuwu::ThumbnailResolution;
-use ytuwu::error::{Result, YtuwuError};
 use ytuwu::id_resolver::IdCollection;
 use ytuwu::itag::{AudioItag, Itag, VideoItag};
 
@@ -18,11 +18,22 @@ async fn main() -> Result<()> {
     let downloader = Downloader::new();
     if let Some(ids) = id_collection {
         let media = downloader
-            .download_dual_media_stream(ids.video_id.ok_or(YtuwuError::CreateDir)?, VideoItag::highest(), AudioItag::highest(), ThumbnailResolution::VeryHigh)
+            .download_dual_media_stream(
+                ids.video_id
+                    .ok_or(YtuwuError::CreateDir)?,
+                VideoItag::highest(),
+                AudioItag::highest(),
+                ThumbnailResolution::VeryHigh,
+            )
             .await?;
         let path = Path::new("teehee");
         media.save(&path)?;
-        println!("{}", media.metadata.author);
+        println!(
+            "{}",
+            media
+                .metadata
+                .author
+        );
     } else {
         println!("no ids found");
     }

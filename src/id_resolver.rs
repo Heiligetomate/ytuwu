@@ -1,5 +1,5 @@
-use std::fmt;
 use serde::{Deserialize, Serialize};
+use std::fmt;
 
 pub trait Id {
     fn new<T: Into<String>>(id: T) -> Self;
@@ -20,20 +20,18 @@ pub struct VideoId {
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct ChannelId {
-    id: String
+    id: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct IdCollection {
-    pub video_id : Option<VideoId>,
+    pub video_id: Option<VideoId>,
     pub browse_id: Option<BrowseId>,
 }
 
 impl Id for BrowseId {
     fn new<T: Into<String>>(id: T) -> Self {
-        Self {
-            id: id.into()
-        }
+        Self { id: id.into() }
     }
     fn get_id(self) -> String {
         self.id
@@ -45,9 +43,7 @@ impl Id for BrowseId {
 
 impl Id for VideoId {
     fn new<T: Into<String>>(id: T) -> Self {
-        Self {
-            id: id.into()
-        }
+        Self { id: id.into() }
     }
     fn get_id(self) -> String {
         self.id
@@ -59,13 +55,11 @@ impl Id for VideoId {
 
 impl Id for ChannelId {
     fn new<T: Into<String>>(id: T) -> Self {
-        Self {
-            id: id.into()
-        }
+        Self { id: id.into() }
     }
     fn get_id(self) -> String {
         self.id
-    } 
+    }
     fn as_str(&self) -> &str {
         &self.id
     }
@@ -75,61 +69,63 @@ impl fmt::Display for IdCollection {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let browse_display: String = {
             if let Some(id) = &self.browse_id {
-                id.as_str().to_owned()
+                id.as_str()
+                    .to_owned()
             } else {
                 "None".to_owned()
             }
         };
         let video_display: String = {
             if let Some(id) = &self.video_id {
-                id.as_str().to_owned()
+                id.as_str()
+                    .to_owned()
             } else {
                 "None".to_owned()
             }
         };
         write!(f, "browse_id: {} \nvideo_id : {}", &browse_display, &video_display)
-    } 
+    }
 }
 
 impl IdCollection {
     pub fn from_url<T: Into<String>>(raw_url: T) -> Option<Self> {
-        let url: String = raw_url.into(); 
-        let mut video_id:  Option<VideoId>  = None;
+        let url: String = raw_url.into();
+        let mut video_id: Option<VideoId> = None;
         let mut browse_id: Option<BrowseId> = None;
         if let Some(vid_id) = video_id_from_raw_url(&url) {
-            video_id = Some(vid_id); 
+            video_id = Some(vid_id);
         }
         if let Some(br_id) = playlist_id_from_raw_url(&url) {
             browse_id = Some(br_id);
         }
         if video_id.is_none() && browse_id.is_none() {
-            return None
+            return None;
         }
-        Some( 
-            Self { 
-                video_id, 
-                browse_id 
-            }
-        )
+        Some(Self { video_id, browse_id })
     }
     pub fn get_video_id(&self) -> Option<&VideoId> {
-        self.video_id.as_ref()
+        self.video_id
+            .as_ref()
     }
     pub fn get_browse_id(&self) -> Option<&BrowseId> {
-        self.browse_id.as_ref()
+        self.browse_id
+            .as_ref()
     }
 }
 
-
 fn video_id_from_raw_url(raw_url: &str) -> Option<VideoId> {
     //TODO: youtu.be (weird url but has a video id in it)
-    let parts: Vec<&str> = raw_url.split("v=").collect();
+    let parts: Vec<&str> = raw_url
+        .split("v=")
+        .collect();
     let part_res = if let Some(part) = parts.get(1) {
         part
     } else {
         return None;
     };
-    let res: Vec<&str> = part_res.split('&').collect();
+    let res: Vec<&str> = part_res
+        .split('&')
+        .collect();
     if res.is_empty() {
         return None;
     }
@@ -137,14 +133,14 @@ fn video_id_from_raw_url(raw_url: &str) -> Option<VideoId> {
 }
 
 fn playlist_id_from_raw_url(raw_url: &str) -> Option<BrowseId> {
-    let parts: Vec<&str> = raw_url.split("list=").collect();
+    let parts: Vec<&str> = raw_url
+        .split("list=")
+        .collect();
     let res = parts.get(1);
-    if res.is_none() { 
+    if res.is_none() {
         return None;
     }
     Some(BrowseId::new(format!("VL{}", res.unwrap())))
 }
 
-
-// TODO: Implement Short video ids 
-
+// TODO: Implement Short video ids
