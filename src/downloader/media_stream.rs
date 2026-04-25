@@ -37,9 +37,15 @@ pub struct MuxedStream {
     itag: MuxedItag,
 }
 
-pub struct PlaylistMediaStream<I: Itag, M: MediaStream> {
-    data: Vec<M>, 
-    itag: I
+#[derive(Debug)]
+pub struct PlaylistMediaStream<M: MediaStream> {
+    pub data: Vec<M>, 
+}
+
+impl<M: Download> PlaylistMediaStream<M> {
+    pub fn new(data: Vec<M>) -> Self {
+        Self { data }
+    }
 }
 
 impl MediaStream for AudioStream {

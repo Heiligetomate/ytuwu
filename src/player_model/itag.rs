@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::{error::Result, downloader::media_stream::{AudioStream, MediaStream, MuxedStream, ShortVideoStream, VideoStream}, error::YtuwuError};
 
+
+//TODO: Different name
 pub trait Itag {
     type Stream: MediaStream;
 
