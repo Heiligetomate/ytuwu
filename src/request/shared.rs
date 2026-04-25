@@ -1,24 +1,13 @@
 use std::fmt::Debug;
 
-
-use reqwest::{RequestBuilder};
-use serde::de::DeserializeOwned;
 use crate::{
     error::{Result, YtuwuError},
-    id_resolver::{
-        BrowseId, 
-        Id, 
-        VideoId
-    }, 
-    request::{
-        parameters::*, 
-        request_builder::RequestBody
-    }, 
-    shared_traits::{
-        Response, 
-        Status
-    }
+    id_resolver::{BrowseId, Id, VideoId},
+    request::{parameters::*, request_builder::RequestBody},
+    shared_traits::{Response, Status},
 };
+use reqwest::RequestBuilder;
+use serde::de::DeserializeOwned;
 
 #[derive(Debug)]
 pub enum Endpoint {
@@ -33,32 +22,43 @@ impl Endpoint {
             Self::Browse(id) => id.as_str(),
         }
     }
+
+    fn get_endpoint(&self) -> &str {
+        match &self {
+            Self::Browse(_) => BROWSE_ENDPOINT,
+            Self::Player(_) => PLAYER_ENDPOINT,
+        }
+    }
 }
 
-fn builder_headers() -> RequestBuilder {
+fn builder_headers(endpoint: &Endpoint) -> RequestBuilder {
     let client = reqwest::Client::new();
-    
-    client.post(ENDPOINT)
+
+    client
+        .post(endpoint.get_endpoint())
         .header(CONTENT_TYPE_HEADER.0, CONTENT_TYPE_HEADER.1)
         .header(USER_AGENT_HEADER.0, USER_AGENT_HEADER.1)
         .header(CLIENT_NAME_HEADER.0, CLIENT_NAME_HEADER.1)
         .header(CLIENT_VERSION_HEADER.0, CLIENT_VERSION_HEADER.1)
         .header(ORIGIN_HEADER.0, ORIGIN_HEADER.1)
-    
 }
 
 fn build_body<'de>(endpoint: &Endpoint, visitor_data: Option<String>) -> RequestBody<'de> {
     match endpoint {
-        Endpoint::Player(video_id)  => RequestBody::new_player_request(video_id.clone(), visitor_data),
-        Endpoint::Browse(browse_id) => RequestBody::new_browse_request(browse_id.clone(), visitor_data),
+        Endpoint::Player(video_id) => {
+            RequestBody::new_player_request(video_id.clone(), visitor_data)
+        }
+        Endpoint::Browse(browse_id) => {
+            RequestBody::new_browse_request(browse_id.clone(), visitor_data)
+        }
     }
-} 
+}
 
-async fn make_request<'de, R>(body: &RequestBody<'de>) -> Result<R>
-where 
-    R: Response + DeserializeOwned + Debug, 
+async fn make_request<'de, R>(body: &RequestBody<'de>, endpoint: &Endpoint) -> Result<R>
+where
+    R: Response + DeserializeOwned + Debug,
 {
-    let headers = builder_headers();
+    let headers = builder_headers(endpoint);
     let response: &str = &headers
         .json(body)
         .send()
@@ -70,16 +70,16 @@ where
 }
 
 pub async fn captcha_bypass<R>(endpoint: Endpoint, max_tries: u16) -> Result<R>
-where 
+where
     R: Response + DeserializeOwned + Debug,
 {
     let mut tries: u16 = 0;
-     
-    let mut visitor_data: Option<String> = None; 
+
+    let mut visitor_data: Option<String> = None;
     while tries < max_tries {
         let body = build_body(&endpoint, visitor_data);
         tries += 1;
-        let resp: R = make_request(&body).await?;
+        let resp: R = make_request(&body, &endpoint).await?;
         match resp.get_status() {
             Status::Error => return Err(YtuwuError::YoutubeAPIReturn),
             Status::Success => return Ok(resp),
@@ -89,5 +89,3 @@ where
     }
     Err(YtuwuError::CaptchaBypassFailed(max_tries))
 }
-
-
