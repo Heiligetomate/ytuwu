@@ -118,25 +118,37 @@ impl MediaStream for MuxedStream {
 
 impl AudioStream {
     pub fn new(itag: AudioItag) -> Self {
-        Self { data: BytesMut::new(), itag }
+        Self {
+            data: BytesMut::new(),
+            itag,
+        }
     }
 }
 
 impl VideoStream {
     pub fn new(itag: VideoItag) -> Self {
-        Self { data: BytesMut::new(), itag }
+        Self {
+            data: BytesMut::new(),
+            itag,
+        }
     }
 }
 
 impl ShortVideoStream {
     pub fn new(itag: ShortVideoItag) -> Self {
-        Self { data: BytesMut::new(), itag }
+        Self {
+            data: BytesMut::new(),
+            itag,
+        }
     }
 }
 
 impl MuxedStream {
     pub fn new(itag: MuxedItag) -> Self {
-        Self { data: BytesMut::new(), itag }
+        Self {
+            data: BytesMut::new(),
+            itag,
+        }
     }
 }
 

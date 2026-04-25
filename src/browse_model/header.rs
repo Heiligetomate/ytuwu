@@ -1,10 +1,10 @@
+use crate::error::{Result, YtuwuError};
 use serde::Deserialize;
-use crate::{error::{YtuwuError, Result}};
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct BrowseHeader {
-   playlist_header_renderer: HeaderRenderer, 
+    playlist_header_renderer: HeaderRenderer,
 }
 
 #[derive(Deserialize, Debug)]
@@ -27,7 +27,9 @@ struct AlbumTitle {
 
 impl BrowseHeader {
     pub fn get_album_title(&self) -> Result<&str> {
-        let title_object = &self.playlist_header_renderer.title;
+        let title_object = &self
+            .playlist_header_renderer
+            .title;
         let title = title_object
             .runs
             .get(0)

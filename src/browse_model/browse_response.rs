@@ -1,13 +1,11 @@
 use serde::Deserialize;
 
 use crate::{
-    error::{Result, YtuwuError},
     browse_model::{
-        full_response::FullResponse, 
-        header::BrowseHeader, 
-        response_context::ResponseContext
-    }, 
-    shared_traits::Response
+        full_response::FullResponse, header::BrowseHeader, response_context::ResponseContext,
+    },
+    error::{Result, YtuwuError},
+    shared_traits::Response,
 };
 
 #[derive(Deserialize, Debug)]
@@ -16,7 +14,7 @@ pub struct BrowseResponse {
     error: Option<ErrorResponse>,
     contents: Option<FullResponse>,
     response_context: Option<ResponseContext>,
-    header: Option<BrowseHeader>
+    header: Option<BrowseHeader>,
 }
 
 #[derive(Deserialize, Debug)]
@@ -33,7 +31,10 @@ impl BrowseResponse {
         Ok(ids)
     }
     pub fn get_album_title(&self) -> Result<&str> {
-        let header = self.header.as_ref().ok_or(YtuwuError::BrowseDataNotFound("album title"))?;
+        let header = self
+            .header
+            .as_ref()
+            .ok_or(YtuwuError::BrowseDataNotFound("album title"))?;
         let title = &header.get_album_title()?;
         Ok(title)
     }
@@ -47,9 +48,11 @@ impl Response for BrowseResponse {
         crate::shared_traits::Status::Success
     }
 
-    fn get_visitor_data(&self)  -> Option<String> {
+    fn get_visitor_data(&self) -> Option<String> {
         if let Some(response_context) = &self.response_context {
-            return response_context.visitor_data.clone(); 
+            return response_context
+                .visitor_data
+                .clone();
         }
         None
     }
