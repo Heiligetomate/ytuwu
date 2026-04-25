@@ -76,21 +76,23 @@ impl fmt::Display for IdCollection {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let browse_display: String = {
             if let Some(id) = &self.browse_id {
-                id.as_str()
-                    .to_owned()
+                id.as_str().to_owned()
             } else {
                 "None".to_owned()
             }
         };
         let video_display: String = {
             if let Some(id) = &self.video_id {
-                id.as_str()
-                    .to_owned()
+                id.as_str().to_owned()
             } else {
                 "None".to_owned()
             }
         };
-        write!(f, "browse_id: {} \nvideo_id : {}", &browse_display, &video_display)
+        write!(
+            f,
+            "browse_id: {} \nvideo_id : {}",
+            &browse_display, &video_display
+        )
     }
 }
 
@@ -108,7 +110,10 @@ impl IdCollection {
         if video_id.is_none() && browse_id.is_none() {
             return None;
         }
-        Some(Self { video_id, browse_id })
+        Some(Self {
+            video_id,
+            browse_id,
+        })
     }
 
     pub fn get_video_id(&self) -> Result<VideoId> {
@@ -128,17 +133,13 @@ impl IdCollection {
 
 fn video_id_from_raw_url(raw_url: &str) -> Option<VideoId> {
     //TODO: youtu.be (weird url but has a video id in it)
-    let parts: Vec<&str> = raw_url
-        .split("v=")
-        .collect();
+    let parts: Vec<&str> = raw_url.split("v=").collect();
     let part_res = if let Some(part) = parts.get(1) {
         part
     } else {
         return None;
     };
-    let res: Vec<&str> = part_res
-        .split('&')
-        .collect();
+    let res: Vec<&str> = part_res.split('&').collect();
     if res.is_empty() {
         return None;
     }
@@ -146,9 +147,7 @@ fn video_id_from_raw_url(raw_url: &str) -> Option<VideoId> {
 }
 
 fn playlist_id_from_raw_url(raw_url: &str) -> Option<BrowseId> {
-    let parts: Vec<&str> = raw_url
-        .split("list=")
-        .collect();
+    let parts: Vec<&str> = raw_url.split("list=").collect();
     let res = parts.get(1);
     if res.is_none() {
         return None;

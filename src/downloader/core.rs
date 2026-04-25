@@ -24,7 +24,7 @@ impl Downloader {
         Self {}
     }
 
-    #[allow(unused)]
+    #[rustfmt::skip]
     pub async fn download_thumbnail_media(&self, video_id: VideoId, resolution: ThumbnailResolution) -> Result<Thumbnail> {
         Ok(MediaBrowse::new(video_id)
             .browse()
@@ -33,7 +33,7 @@ impl Downloader {
             .await?)
     }
 
-    #[allow(unused)]
+    #[rustfmt::skip]
     pub async fn download_media_stream<I: Itag + Copy>(&self, video_id: VideoId, itag: I) -> Result<I::Stream> {
         Ok(MediaBrowse::new(video_id)
             .browse()
@@ -42,7 +42,7 @@ impl Downloader {
             .await?)
     }
 
-    #[allow(unused)]
+    #[rustfmt::skip]
     pub async fn download_full_media<I>(&self, video_id: VideoId, itag: I, thumbnail_resolution: ThumbnailResolution) -> Result<DownloadedMedia<I::Stream>>
     where
         I: Itag + Copy + Debug,
@@ -55,7 +55,7 @@ impl Downloader {
             .await?)
     }
 
-    #[allow(unused)]
+    #[rustfmt::skip]
     pub async fn download_dual_media_stream(&self, video_id: VideoId, video_itag: VideoItag, audio_itag: AudioItag, thumbnail_resolution: ThumbnailResolution) -> Result<DownloadedDualStreamMedia> {
         Ok(MediaBrowse::new(video_id)
             .browse()
@@ -64,7 +64,7 @@ impl Downloader {
             .await?)
     }
 
-    #[allow(unused)]
+    #[rustfmt::skip]
     pub async fn download_playlist_thumbnails(&self, browse_id: BrowseId, thumbnail_resolution: ThumbnailResolution) -> Result<PlaylistThumbnail> {
         Ok(PlaylistBrowse::new(browse_id)
             .browse()
@@ -75,7 +75,7 @@ impl Downloader {
             .await?)
     }
 
-    #[allow(unused)]
+    #[rustfmt::skip]
     pub async fn download_full_playlist<I>(&self, browse_id: BrowseId, itag: I, thumbnail_resolution: ThumbnailResolution) -> Result<DownloadedPlaylist<I::Stream>>
     where
         I: Itag + Copy + Debug,
