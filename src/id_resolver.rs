@@ -147,7 +147,9 @@ fn video_id_from_raw_url(raw_url: &str) -> Option<VideoId> {
 }
 
 fn playlist_id_from_raw_url(raw_url: &str) -> Option<BrowseId> {
-    let parts: Vec<&str> = raw_url.split("list=").collect();
+    let parts: Vec<&str> = raw_url
+        .split("list=")
+        .collect();
     let res = parts.get(1);
     if res.is_none() {
         return None;
