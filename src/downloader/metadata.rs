@@ -9,7 +9,7 @@ pub struct MediaMetadata {
 pub struct PlaylistMetadata {
     pub title: String,
     //pub author: String,
-    song_count: u16,
+    pub song_count: u16,
 }
 
 impl MediaMetadata {

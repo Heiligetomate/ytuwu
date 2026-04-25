@@ -7,30 +7,27 @@ use std::{
 use crate::error::{Result, YtuwuError};
 use bytes::Bytes;
 
-use crate::player_model::video_details::ThumbnailResolution;
-
 #[derive(Debug)]
 pub struct Thumbnail {
     name: String,
     data: Bytes,
-    size: ThumbnailResolution,
 }
 
 #[derive(Debug)]
 pub struct PlaylistThumbnail {
     data: Vec<Thumbnail>,
-    size: ThumbnailResolution,
 }
 
 impl Thumbnail {
-    pub fn new(data: Bytes, size: ThumbnailResolution, name: &str) -> Self {
-        Self { data, size, name: name.to_owned() }
+    pub fn new(data: Bytes, name: &str) -> Self {
+        Self { data, name: name.to_owned() }
     }
 
     // dont use this lmao
     pub fn save_file(&self, path: &Path) -> Result<()> {
         let mut file = fs::File::create(path).map_err(|_| YtuwuError::CreateFile)?;
-        file.write_all(&self.data).map_err(|_| YtuwuError::WriteToFile);
+        file.write_all(&self.data)
+            .map_err(|_| YtuwuError::WriteToFile)?;
         Ok(())
     }
 
@@ -49,12 +46,12 @@ impl Thumbnail {
 }
 
 impl PlaylistThumbnail {
-    pub fn new(data: Vec<Thumbnail>, size: ThumbnailResolution) -> Self {
-        Self { data, size }
+    pub fn new(data: Vec<Thumbnail>) -> Self {
+        Self { data }
     }
 
     pub fn save(&self, path: &Path) -> Result<()> {
-        fs::create_dir_all(path).map_err(|_| YtuwuError::CreateDir);
+        fs::create_dir_all(path).map_err(|_| YtuwuError::CreateDir)?;
         for thumbnail in self.data.iter() {
             thumbnail.save(&path)?
         }
