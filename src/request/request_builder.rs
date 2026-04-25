@@ -1,7 +1,7 @@
-use serde::Serialize;
-use crate::request::parameters::*;
 use crate::id_resolver::{BrowseId, Id, VideoId};
- 
+use crate::request::parameters::*;
+use serde::Serialize;
+
 #[derive(Serialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct RequestBody<'de> {
@@ -13,13 +13,17 @@ pub struct RequestBody<'de> {
 }
 
 impl<'de> RequestBody<'de> {
-    fn new(video_id: Option<String>, browse_id: Option<String>, visitor_data: Option<String>) -> Self { 
+    fn new(
+        video_id: Option<String>,
+        browse_id: Option<String>,
+        visitor_data: Option<String>,
+    ) -> Self {
         Self {
-            context         : Context::default_downloader_body(visitor_data),
-            video_id        : video_id,
-            browse_id       : browse_id,
+            context: Context::default_downloader_body(visitor_data),
+            video_id: video_id,
+            browse_id: browse_id,
             content_check_ok: true,
-            racy_check_ok   : true,
+            racy_check_ok: true,
         }
     }
     pub fn new_browse_request(browse_id: BrowseId, visitor_data: Option<String>) -> Self {
@@ -34,7 +38,6 @@ impl<'de> RequestBody<'de> {
 pub struct Context<'de> {
     client: Client<'de>,
 }
-
 
 #[derive(Serialize, Debug)]
 #[serde(rename_all = "camelCase")]
@@ -54,7 +57,7 @@ pub struct Client<'de> {
 impl<'de> Context<'de> {
     pub fn default_downloader_body(visitor_data: Option<String>) -> Self {
         Self {
-            client: Client {             
+            client: Client {
                 client_name: CLIENT_NAME,
                 client_version: CLIENT_VERSION,
                 device_make: DEVICE_MAKE,
@@ -65,8 +68,7 @@ impl<'de> Context<'de> {
                 time_zone: TIMEZONE,
                 utc_offset_minutes: UTC_OFFSET_MINUTES,
                 visitor_data: visitor_data,
-            }
+            },
         }
     }
 }
-

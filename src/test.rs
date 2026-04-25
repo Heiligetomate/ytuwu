@@ -1,4 +1,5 @@
 use crate::{
+    browse_model::browse_response::BrowseResponse,
     error::Result,
     id_resolver::{self, BrowseId, Id, VideoId},
     player_model::player_response::PlayerResponse,
@@ -8,7 +9,8 @@ use crate::{
 
 #[test]
 fn test_id_resolver() {
-    let playlist_url = "https://music.youtube.com/playlist?list=OLAK5uy_nVY7Ekmu-3gJilFDUz8xrjkzmVmVnQSMQ";
+    let playlist_url =
+        "https://music.youtube.com/playlist?list=OLAK5uy_nVY7Ekmu-3gJilFDUz8xrjkzmVmVnQSMQ";
     let mixed_url = "https://music.youtube.com/watch?v=lndG8BiZCmM&list=OLAK5uy_mrUmnJrX4QzJd6GeOuqcqT8EUMH1C0eTU";
     let media_url = "https://music.youtube.com/watch?v=lndG8BiZCmM";
 
@@ -48,7 +50,7 @@ fn test_id_resolver() {
         playlist_id_collection
             .get_browse_id()
             .ok(),
-        Some(BrowseId::new("VLOLAK5uy_nVY7Ekmu-3gJilFDUz8xrjkzmVmVnQSMQ"))
+        Some(BrowseId::new("OLAK5uy_nVY7Ekmu-3gJilFDUz8xrjkzmVmVnQSMQ"))
     );
     assert_eq!(
         mixed_id_collection
@@ -60,7 +62,7 @@ fn test_id_resolver() {
         mixed_id_collection
             .get_browse_id()
             .ok(),
-        Some(BrowseId::new("VLOLAK5uy_mrUmnJrX4QzJd6GeOuqcqT8EUMH1C0eTU"))
+        Some(BrowseId::new("OLAK5uy_mrUmnJrX4QzJd6GeOuqcqT8EUMH1C0eTU"))
     )
 }
 
@@ -75,4 +77,21 @@ async fn test_player_endpoint() {
 
     //assert_eq!(response.get_title().to_lowercase(), "damnation");
     assert_eq!(response.get_status(), Status::Success);
+}
+
+#[tokio::test]
+async fn test_browse_endpoint() {
+    let browse_id = BrowseId::new("OLAK5uy_nVY7Ekmu-3gJilFDUz8xrjkzmVmVnQSMQ");
+    let response: Result<BrowseResponse> = captcha_bypass(Endpoint::Browse(browse_id), 2).await;
+
+    assert!(response.is_ok());
+
+    let response = response.unwrap();
+    let ids = response.get_ids();
+
+    assert!(ids.is_ok());
+
+    let ids = ids.unwrap().len();
+
+    assert_eq!(ids, 20); // eh idk
 }

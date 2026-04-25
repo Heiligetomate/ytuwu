@@ -1,10 +1,8 @@
 use std::path::Path;
 
-use ytuwu::Downloader;
-use ytuwu::Result;
-use ytuwu::ThumbnailResolution;
 use ytuwu::id_resolver::IdCollection;
-use ytuwu::itag::{AudioItag, Itag, VideoItag};
+use ytuwu::itag::{AudioItag, Itag};
+use ytuwu::{Downloader, Result, ThumbnailResolution};
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -18,16 +16,14 @@ async fn main() -> Result<()> {
     let downloader = Downloader::new();
     if let Some(ids) = id_collection {
         let media = downloader
-            .download_dual_media_stream(
-                ids.get_video_id()?,
-                VideoItag::highest(),
+            .download_full_playlist(
+                ids.get_browse_id()?,
                 AudioItag::highest(),
-                ThumbnailResolution::VeryHigh,
+                ThumbnailResolution::Low,
             )
             .await?;
         let path = Path::new("teehee");
         media.save(&path)?;
-        println!("{}", media.metadata.author);
     } else {
         println!("no ids found");
     }
