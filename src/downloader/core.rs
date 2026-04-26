@@ -4,11 +4,13 @@ use crate::{
     downloader::{
         downloaded::{DownloadedDualStreamMedia, DownloadedMedia, DownloadedPlaylist},
         media::MediaBrowse,
+        media_stream::ShortVideoStream,
         playlist::PlaylistBrowse,
         thumbnail::{PlaylistThumbnail, Thumbnail},
     },
     error::Result,
-    id_resolver::{BrowseId, VideoId},
+    id_resolver::{BrowseId, ShortId, VideoId},
+    itag::ShortVideoItag,
     player_model::{
         itag::{AudioItag, Itag, VideoItag},
         video_details::ThumbnailResolution,
@@ -88,5 +90,16 @@ impl Downloader {
             .await?
             .download_full(itag, thumbnail_resolution)
             .await?)
+    }
+
+    #[rustfmt::skip]
+    pub async fn download_short(&self, short_id: ShortId, video_itag: ShortVideoItag, audio_itag: AudioItag, thumbnail_resolution: ThumbnailResolution) -> Result<DownloadedPlaylist<ShortVideoStream>> {
+        let id = MediaBrowse::from_short(short_id);
+        Ok(
+            id.browse()
+            .await?
+            .download_dual_stream(video_itag, audio_itag, &thumbnail_resolution)
+            .await?
+        )
     }
 }
