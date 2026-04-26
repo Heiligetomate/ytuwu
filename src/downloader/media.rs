@@ -5,6 +5,7 @@ use crate::downloader::media_stream::MediaStream;
 use crate::downloader::thumbnail::Thumbnail;
 use crate::downloader::util::*;
 use crate::error::Result;
+use crate::id_resolver::{Id, ShortId};
 use crate::player_model::itag::{AudioItag, VideoItag};
 use crate::{
     id_resolver::VideoId,
@@ -136,6 +137,11 @@ impl Media {
 impl MediaBrowse {
     pub fn new(id: VideoId) -> Self {
         Self { video_id: id }
+    }
+
+    pub fn from_short(id: ShortId) -> Self {
+        let video_id = VideoId::new(id.get_id());
+        Self { video_id }
     }
 
     pub async fn browse(self) -> Result<Media> {
