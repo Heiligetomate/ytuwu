@@ -64,11 +64,11 @@ pub enum AudioItag {
     OpusMedium, // 251
 }
 
-const SHORT_ORDER: [ShortVideoItag; 2] = [ShortVideoItag::High, ShortVideoItag::Low];
+const SHORT_LONG_VIDEO_ORDER: [ShortVideoItag; 2] = [ShortVideoItag::High, ShortVideoItag::Low];
 
 const AUDIO_ORDER: [AudioItag; 4] = [AudioItag::OpusMedium, AudioItag::AacMedium, AudioItag::OpusLow, AudioItag::AacLow];
 
-const VIDEO_ORDER: [LongVideoItag; 12] = [
+const LONG_VIDEO_ORDER: [LongVideoItag; 12] = [
     LongVideoItag::WebM1080p,
     LongVideoItag::MP41080p,
     LongVideoItag::WebM720p,
@@ -94,9 +94,9 @@ impl Itag for LongVideoItag {
     where
         Self: Sized,
     {
-        for (i, itag) in VIDEO_ORDER.iter().enumerate() {
+        for (i, itag) in LONG_VIDEO_ORDER.iter().enumerate() {
             if *itag == self {
-                let next_itag = VIDEO_ORDER
+                let next_itag = LONG_VIDEO_ORDER
                     .get(i + 1)
                     .ok_or(YtuwuError::NoLowerItagFound)?;
                 return Ok(*next_itag);
@@ -200,9 +200,12 @@ impl Itag for ShortVideoItag {
     where
         Self: Sized,
     {
-        for (i, itag) in SHORT_ORDER.iter().enumerate() {
+        for (i, itag) in SHORT_LONG_VIDEO_ORDER
+            .iter()
+            .enumerate()
+        {
             if *itag == self {
-                let next_itag = SHORT_ORDER
+                let next_itag = SHORT_LONG_VIDEO_ORDER
                     .get(i + 1)
                     .ok_or(YtuwuError::NoLowerItagFound)?;
                 return Ok(*next_itag);
