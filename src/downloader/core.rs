@@ -4,7 +4,7 @@ use crate::{
     downloader::{
         downloaded::{DownloadedDualStreamMedia, DownloadedMedia, DownloadedPlaylist},
         media::MediaBrowse,
-        media_stream::ShortVideoStream,
+        media_stream::{ShortVideoStream, VideoStream},
         playlist::PlaylistBrowse,
         thumbnail::{PlaylistThumbnail, Thumbnail},
     },
@@ -58,7 +58,9 @@ impl Downloader {
     }
 
     #[rustfmt::skip]
-    pub async fn download_dual_media_stream(&self, video_id: VideoId, video_itag: VideoItag, audio_itag: AudioItag, thumbnail_resolution: ThumbnailResolution) -> Result<DownloadedDualStreamMedia> {
+    pub async fn download_dual_media_stream<V: VideoItag + Copy>(&self, video_id: VideoId, video_itag: V, audio_itag: AudioItag, thumbnail_resolution: ThumbnailResolution) -> Result<DownloadedDualStreamMedia<<V as Itag>::Stream>>
+    where <V as Itag>::Stream: VideoStream,
+ {
         Ok(MediaBrowse::new(video_id)
             .browse()
             .await?
@@ -93,7 +95,7 @@ impl Downloader {
     }
 
     #[rustfmt::skip]
-    pub async fn download_short(&self, short_id: ShortId, video_itag: ShortVideoItag, audio_itag: AudioItag, thumbnail_resolution: ThumbnailResolution) -> Result<DownloadedPlaylist<ShortVideoStream>> {
+    pub async fn download_short(&self, short_id: ShortId, video_itag: ShortVideoItag, audio_itag: AudioItag, thumbnail_resolution: ThumbnailResolution) -> Result<DownloadedDualStreamMedia<ShortVideoStream>> {
         let id = MediaBrowse::from_short(short_id);
         Ok(
             id.browse()
