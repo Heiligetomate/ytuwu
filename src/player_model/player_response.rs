@@ -62,9 +62,7 @@ impl PlayerResponse {
     }
 
     pub fn get_title(&self) -> Result<&str> {
-        Ok(&self
-            .get_video_deatails()?
-            .title)
+        Ok(&self.get_video_deatails()?.title)
     }
 
     pub fn get_author(&self) -> Result<&str> {
@@ -78,9 +76,7 @@ impl PlayerResponse {
 impl Response for PlayerResponse {
     fn get_visitor_data(&self) -> Option<String> {
         if let Some(response_context) = &self.response_context {
-            return response_context
-                .visitor_data
-                .clone();
+            return response_context.visitor_data.clone();
         }
         None
     }

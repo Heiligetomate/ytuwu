@@ -27,9 +27,7 @@ struct AlbumTitle {
 
 impl BrowseHeader {
     pub fn get_album_title(&self) -> Result<&str> {
-        let title_object = &self
-            .playlist_header_renderer
-            .title;
+        let title_object = &self.playlist_header_renderer.title;
         let title = title_object
             .runs
             .get(0)

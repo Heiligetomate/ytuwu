@@ -9,8 +9,7 @@ use crate::{
 
 #[test]
 fn test_id_resolver() {
-    let playlist_url =
-        "https://music.youtube.com/playlist?list=OLAK5uy_nVY7Ekmu-3gJilFDUz8xrjkzmVmVnQSMQ";
+    let playlist_url = "https://music.youtube.com/playlist?list=OLAK5uy_nVY7Ekmu-3gJilFDUz8xrjkzmVmVnQSMQ";
     let mixed_url = "https://music.youtube.com/watch?v=lndG8BiZCmM&list=OLAK5uy_mrUmnJrX4QzJd6GeOuqcqT8EUMH1C0eTU";
     let media_url = "https://music.youtube.com/watch?v=lndG8BiZCmM";
 
@@ -28,30 +27,10 @@ fn test_id_resolver() {
     let playlist_id_collection = playlist_id_collection.unwrap();
     let mixed_id_collection = mixed_id_collection.unwrap();
 
-    assert_eq!(
-        video_id_collecton
-            .get_id()
-            .ok(),
-        Some(VideoId::new("lndG8BiZCmM"))
-    );
-    assert_eq!(
-        playlist_id_collection
-            .get_id()
-            .ok(),
-        Some(BrowseId::new("OLAK5uy_nVY7Ekmu-3gJilFDUz8xrjkzmVmVnQSMQ"))
-    );
-    assert_eq!(
-        mixed_id_collection
-            .get_id()
-            .ok(),
-        Some(VideoId::new("lndG8BiZCmM"))
-    );
-    assert_eq!(
-        mixed_id_collection
-            .get_id()
-            .ok(),
-        Some(BrowseId::new("OLAK5uy_mrUmnJrX4QzJd6GeOuqcqT8EUMH1C0eTU"))
-    )
+    assert_eq!(video_id_collecton.get_id().ok(), Some(VideoId::new("lndG8BiZCmM")));
+    assert_eq!(playlist_id_collection.get_id().ok(), Some(BrowseId::new("OLAK5uy_nVY7Ekmu-3gJilFDUz8xrjkzmVmVnQSMQ")));
+    assert_eq!(mixed_id_collection.get_id().ok(), Some(VideoId::new("lndG8BiZCmM")));
+    assert_eq!(mixed_id_collection.get_id().ok(), Some(BrowseId::new("OLAK5uy_mrUmnJrX4QzJd6GeOuqcqT8EUMH1C0eTU")))
 }
 
 #[tokio::test]

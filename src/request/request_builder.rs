@@ -13,11 +13,7 @@ pub struct RequestBody<'de> {
 }
 
 impl<'de> RequestBody<'de> {
-    fn new(
-        video_id: Option<String>,
-        browse_id: Option<String>,
-        visitor_data: Option<String>,
-    ) -> Self {
+    fn new(video_id: Option<String>, browse_id: Option<String>, visitor_data: Option<String>) -> Self {
         Self {
             context: Context::default_downloader_body(visitor_data),
             video_id: video_id,

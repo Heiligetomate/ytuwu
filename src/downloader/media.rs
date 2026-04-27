@@ -63,7 +63,12 @@ impl Media {
         Ok(downloaded_stream)
     }
 
-    pub async fn download_dual_stream<V: VideoItag + Copy>(&self, video_itag: V, audio_itag: AudioItag, thumbnail_resolution: &ThumbnailResolution) -> Result<DownloadedDualStreamMedia<<V as Itag>::Stream>>
+    pub async fn download_dual_stream<V: VideoItag + Copy>(
+        &self,
+        video_itag: V,
+        audio_itag: AudioItag,
+        thumbnail_resolution: &ThumbnailResolution,
+    ) -> Result<DownloadedDualStreamMedia<<V as Itag>::Stream>>
     where
         <V as Itag>::Stream: VideoStream,
     {

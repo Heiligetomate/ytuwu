@@ -61,19 +61,13 @@ impl FullResponse {
             .section_list_renderer
             .contents
             .as_ref()
-            .ok_or(YtuwuError::BrowseDataNotFound(
-                "section list renderer contents",
-            ))?
+            .ok_or(YtuwuError::BrowseDataNotFound("section list renderer contents"))?
             .get(0)
             .as_ref()
-            .ok_or(YtuwuError::BrowseDataNotFound(
-                "first section list renderer element",
-            ))?
+            .ok_or(YtuwuError::BrowseDataNotFound("first section list renderer element"))?
             .playlist_video_list_renderer
             .as_ref()
-            .ok_or(YtuwuError::BrowseDataNotFound(
-                "playlist video list renderer",
-            ))?
+            .ok_or(YtuwuError::BrowseDataNotFound("playlist video list renderer"))?
             .get_ids();
         Ok(ids)
     }

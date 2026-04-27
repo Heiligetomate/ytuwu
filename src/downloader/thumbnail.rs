@@ -20,10 +20,7 @@ pub struct PlaylistThumbnail {
 
 impl Thumbnail {
     pub fn new(data: Bytes, name: &str) -> Self {
-        Self {
-            data,
-            name: name.to_owned(),
-        }
+        Self { data, name: name.to_owned() }
     }
 
     // dont use this lmao

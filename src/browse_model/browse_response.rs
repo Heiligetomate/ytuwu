@@ -1,9 +1,7 @@
 use serde::Deserialize;
 
 use crate::{
-    browse_model::{
-        full_response::FullResponse, header::BrowseHeader, response_context::ResponseContext,
-    },
+    browse_model::{full_response::FullResponse, header::BrowseHeader, response_context::ResponseContext},
     error::{Result, YtuwuError},
     shared_traits::Response,
 };
@@ -50,9 +48,7 @@ impl Response for BrowseResponse {
 
     fn get_visitor_data(&self) -> Option<String> {
         if let Some(response_context) = &self.response_context {
-            return response_context
-                .visitor_data
-                .clone();
+            return response_context.visitor_data.clone();
         }
         None
     }

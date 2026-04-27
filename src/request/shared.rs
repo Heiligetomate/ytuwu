@@ -45,12 +45,8 @@ fn builder_headers(endpoint: &Endpoint) -> RequestBuilder {
 
 fn build_body<'de>(endpoint: &Endpoint, visitor_data: Option<String>) -> RequestBody<'de> {
     match endpoint {
-        Endpoint::Player(video_id) => {
-            RequestBody::new_player_request(video_id.clone(), visitor_data)
-        }
-        Endpoint::Browse(browse_id) => {
-            RequestBody::new_browse_request(browse_id.clone(), visitor_data)
-        }
+        Endpoint::Player(video_id) => RequestBody::new_player_request(video_id.clone(), visitor_data),
+        Endpoint::Browse(browse_id) => RequestBody::new_browse_request(browse_id.clone(), visitor_data),
     }
 }
 
