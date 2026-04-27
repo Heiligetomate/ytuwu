@@ -44,9 +44,7 @@ pub struct IdCollection {
 
 impl Id for BrowseId {
     fn new<T: Into<String>>(id: T) -> Self {
-        Self {
-            id: format!("VL{}", id.into()),
-        }
+        Self { id: format!("VL{}", id.into()) }
     }
 
     fn get_id(self) -> String {
@@ -138,25 +136,9 @@ impl GetId<ShortId> for IdCollection {
 
 impl fmt::Display for IdCollection {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let browse_display: String = {
-            if let Some(id) = &self.browse_id {
-                id.as_str().to_owned()
-            } else {
-                "None".to_owned()
-            }
-        };
-        let video_display: String = {
-            if let Some(id) = &self.video_id {
-                id.as_str().to_owned()
-            } else {
-                "None".to_owned()
-            }
-        };
-        write!(
-            f,
-            "browse_id: {} \nvideo_id : {}",
-            &browse_display, &video_display
-        )
+        let browse_display: String = { if let Some(id) = &self.browse_id { id.as_str().to_owned() } else { "None".to_owned() } };
+        let video_display: String = { if let Some(id) = &self.video_id { id.as_str().to_owned() } else { "None".to_owned() } };
+        write!(f, "browse_id: {} \nvideo_id : {}", &browse_display, &video_display)
     }
 }
 
@@ -170,8 +152,7 @@ impl IdCollection {
         };
 
         let url_string: String = raw_url.into();
-        let url: Url = Url::parse(&url_string)
-            .map_err(|_| YtuwuError::UrlParsing("could not parse the url"))?;
+        let url: Url = Url::parse(&url_string).map_err(|_| YtuwuError::UrlParsing("could not parse the url"))?;
 
         match url
             .host_str()
@@ -208,9 +189,14 @@ impl IdCollection {
                     "channel" => {
                         let id = url_parts
                             .get(1)
-                            .ok_or(YtuwuError::UrlParsing("no channel id found"))
-                            .unwrap();
+                            .ok_or(YtuwuError::UrlParsing("no channel id found"))?;
                         result.channel_id = Some(ChannelId::new(*id));
+                    }
+                    "shorts" => {
+                        let id = url_parts
+                            .get(1)
+                            .ok_or(YtuwuError::UrlParsing("no short id found"))?;
+                        result.short_id = Some(ShortId::new(*id));
                     }
                     "media" | "watch" => {}
                     _ => result.short_id = Some(ShortId::new(*first_segment)),

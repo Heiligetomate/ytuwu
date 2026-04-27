@@ -1,14 +1,10 @@
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    downloader::media_stream::{
-        AudioStream, MediaStream, MuxedStream, ShortVideoStream, VideoStream,
-    },
-    error::Result,
-    error::YtuwuError,
+    downloader::media_stream::{AudioStream, LongVideoStream, MediaStream, MuxedStream, ShortVideoStream, VideoStream},
+    error::{Result, YtuwuError},
 };
 
-//TODO: Different name
 pub trait Itag {
     type Stream: MediaStream;
 
@@ -23,13 +19,23 @@ pub trait Itag {
     fn new_stream(self) -> Self::Stream;
 }
 
+pub trait VideoItag: Itag
+where
+    <Self as Itag>::Stream: VideoStream,
+{
+}
+
+impl VideoItag for LongVideoItag {}
+
+impl VideoItag for ShortVideoItag {}
+
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone, Copy)]
 pub enum MuxedItag {
     MuxedMP4,
 }
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone, Copy)]
-pub enum VideoItag {
+pub enum LongVideoItag {
     MP41080p,  // 137
     WebM1080p, // 248
     MP4720p,   // 136
@@ -60,30 +66,25 @@ pub enum AudioItag {
 
 const SHORT_ORDER: [ShortVideoItag; 2] = [ShortVideoItag::High, ShortVideoItag::Low];
 
-const AUDIO_ORDER: [AudioItag; 4] = [
-    AudioItag::OpusMedium,
-    AudioItag::AacMedium,
-    AudioItag::OpusLow,
-    AudioItag::AacLow,
+const AUDIO_ORDER: [AudioItag; 4] = [AudioItag::OpusMedium, AudioItag::AacMedium, AudioItag::OpusLow, AudioItag::AacLow];
+
+const VIDEO_ORDER: [LongVideoItag; 12] = [
+    LongVideoItag::WebM1080p,
+    LongVideoItag::MP41080p,
+    LongVideoItag::WebM720p,
+    LongVideoItag::MP4720p,
+    LongVideoItag::Webm480p,
+    LongVideoItag::MP4480p,
+    LongVideoItag::WebM360p,
+    LongVideoItag::MP4360p,
+    LongVideoItag::WebM240p,
+    LongVideoItag::MP4240p,
+    LongVideoItag::MP4144p,
+    LongVideoItag::MP4144p,
 ];
 
-const VIDEO_ORDER: [VideoItag; 12] = [
-    VideoItag::WebM1080p,
-    VideoItag::MP41080p,
-    VideoItag::WebM720p,
-    VideoItag::MP4720p,
-    VideoItag::Webm480p,
-    VideoItag::MP4480p,
-    VideoItag::WebM360p,
-    VideoItag::MP4360p,
-    VideoItag::WebM240p,
-    VideoItag::MP4240p,
-    VideoItag::MP4144p,
-    VideoItag::MP4144p,
-];
-
-impl Itag for VideoItag {
-    type Stream = VideoStream;
+impl Itag for LongVideoItag {
+    type Stream = LongVideoStream;
 
     fn highest() -> Self {
         Self::WebM1080p
@@ -139,7 +140,7 @@ impl Itag for VideoItag {
     }
 
     fn new_stream(self) -> Self::Stream {
-        VideoStream::new(self)
+        LongVideoStream::new(self)
     }
 }
 

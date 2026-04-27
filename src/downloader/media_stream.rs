@@ -4,10 +4,13 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use crate::error::{Result, YtuwuError};
+use crate::{
+    error::{Result, YtuwuError},
+    itag::LongVideoItag,
+};
 use bytes::{BufMut, Bytes, BytesMut};
 
-use crate::player_model::itag::{AudioItag, Itag, MuxedItag, ShortVideoItag, VideoItag};
+use crate::player_model::itag::{AudioItag, Itag, MuxedItag, ShortVideoItag};
 
 pub trait MediaStream {
     fn save(&self, path: &Path, file_name: &str) -> Result<()>;
@@ -16,6 +19,12 @@ pub trait MediaStream {
     fn push_data(&mut self, data: Bytes);
 }
 
+pub trait VideoStream: MediaStream {}
+
+impl VideoStream for LongVideoStream {}
+
+impl VideoStream for ShortVideoStream {}
+
 #[derive(Debug)]
 pub struct AudioStream {
     data: BytesMut,
@@ -23,9 +32,9 @@ pub struct AudioStream {
 }
 
 #[derive(Debug)]
-pub struct VideoStream {
+pub struct LongVideoStream {
     data: BytesMut,
-    itag: VideoItag,
+    itag: LongVideoItag,
 }
 
 #[derive(Debug)]
@@ -59,7 +68,7 @@ impl MediaStream for AudioStream {
     }
 }
 
-impl MediaStream for VideoStream {
+impl MediaStream for LongVideoStream {
     fn get_data(&self) -> &BytesMut {
         &self.data
     }
@@ -118,48 +127,30 @@ impl MediaStream for MuxedStream {
 
 impl AudioStream {
     pub fn new(itag: AudioItag) -> Self {
-        Self {
-            data: BytesMut::new(),
-            itag,
-        }
+        Self { data: BytesMut::new(), itag }
     }
 }
 
-impl VideoStream {
-    pub fn new(itag: VideoItag) -> Self {
-        Self {
-            data: BytesMut::new(),
-            itag,
-        }
+impl LongVideoStream {
+    pub fn new(itag: LongVideoItag) -> Self {
+        Self { data: BytesMut::new(), itag }
     }
 }
 
 impl ShortVideoStream {
     pub fn new(itag: ShortVideoItag) -> Self {
-        Self {
-            data: BytesMut::new(),
-            itag,
-        }
+        Self { data: BytesMut::new(), itag }
     }
 }
 
 impl MuxedStream {
     pub fn new(itag: MuxedItag) -> Self {
-        Self {
-            data: BytesMut::new(),
-            itag,
-        }
+        Self { data: BytesMut::new(), itag }
     }
 }
 
 fn save_media_stream(path: &Path, file_name: &str, media_stream: &impl MediaStream) -> Result<()> {
-    let file_name = format!(
-        "{}.{}",
-        file_name,
-        media_stream
-            .get_itag()
-            .get_mime_type()
-    );
+    let file_name = format!("{}.{}", file_name, media_stream.get_itag().get_mime_type());
     if !path.is_dir() {
         return Err(YtuwuError::InvalidPath);
     }
