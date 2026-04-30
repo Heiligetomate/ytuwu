@@ -58,10 +58,7 @@ impl PlaylistContentBrowse {
         for item in self.media.drain(..) {
             media_items.push(item.browse().await?);
         }
-        Ok(Playlist {
-            media: media_items,
-            title: self.title,
-        })
+        Ok(Playlist { media: media_items, title: self.title })
     }
 }
 
