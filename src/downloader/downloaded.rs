@@ -19,6 +19,7 @@ pub struct DownloadedMedia<M: MediaStream + Debug> {
     pub stream: M,
 }
 
+#[derive(Debug)]
 pub struct DownloadedDualStreamMedia<V: VideoStream> {
     pub metadata: MediaMetadata,
     pub thumbnail: Thumbnail,
