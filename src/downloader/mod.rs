@@ -1,3 +1,4 @@
+mod channel;
 pub mod core;
 pub mod downloaded;
 mod media;
