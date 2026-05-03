@@ -10,8 +10,8 @@ pub const TIMEZONE: &str = "UTC";
 pub const ANDROID_SDK_VERSION: u16 = 29;
 pub const UTC_OFFSET_MINUTES: u16 = 0;
 
-pub const PLAYER_ENDPOINT: &str = "https://music.youtube.com/youtubei/v1/player";
-pub const BROWSE_ENDPOINT: &str = "https://music.youtube.com/youtubei/v1/browse";
+pub const PLAYER_ENDPOINT: &str = "https://music.youtube.com/youtubei/v1/player?prettyPrint=false";
+pub const BROWSE_ENDPOINT: &str = "https://music.youtube.com/youtubei/v1/browse?prettyPrint=false";
 pub const ORIGIN_HEADER: Header = ("Origin", "https://www.youtube.com");
 
 pub const CONTENT_TYPE_HEADER: Header = ("Content-Type", "application/json");
