@@ -76,3 +76,5 @@ let playlist_url = "https://music.youtube.com/playlist?list=OLAK5uy_nVY7Ekmu-3gJ
 - save chunks when crashing while downloading and continue the download afterwards
 - cache 
 - Yt shorts download 
+- age verification 
+- continuation
