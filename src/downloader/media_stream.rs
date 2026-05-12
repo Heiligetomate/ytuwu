@@ -10,7 +10,7 @@ use crate::{
 };
 use bytes::{BufMut, Bytes, BytesMut};
 
-use crate::player_model::itag::{AudioItag, Itag, MuxedItag, ShortVideoItag};
+use crate::models::itag::{AudioItag, Itag, MuxedItag, ShortVideoItag};
 
 pub trait MediaStream {
     fn save(&self, path: &Path, file_name: &str) -> Result<()>;

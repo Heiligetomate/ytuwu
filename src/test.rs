@@ -1,8 +1,8 @@
 use crate::{
-    browse_model::browse_response::BrowseResponse,
     error::Result,
     id_resolver::{self, BrowseId, GetId, Id, VideoId},
-    player_model::player_response::PlayerResponse,
+    models::fast_browse::BrowseResponse,
+    models::player::PlayerResponse,
     request::shared::{Endpoint, captcha_bypass},
     shared_traits::{Response, Status},
 };

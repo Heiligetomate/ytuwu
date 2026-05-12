@@ -7,11 +7,11 @@ use crate::downloader::util::*;
 use crate::error::Result;
 use crate::id_resolver::{Id, ShortId};
 use crate::itag::VideoItag;
-use crate::player_model::itag::AudioItag;
+use crate::models::itag::AudioItag;
 use crate::{
     id_resolver::VideoId,
+    models::{itag::Itag, player::PlayerResponse, player::ThumbnailResolution},
     name_trimmer::trim,
-    player_model::{itag::Itag, player_response::PlayerResponse, video_details::ThumbnailResolution},
     request::shared::captcha_bypass,
 };
 use bytes::Bytes;
@@ -63,12 +63,7 @@ impl Media {
         Ok(downloaded_stream)
     }
 
-    pub async fn download_dual_stream<V: VideoItag + Copy>(
-        &self,
-        video_itag: V,
-        audio_itag: AudioItag,
-        thumbnail_resolution: &ThumbnailResolution,
-    ) -> Result<DownloadedDualStreamMedia<<V as Itag>::Stream>>
+    pub async fn download_dual_stream<V: VideoItag + Copy>(&self, video_itag: V, audio_itag: AudioItag, thumbnail_resolution: &ThumbnailResolution) -> Result<DownloadedDualStreamMedia<<V as Itag>::Stream>>
     where
         <V as Itag>::Stream: VideoStream,
     {

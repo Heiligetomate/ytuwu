@@ -1,7 +1,6 @@
 use std::fmt::Debug;
 
 use crate::{
-    browse_model::browse_response::BrowseResponse,
     downloaded::DownloadedMedia,
     downloader::{
         downloaded::DownloadedPlaylist,
@@ -10,8 +9,9 @@ use crate::{
     },
     error::Result,
     id_resolver::{BrowseId, Id, VideoId},
+    models::fast_browse::BrowseResponse,
+    models::{itag::Itag, player::ThumbnailResolution},
     name_trimmer,
-    player_model::{itag::Itag, video_details::ThumbnailResolution},
     request::shared::captcha_bypass,
 };
 

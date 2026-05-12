@@ -11,9 +11,9 @@ use crate::{
     error::Result,
     id_resolver::{BrowseId, ShortId, VideoId},
     itag::ShortVideoItag,
-    player_model::{
+    models::{
         itag::{AudioItag, Itag, VideoItag},
-        video_details::ThumbnailResolution,
+        player::ThumbnailResolution,
     },
 };
 
