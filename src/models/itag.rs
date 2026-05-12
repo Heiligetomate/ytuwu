@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use crate::{
     downloader::media_stream::{AudioStream, LongVideoStream, MediaStream, MuxedStream, ShortVideoStream, VideoStream},
     error::{Result, YtuwuError},
+    models::constants::*,
 };
 
 pub trait Itag {
@@ -124,18 +125,18 @@ impl Itag for LongVideoItag {
 
     fn get_mime_type(&self) -> &str {
         match &self {
-            Self::WebM1080p => "webm",
-            Self::MP41080p => "mp4",
-            Self::WebM720p => "webm",
-            Self::MP4720p => "mp4",
-            Self::Webm480p => "webm",
-            Self::MP4480p => "mp4",
-            Self::WebM360p => "webm",
-            Self::MP4360p => "mp4",
-            Self::WebM240p => "webm",
-            Self::MP4240p => "mp4",
-            Self::Webm144p => "webm",
-            Self::MP4144p => "mp4",
+            Self::WebM1080p => WEBM_FORMAT,
+            Self::MP41080p => MP4_FORMAT,
+            Self::WebM720p => WEBM_FORMAT,
+            Self::MP4720p => MP4_FORMAT,
+            Self::Webm480p => WEBM_FORMAT,
+            Self::MP4480p => MP4_FORMAT,
+            Self::WebM360p => WEBM_FORMAT,
+            Self::MP4360p => MP4_FORMAT,
+            Self::WebM240p => WEBM_FORMAT,
+            Self::MP4240p => MP4_FORMAT,
+            Self::Webm144p => WEBM_FORMAT,
+            Self::MP4144p => MP4_FORMAT,
         }
     }
 
@@ -177,10 +178,10 @@ impl Itag for AudioItag {
 
     fn get_mime_type(&self) -> &str {
         match &self {
-            Self::OpusMedium => "webm",
-            Self::OpusLow => "webm",
-            Self::AacMedium => "m4a",
-            Self::AacLow => "m4a",
+            Self::OpusMedium => WEBM_FORMAT,
+            Self::OpusLow => WEBM_FORMAT,
+            Self::AacMedium => M4A_FORMAT,
+            Self::AacLow => M4A_FORMAT,
         }
     }
 
@@ -222,7 +223,7 @@ impl Itag for ShortVideoItag {
     }
 
     fn get_mime_type(&self) -> &str {
-        "mp4"
+        MP4_FORMAT
     }
 
     fn new_stream(self) -> Self::Stream {
@@ -246,7 +247,7 @@ impl Itag for MuxedItag {
     }
 
     fn get_mime_type(&self) -> &str {
-        "mp4"
+        MP4_FORMAT
     }
 
     fn new_stream(self) -> Self::Stream {
