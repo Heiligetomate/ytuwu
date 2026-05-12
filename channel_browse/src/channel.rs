@@ -2,153 +2,153 @@ use serde::Deserialize;
 
 #[derive(Deserialize, Debug)]
 pub struct ChannelBrowse {
-    contents: ChannelContents,
+    pub contents: ChannelContents,
 }
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-struct ChannelContents {
-    single_column_browse_results_renderer: SingleColumnBrowseResultsRenderer,
+pub struct ChannelContents {
+    pub single_column_browse_results_renderer: SingleColumnBrowseResultsRenderer,
 }
 
 #[derive(Deserialize, Debug)]
-struct SingleColumnBrowseResultsRenderer {
-    tabs: Vec<ChannelTab>,
-}
-
-#[derive(Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
-struct ChannelTab {
-    tab_renderer: ChannelTabRenderer,
-}
-
-#[derive(Deserialize, Debug)]
-struct ChannelTabRenderer {
-    content: ChannelTabContent,
+pub struct SingleColumnBrowseResultsRenderer {
+    pub tabs: Vec<ChannelTab>,
 }
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-struct ChannelTabContent {
-    section_list_renderer: ChannelSectionListRenderer,
+pub struct ChannelTab {
+    pub tab_renderer: ChannelTabRenderer,
 }
 
 #[derive(Deserialize, Debug)]
-struct ChannelSectionListRenderer {
-    contents: Vec<ChannelSection>,
-    header: Option<ChannelSectionListHeader>,
-}
-
-#[derive(Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
-struct ChannelSectionListHeader {
-    music_side_aligned_item_renderer: MusicSideAlignedItemRenderer,
+pub struct ChannelTabRenderer {
+    pub content: ChannelTabContent,
 }
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-struct MusicSideAlignedItemRenderer {
-    start_items: Vec<ChipCloud>,
+pub struct ChannelTabContent {
+    pub section_list_renderer: ChannelSectionListRenderer,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct ChannelSectionListRenderer {
+    pub contents: Vec<ChannelSection>,
+    pub header: Option<ChannelSectionListHeader>,
 }
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-struct ChipCloud {
-    chip_cloud_renderer: ChipCloudRenderer,
-}
-
-#[derive(Deserialize, Debug)]
-struct ChipCloudRenderer {
-    chips: Vec<Chip>,
+pub struct ChannelSectionListHeader {
+    pub music_side_aligned_item_renderer: MusicSideAlignedItemRenderer,
 }
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-struct Chip {
-    chip_cloud_chip_renderer: ChipCloudChipRenderer,
+pub struct MusicSideAlignedItemRenderer {
+    pub start_items: Vec<ChipCloud>,
 }
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-struct ChipCloudChipRenderer {
-    text: ChipText,
-    navigation_endpoint: ChipNavigationEndpoint,
+pub struct ChipCloud {
+    pub chip_cloud_renderer: ChipCloudRenderer,
 }
 
 #[derive(Deserialize, Debug)]
-struct ChipText {
-    runs: Vec<ChipRun>,
-}
-
-#[derive(Deserialize, Debug)]
-struct ChipRun {
-    text: String, // "Albums" or "Singles & EPs"
+pub struct ChipCloudRenderer {
+    pub chips: Vec<Chip>,
 }
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-struct ChipNavigationEndpoint {
-    browse_section_list_reload_endpoint: BrowseSectionListReloadEndpoint,
-}
-
-#[derive(Deserialize, Debug)]
-struct BrowseSectionListReloadEndpoint {
-    continuation: ContinuationWrapper,
+pub struct Chip {
+    pub chip_cloud_chip_renderer: ChipCloudChipRenderer,
 }
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-struct ContinuationWrapper {
-    reload_continuation_data: ReloadContinuationData,
+pub struct ChipCloudChipRenderer {
+    pub text: ChipText,
+    pub navigation_endpoint: ChipNavigationEndpoint,
 }
 
 #[derive(Deserialize, Debug)]
-struct ReloadContinuationData {
-    continuation: String,
+pub struct ChipText {
+    pub runs: Vec<ChipRun>,
 }
 
 #[derive(Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
-struct ChannelSection {
-    grid_renderer: GridRenderer,
-}
-
-#[derive(Deserialize, Debug)]
-struct GridRenderer {
-    items: Vec<GridItem>,
+pub struct ChipRun {
+    pub text: String,
 }
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-struct GridItem {
-    music_two_row_item_renderer: MusicTwoRowItemRenderer,
+pub struct ChipNavigationEndpoint {
+    pub browse_section_list_reload_endpoint: BrowseSectionListReloadEndpoint,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct BrowseSectionListReloadEndpoint {
+    pub continuation: ContinuationWrapper,
 }
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-struct MusicTwoRowItemRenderer {
-    navigation_endpoint: ReleaseNavigationEndpoint,
-    subtitle: Option<Subtitle>,
+pub struct ContinuationWrapper {
+    pub reload_continuation_data: ReloadContinuationData,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct ReloadContinuationData {
+    pub continuation: String,
 }
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-struct ReleaseNavigationEndpoint {
-    browse_endpoint: ReleaseBrowseEndpoint,
+pub struct ChannelSection {
+    pub grid_renderer: GridRenderer,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct GridRenderer {
+    pub items: Vec<GridItem>,
 }
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-struct ReleaseBrowseEndpoint {
-    browse_id: String,
+pub struct GridItem {
+    pub music_two_row_item_renderer: MusicTwoRowItemRenderer,
 }
 
 #[derive(Deserialize, Debug)]
-struct Subtitle {
-    runs: Vec<SubtitleRun>,
+#[serde(rename_all = "camelCase")]
+pub struct MusicTwoRowItemRenderer {
+    pub navigation_endpoint: ReleaseNavigationEndpoint,
+    pub subtitle: Option<Subtitle>,
 }
 
 #[derive(Deserialize, Debug)]
-struct SubtitleRun {
-    text: String,
+#[serde(rename_all = "camelCase")]
+pub struct ReleaseNavigationEndpoint {
+    pub browse_endpoint: ReleaseBrowseEndpoint,
+}
+
+#[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct ReleaseBrowseEndpoint {
+    pub browse_id: String,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct Subtitle {
+    pub runs: Vec<SubtitleRun>,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct SubtitleRun {
+    pub text: String,
 }
