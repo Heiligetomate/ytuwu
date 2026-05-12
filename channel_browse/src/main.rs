@@ -1,6 +1,7 @@
 use std::{error::Error, fs, path::Path};
 
-use crate::{album::AlbumResponse, channel::ChannelBrowse};
+use album::SlowAlbumResponse;
+use channel::ChannelBrowse;
 
 mod album;
 mod channel;
@@ -13,7 +14,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let album_file_content = fs::read_to_string(album_path)?;
 
     let channel_res: ChannelBrowse = serde_json::from_str(&channel_file_content)?;
-    let album_res: AlbumResponse = serde_json::from_str(&album_file_content)?;
+    let album_res: SlowAlbumResponse = serde_json::from_str(&album_file_content)?;
 
     println!("{:#?}", channel_res);
     println!("{:#?}", album_res);
