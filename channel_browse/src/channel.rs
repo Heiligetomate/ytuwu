@@ -6,8 +6,9 @@ pub struct ChannelBrowse {
 }
 
 #[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 struct ChannelContents {
-    singleColumnBrowseResultsRenderer: SingleColumnBrowseResultsRenderer,
+    single_column_browse_results_renderer: SingleColumnBrowseResultsRenderer,
 }
 
 #[derive(Deserialize, Debug)]
@@ -16,8 +17,9 @@ struct SingleColumnBrowseResultsRenderer {
 }
 
 #[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 struct ChannelTab {
-    tabRenderer: ChannelTabRenderer,
+    tab_renderer: ChannelTabRenderer,
 }
 
 #[derive(Deserialize, Debug)]
@@ -26,8 +28,9 @@ struct ChannelTabRenderer {
 }
 
 #[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 struct ChannelTabContent {
-    sectionListRenderer: ChannelSectionListRenderer,
+    section_list_renderer: ChannelSectionListRenderer,
 }
 
 #[derive(Deserialize, Debug)]
@@ -37,18 +40,21 @@ struct ChannelSectionListRenderer {
 }
 
 #[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 struct ChannelSectionListHeader {
-    musicSideAlignedItemRenderer: MusicSideAlignedItemRenderer,
+    music_side_aligned_item_renderer: MusicSideAlignedItemRenderer,
 }
 
 #[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 struct MusicSideAlignedItemRenderer {
-    startItems: Vec<ChipCloud>,
+    start_items: Vec<ChipCloud>,
 }
 
 #[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 struct ChipCloud {
-    chipCloudRenderer: ChipCloudRenderer,
+    chip_cloud_renderer: ChipCloudRenderer,
 }
 
 #[derive(Deserialize, Debug)]
@@ -57,14 +63,16 @@ struct ChipCloudRenderer {
 }
 
 #[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 struct Chip {
-    chipCloudChipRenderer: ChipCloudChipRenderer,
+    chip_cloud_chip_renderer: ChipCloudChipRenderer,
 }
 
 #[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 struct ChipCloudChipRenderer {
     text: ChipText,
-    navigationEndpoint: ChipNavigationEndpoint,
+    navigation_endpoint: ChipNavigationEndpoint,
 }
 
 #[derive(Deserialize, Debug)]
@@ -78,8 +86,9 @@ struct ChipRun {
 }
 
 #[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 struct ChipNavigationEndpoint {
-    browseSectionListReloadEndpoint: BrowseSectionListReloadEndpoint,
+    browse_section_list_reload_endpoint: BrowseSectionListReloadEndpoint,
 }
 
 #[derive(Deserialize, Debug)]
@@ -88,18 +97,20 @@ struct BrowseSectionListReloadEndpoint {
 }
 
 #[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 struct ContinuationWrapper {
-    reloadContinuationData: ReloadContinuationData,
+    reload_continuation_data: ReloadContinuationData,
 }
 
 #[derive(Deserialize, Debug)]
 struct ReloadContinuationData {
-    continuation: String, // pass this as "continuation" to get that tab
+    continuation: String,
 }
 
 #[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 struct ChannelSection {
-    gridRenderer: GridRenderer,
+    grid_renderer: GridRenderer,
 }
 
 #[derive(Deserialize, Debug)]
@@ -108,24 +119,28 @@ struct GridRenderer {
 }
 
 #[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 struct GridItem {
-    musicTwoRowItemRenderer: MusicTwoRowItemRenderer,
+    music_two_row_item_renderer: MusicTwoRowItemRenderer,
 }
 
 #[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 struct MusicTwoRowItemRenderer {
-    navigationEndpoint: ReleaseNavigationEndpoint,
+    navigation_endpoint: ReleaseNavigationEndpoint,
     subtitle: Option<Subtitle>,
 }
 
 #[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 struct ReleaseNavigationEndpoint {
-    browseEndpoint: ReleaseBrowseEndpoint,
+    browse_endpoint: ReleaseBrowseEndpoint,
 }
 
 #[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 struct ReleaseBrowseEndpoint {
-    browseId: String, // MPREb_ ID
+    browse_id: String,
 }
 
 #[derive(Deserialize, Debug)]
@@ -135,5 +150,5 @@ struct Subtitle {
 
 #[derive(Deserialize, Debug)]
 struct SubtitleRun {
-    text: String, // concatenate all to get e.g. "Single • 2024"
+    text: String,
 }
