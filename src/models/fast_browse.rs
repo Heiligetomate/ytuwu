@@ -36,7 +36,6 @@ struct Tab {
 }
 
 #[derive(Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
 struct TabRenderer {
     content: TabRendererContent,
 }
@@ -48,7 +47,6 @@ struct TabRendererContent {
 }
 
 #[derive(Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
 struct SectionListRenderer {
     contents: Option<Vec<ListRendererContent>>,
 }
@@ -66,25 +64,21 @@ struct BrowseHeader {
 }
 
 #[derive(Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
 struct HeaderRenderer {
     title: HeaderTitle,
 }
 
 #[derive(Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
 struct HeaderTitle {
     runs: Vec<AlbumTitle>,
 }
 
 #[derive(Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
 struct AlbumTitle {
     text: String,
 }
 
 #[derive(Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
 pub struct PlaylistVideoListRenderer {
     contents: Vec<PlaylistContent>,
 }

@@ -29,7 +29,6 @@ pub struct StreamingData {
 }
 
 #[derive(Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
 pub struct Stream {
     itag: u16,
     url: String,
@@ -54,7 +53,6 @@ pub struct Thumbnail {
 }
 
 #[derive(Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
 pub struct PlayabilityStatus {
     pub status: PlayabilityStatusValue,
     reason: Option<String>,
