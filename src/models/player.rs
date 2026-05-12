@@ -1,4 +1,4 @@
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
 use crate::{
     error::{Result, YtuwuError},
@@ -53,7 +53,7 @@ pub struct Thumbnail {
     width: u16,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct PlayabilityStatus {
     pub status: PlayabilityStatusValue,
@@ -68,7 +68,7 @@ pub enum ThumbnailResolution {
     VeryHigh,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Deserialize, Debug, Clone, Copy, PartialEq, Eq)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum PlayabilityStatusValue {
     Ok,
