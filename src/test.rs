@@ -3,7 +3,7 @@ use crate::{
     id_resolver::{self, BrowseId, GetId, Id, VideoId},
     models::fast_browse::BrowseResponse,
     models::player::PlayerResponse,
-    request::shared::{Endpoint, captcha_bypass},
+    request::core::{Endpoint, captcha_bypass},
     shared_traits::{Response, Status},
 };
 
