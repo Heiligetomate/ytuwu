@@ -1,7 +1,7 @@
 use serde::Deserialize;
 
 #[derive(Deserialize, Debug)]
-pub struct ChannelBrowse {
+pub struct ChannelBrowseResponse {
     contents: ChannelContents,
 }
 
