@@ -1,8 +1,20 @@
 use serde::Deserialize;
 
+use crate::shared_traits::Response;
+
+// TODO: some should be Option<>.
+
 #[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct ChannelBrowseResponse {
-    contents: ChannelContents,
+    contents: Option<ChannelContents>,
+    response_context: Option<ResponseContext>,
+}
+
+#[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+struct ResponseContext {
+    visitor_data: Option<String>,
 }
 
 #[derive(Deserialize, Debug)]
@@ -35,7 +47,7 @@ struct ChannelTabContent {
 
 #[derive(Deserialize, Debug)]
 struct ChannelSectionListRenderer {
-    contents: Vec<ChannelSection>,
+    contents: Option<Vec<ChannelSection>>,
     header: Option<ChannelSectionListHeader>,
 }
 
@@ -104,7 +116,7 @@ struct ContinuationWrapper {
 
 #[derive(Deserialize, Debug)]
 struct ReloadContinuationData {
-    continuation: String,
+    continuation: Option<String>,
 }
 
 #[derive(Deserialize, Debug)]
@@ -140,7 +152,7 @@ struct ReleaseNavigationEndpoint {
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 struct ReleaseBrowseEndpoint {
-    browse_id: String,
+    browse_id: Option<String>,
 }
 
 #[derive(Deserialize, Debug)]
@@ -150,5 +162,21 @@ struct Subtitle {
 
 #[derive(Deserialize, Debug)]
 struct SubtitleRun {
-    text: String,
+    text: Option<String>,
+}
+
+impl Response for ChannelBrowseResponse {
+    fn get_status(&self) -> crate::shared_traits::Status {
+        if self.contents.is_none() {
+            return crate::shared_traits::Status::Error;
+        }
+        crate::shared_traits::Status::Success
+    }
+
+    fn get_visitor_data(&self) -> Option<String> {
+        if let Some(ctx) = &self.response_context {
+            return ctx.visitor_data.clone();
+        }
+        None
+    }
 }
