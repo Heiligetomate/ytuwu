@@ -55,7 +55,6 @@ pub struct Thumbnail {
 #[derive(Deserialize, Debug)]
 pub struct PlayabilityStatus {
     pub status: PlayabilityStatusValue,
-    reason: Option<String>,
 }
 
 #[derive(Debug, PartialEq, Eq, Clone)]
