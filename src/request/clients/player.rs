@@ -3,7 +3,7 @@ use crate::{
     request::clients::{
         client::{ClientPrebuild, ClientWithHeaders},
         endpoints::PLAYER_ENDPOINT,
-        shared_params::{CLIENT_NAME_HEADER_NAME, CLIENT_VERSION_HEADER_NAME, CONTENT_TYPE_HEADER, GL, HL, ORIGIN_HEADER, USER_AGENT_HEADER_NAME},
+        shared_params::{CLIENT_NAME_HEADER_NAME, CLIENT_VERSION_HEADER_NAME, CONTENT_TYPE_HEADER, GL, HL, ORIGIN_HEADER, TIME_ZONE, USER_AGENT_HEADER_NAME, UTC_OFFSET_MINUTES},
     },
 };
 
@@ -43,6 +43,8 @@ impl ClientWithHeaders for PlayerClient {
                     device_model: Some(DEVICE_MODEL),
                     hl: HL,
                     gl: GL,
+                    time_zone: TIME_ZONE,
+                    utc_offset_minutes: UTC_OFFSET_MINUTES,
                     visitor_data,
                 },
             },

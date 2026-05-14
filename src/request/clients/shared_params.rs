@@ -3,6 +3,8 @@ type Header = (&'static str, &'static str);
 // Client params
 pub const HL: &str = "en";
 pub const GL: &str = "US";
+pub const TIME_ZONE: &str = "UTC";
+pub const UTC_OFFSET_MINUTES: &str = "0";
 
 // Header names
 pub const ORIGIN_HEADER_NAME: &str = "Origin";

@@ -25,4 +25,6 @@ pub struct ClientBody<'de> {
     pub hl: &'de str,
     pub gl: &'de str,
     pub visitor_data: Option<String>,
+    pub time_zone: &'de str,
+    pub utc_offset_minutes: &'de str,
 }
