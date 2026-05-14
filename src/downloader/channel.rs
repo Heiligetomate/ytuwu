@@ -4,7 +4,7 @@ use crate::{
         media::{Media, MediaBrowse},
         playlist::{Playlist, PlaylistBrowse},
     },
-    id_resolver::ChannelId,
+    id_resolver::channel_id::ChannelId,
 };
 
 #[derive(Debug)]

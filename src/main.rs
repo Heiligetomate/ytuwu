@@ -1,6 +1,7 @@
 use std::path::Path;
 
-use ytuwu::id_resolver::{GetId, IdCollection};
+use ytuwu::id_resolver::id::GetId;
+use ytuwu::id_resolver::id_collection::IdCollection;
 use ytuwu::itag::{AudioItag, Itag};
 use ytuwu::{Downloader, Result, ThumbnailResolution};
 

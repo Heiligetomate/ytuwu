@@ -8,7 +8,7 @@ use crate::{
         thumbnail::PlaylistThumbnail,
     },
     error::Result,
-    id_resolver::{BrowseId, Id, VideoId},
+    id_resolver::{id::Id, playlist_id::BrowseId, video_id::VideoId},
     models::{fast_browse::BrowseResponse, itag::Itag, player::ThumbnailResolution},
     name_trimmer,
     request::{clients::browse::BrowseClient, core::captcha_bypass},

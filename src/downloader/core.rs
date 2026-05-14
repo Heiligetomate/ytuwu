@@ -9,7 +9,7 @@ use crate::{
         thumbnail::{PlaylistThumbnail, Thumbnail},
     },
     error::Result,
-    id_resolver::{BrowseId, ShortId, VideoId},
+    id_resolver::{playlist_id::BrowseId, short_id::ShortId, video_id::VideoId},
     itag::ShortVideoItag,
     models::{
         itag::{AudioItag, Itag, VideoItag},

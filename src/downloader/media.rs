@@ -1,19 +1,21 @@
 use std::fmt::Debug;
 
-use crate::downloader::downloaded::{DownloadedDualStreamMedia, DownloadedMedia};
-use crate::downloader::media_stream::{MediaStream, VideoStream};
-use crate::downloader::thumbnail::Thumbnail;
-use crate::downloader::util::*;
-use crate::error::Result;
-use crate::id_resolver::{Id, ShortId};
-use crate::itag::VideoItag;
-use crate::models::itag::AudioItag;
-use crate::request::clients::player::PlayerClient;
 use crate::{
-    id_resolver::VideoId,
-    models::{itag::Itag, player::PlayerResponse, player::ThumbnailResolution},
+    downloader::{
+        downloaded::{DownloadedDualStreamMedia, DownloadedMedia},
+        media_stream::{MediaStream, VideoStream},
+        thumbnail::Thumbnail,
+        util::*,
+    },
+    error::Result,
+    id_resolver::{id::Id, short_id::ShortId, video_id::VideoId},
+    itag::VideoItag,
+    models::{
+        itag::{AudioItag, Itag},
+        player::{PlayerResponse, ThumbnailResolution},
+    },
     name_trimmer::trim,
-    request::core::captcha_bypass,
+    request::{clients::player::PlayerClient, core::captcha_bypass},
 };
 use bytes::Bytes;
 
