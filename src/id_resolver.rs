@@ -2,13 +2,18 @@ use serde::{Deserialize, Serialize};
 use std::fmt;
 use url::Url;
 
-use crate::{Result, error::YtuwuError};
+use crate::{
+    Result,
+    error::YtuwuError,
+    request::clients::{browse::BrowseClient, channel::ChannelClient, client::ClientWithHeaders, player::PlayerClient},
+};
 
 pub trait GetId<T: Id> {
     fn get_id(&self) -> Result<T>;
 }
 
 pub trait Id {
+    type Client: ClientWithHeaders;
     fn new<T: Into<String>>(id: T) -> Self;
     fn get_id(self) -> String;
     fn as_str(&self) -> &str;
@@ -43,6 +48,8 @@ pub struct IdCollection {
 }
 
 impl Id for BrowseId {
+    type Client = BrowseClient;
+
     fn new<T: Into<String>>(id: T) -> Self {
         Self { id: format!("VL{}", id.into()) }
     }
@@ -57,6 +64,8 @@ impl Id for BrowseId {
 }
 
 impl Id for VideoId {
+    type Client = PlayerClient;
+
     fn new<T: Into<String>>(id: T) -> Self {
         Self { id: id.into() }
     }
@@ -71,6 +80,8 @@ impl Id for VideoId {
 }
 
 impl Id for ChannelId {
+    type Client = ChannelClient;
+
     fn new<T: Into<String>>(id: T) -> Self {
         Self { id: id.into() }
     }
@@ -85,6 +96,8 @@ impl Id for ChannelId {
 }
 
 impl Id for ShortId {
+    type Client = PlayerClient;
+
     fn new<T: Into<String>>(id: T) -> Self {
         Self { id: id.into() }
     }

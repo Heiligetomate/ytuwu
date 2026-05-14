@@ -1,7 +1,7 @@
 use std::path::Path;
 
 use ytuwu::id_resolver::{GetId, IdCollection};
-use ytuwu::itag::{AudioItag, Itag, ShortVideoItag};
+use ytuwu::itag::{AudioItag, Itag};
 use ytuwu::{Downloader, Result, ThumbnailResolution};
 
 #[rustfmt::skip]

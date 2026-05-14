@@ -1,7 +1,7 @@
 pub mod body;
-mod browse;
-mod channel;
+pub mod browse;
+pub mod channel;
 pub mod client;
 mod endpoints;
-mod player;
+pub mod player;
 mod shared_params;

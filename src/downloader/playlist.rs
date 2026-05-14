@@ -9,10 +9,9 @@ use crate::{
     },
     error::Result,
     id_resolver::{BrowseId, Id, VideoId},
-    models::fast_browse::BrowseResponse,
-    models::{itag::Itag, player::ThumbnailResolution},
+    models::{fast_browse::BrowseResponse, itag::Itag, player::ThumbnailResolution},
     name_trimmer,
-    request::core::captcha_bypass,
+    request::{clients::browse::BrowseClient, core::captcha_bypass},
 };
 
 #[derive(Debug)]
@@ -37,7 +36,7 @@ impl PlaylistBrowse {
         Self { browse_id: id }
     }
     pub async fn browse(self) -> Result<PlaylistContentBrowse> {
-        let response: BrowseResponse = captcha_bypass(crate::request::core::Endpoint::Browse(self.browse_id), 2).await?;
+        let response: BrowseResponse = captcha_bypass::<BrowseClient>(self.browse_id.as_str(), 2).await?;
         let ids = response.get_ids()?;
         let title = response.get_album_title()?.to_owned();
         let trimmed_title = name_trimmer::trim(title, "-");

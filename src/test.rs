@@ -1,9 +1,11 @@
 use crate::{
     error::Result,
     id_resolver::{self, BrowseId, GetId, Id, VideoId},
-    models::fast_browse::BrowseResponse,
-    models::player::PlayerResponse,
-    request::core::{Endpoint, captcha_bypass},
+    models::{fast_browse::BrowseResponse, player::PlayerResponse},
+    request::{
+        clients::{browse::BrowseClient, player::PlayerClient},
+        core::captcha_bypass,
+    },
     shared_traits::{Response, Status},
 };
 
@@ -36,7 +38,7 @@ fn test_id_resolver() {
 #[tokio::test]
 async fn test_player_endpoint() {
     let video_id = VideoId::new("lndG8BiZCmM");
-    let response: Result<PlayerResponse> = captcha_bypass(Endpoint::Player(video_id), 2).await;
+    let response: Result<PlayerResponse> = captcha_bypass::<PlayerClient>(video_id.as_str(), 2).await;
 
     assert!(response.is_ok());
 
@@ -49,7 +51,7 @@ async fn test_player_endpoint() {
 #[tokio::test]
 async fn test_browse_endpoint() {
     let browse_id = BrowseId::new("OLAK5uy_nVY7Ekmu-3gJilFDUz8xrjkzmVmVnQSMQ");
-    let response: Result<BrowseResponse> = captcha_bypass(Endpoint::Browse(browse_id), 2).await;
+    let response: Result<BrowseResponse> = captcha_bypass::<BrowseClient>(browse_id.as_str(), 2).await;
 
     assert!(response.is_ok());
 

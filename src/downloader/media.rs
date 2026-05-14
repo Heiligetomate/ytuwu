@@ -8,6 +8,7 @@ use crate::error::Result;
 use crate::id_resolver::{Id, ShortId};
 use crate::itag::VideoItag;
 use crate::models::itag::AudioItag;
+use crate::request::clients::player::PlayerClient;
 use crate::{
     id_resolver::VideoId,
     models::{itag::Itag, player::PlayerResponse, player::ThumbnailResolution},
@@ -120,7 +121,7 @@ impl MediaBrowse {
     }
 
     pub async fn browse(self) -> Result<Media> {
-        let response: PlayerResponse = captcha_bypass(crate::request::core::Endpoint::Player(self.video_id), 2).await?;
+        let response: PlayerResponse = captcha_bypass::<PlayerClient>(&self.video_id.as_str(), 2).await?;
         let title = response.get_title()?.to_owned();
         let trimmed_title = trim(title, "-");
         Ok(Media {
