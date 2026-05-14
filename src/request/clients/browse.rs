@@ -21,7 +21,7 @@ pub struct BrowseClient {}
 impl ClientWithHeaders for BrowseClient {
     type Response = BrowseResponse;
 
-    fn get_client() -> ClientPrebuild {
+    fn build_headers() -> ClientPrebuild {
         let client = reqwest::Client::new();
 
         client

@@ -22,7 +22,7 @@ pub struct ChannelClient {}
 impl ClientWithHeaders for ChannelClient {
     type Response = ChannelBrowseResponse;
 
-    fn get_client() -> ClientPrebuild {
+    fn build_headers() -> ClientPrebuild {
         let client = reqwest::Client::new();
 
         client
