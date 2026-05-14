@@ -1,5 +1,9 @@
 type Header = (&'static str, &'static str);
 
+// Client params
+pub const HL: &str = "en";
+pub const GL: &str = "US";
+
 // Header names
 pub const ORIGIN_HEADER_NAME: &str = "Origin";
 pub const CONTENT_TYPE_HEADER_NAME: &str = "Content-Type";
