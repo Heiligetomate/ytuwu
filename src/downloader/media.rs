@@ -15,7 +15,7 @@ use crate::{
         player::{PlayerResponse, ThumbnailResolution},
     },
     name_trimmer::trim,
-    request::{clients::player::PlayerClient, core::captcha_bypass},
+    request::core::captcha_bypass,
 };
 use bytes::Bytes;
 
@@ -123,7 +123,7 @@ impl MediaBrowse {
     }
 
     pub async fn browse(self) -> Result<Media> {
-        let response: PlayerResponse = captcha_bypass::<PlayerClient>(&self.video_id.as_str(), 2).await?;
+        let response: PlayerResponse = captcha_bypass(&self.video_id, 2).await?;
         let title = response.get_title()?.to_owned();
         let trimmed_title = trim(title, "-");
         Ok(Media {

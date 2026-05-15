@@ -8,10 +8,7 @@ use crate::{
     },
     models::response::{Response, Status},
     models::{fast_browse::BrowseResponse, player::PlayerResponse},
-    request::{
-        clients::{browse::BrowseClient, player::PlayerClient},
-        core::captcha_bypass,
-    },
+    request::core::captcha_bypass,
 };
 
 #[test]
@@ -43,7 +40,7 @@ fn test_id_resolver() {
 #[tokio::test]
 async fn test_player_endpoint() {
     let video_id = VideoId::new("lndG8BiZCmM");
-    let response: Result<PlayerResponse> = captcha_bypass::<PlayerClient>(video_id.as_str(), 2).await;
+    let response: Result<PlayerResponse> = captcha_bypass(&video_id, 2).await;
 
     assert!(response.is_ok());
 
@@ -56,7 +53,7 @@ async fn test_player_endpoint() {
 #[tokio::test]
 async fn test_browse_endpoint() {
     let browse_id = BrowseId::new("OLAK5uy_nVY7Ekmu-3gJilFDUz8xrjkzmVmVnQSMQ");
-    let response: Result<BrowseResponse> = captcha_bypass::<BrowseClient>(browse_id.as_str(), 2).await;
+    let response: Result<BrowseResponse> = captcha_bypass(&browse_id, 2).await;
 
     assert!(response.is_ok());
 
