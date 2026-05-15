@@ -6,7 +6,6 @@ mod models;
 mod name_trimmer;
 //mod player_model;
 mod request;
-mod shared_traits;
 
 #[cfg(test)]
 mod test;

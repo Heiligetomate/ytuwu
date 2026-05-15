@@ -3,7 +3,7 @@ use serde::Deserialize;
 use crate::{
     error::{Result, YtuwuError},
     models::itag::Itag,
-    shared_traits::{self, Response},
+    models::response::{Response, Status},
 };
 
 #[derive(Deserialize, Debug)]
@@ -174,14 +174,14 @@ impl Response for PlayerResponse {
         None
     }
 
-    fn get_status(&self) -> shared_traits::Status {
+    fn get_status(&self) -> Status {
         if let Some(playability_status) = &self.playability_status {
             return match playability_status.status {
-                PlayabilityStatusValue::Ok => shared_traits::Status::Success,
-                PlayabilityStatusValue::LoginRequired => shared_traits::Status::Login,
-                _ => shared_traits::Status::Error,
+                PlayabilityStatusValue::Ok => Status::Success,
+                PlayabilityStatusValue::LoginRequired => Status::Login,
+                _ => Status::Error,
             };
         }
-        shared_traits::Status::Error
+        Status::Error
     }
 }

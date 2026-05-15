@@ -2,7 +2,7 @@ use serde::Deserialize;
 
 use crate::{
     error::{Result, YtuwuError},
-    shared_traits::Response,
+    models::response::{Response, Status},
 };
 
 #[derive(Deserialize, Debug)]
@@ -179,11 +179,11 @@ impl BrowseResponse {
 }
 
 impl Response for BrowseResponse {
-    fn get_status(&self) -> crate::shared_traits::Status {
+    fn get_status(&self) -> Status {
         if self.error.is_some() {
-            return crate::shared_traits::Status::Error;
+            return Status::Error;
         }
-        crate::shared_traits::Status::Success
+        Status::Success
     }
 
     fn get_visitor_data(&self) -> Option<String> {

@@ -1,7 +1,7 @@
 use crate::{
     error::{Result, YtuwuError},
+    models::response::{Response, Status},
     request::clients::client::ClientWithHeaders,
-    shared_traits::{Response, Status},
 };
 use serde::de::DeserializeOwned;
 

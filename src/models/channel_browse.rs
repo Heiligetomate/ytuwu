@@ -1,7 +1,6 @@
 use serde::Deserialize;
 
-use crate::shared_traits::Response;
-
+use crate::models::response::{Response, Status};
 // TODO: some should be Option<>.
 
 #[derive(Deserialize, Debug)]
@@ -166,11 +165,11 @@ struct SubtitleRun {
 }
 
 impl Response for ChannelBrowseResponse {
-    fn get_status(&self) -> crate::shared_traits::Status {
+    fn get_status(&self) -> Status {
         if self.contents.is_none() {
-            return crate::shared_traits::Status::Error;
+            return Status::Error;
         }
-        crate::shared_traits::Status::Success
+        Status::Success
     }
 
     fn get_visitor_data(&self) -> Option<String> {

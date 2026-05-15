@@ -1,6 +1,6 @@
 use reqwest::RequestBuilder;
 
-use crate::{request::clients::body::RequestBody, shared_traits::Response};
+use crate::{models::response::Response, request::clients::body::RequestBody};
 
 pub type ClientPrebuild = RequestBuilder;
 

@@ -6,12 +6,12 @@ use crate::{
         playlist_id::BrowseId,
         video_id::VideoId,
     },
+    models::response::{Response, Status},
     models::{fast_browse::BrowseResponse, player::PlayerResponse},
     request::{
         clients::{browse::BrowseClient, player::PlayerClient},
         core::captcha_bypass,
     },
-    shared_traits::{Response, Status},
 };
 
 #[test]
