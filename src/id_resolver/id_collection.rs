@@ -18,6 +18,7 @@ pub struct IdCollection {
 }
 
 impl IdCollection {
+    // This is not good!! (i think)
     pub fn from_url<T: Into<String>>(raw_url: T) -> Result<Self> {
         let mut result = Self {
             video_id: None,

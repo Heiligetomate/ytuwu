@@ -6,8 +6,11 @@ use crate::{
         playlist_id::BrowseId,
         video_id::VideoId,
     },
-    models::response::{Response, Status},
-    models::{fast_browse::BrowseResponse, player::PlayerResponse},
+    models::{
+        fast_browse::FastBrowseResponse,
+        player::PlayerResponse,
+        response::{BrowseResponse, Response, Status},
+    },
     request::core::captcha_bypass,
 };
 
@@ -53,12 +56,12 @@ async fn test_player_endpoint() {
 #[tokio::test]
 async fn test_browse_endpoint() {
     let browse_id = BrowseId::new("OLAK5uy_nVY7Ekmu-3gJilFDUz8xrjkzmVmVnQSMQ");
-    let response: Result<BrowseResponse> = captcha_bypass(&browse_id, 2).await;
+    let response: Result<FastBrowseResponse> = captcha_bypass(&browse_id, 2).await;
 
     assert!(response.is_ok());
 
     let response = response.unwrap();
-    let ids = response.get_ids();
+    let ids = response.get_video_ids();
 
     assert!(ids.is_ok());
 

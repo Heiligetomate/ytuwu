@@ -1,5 +1,5 @@
 use crate::{
-    models::fast_browse::BrowseResponse,
+    models::fast_browse::FastBrowseResponse,
     request::clients::{
         client::{ClientPrebuild, ClientWithHeaders},
         endpoints::BROWSE_ENDPOINT,
@@ -19,7 +19,7 @@ const DEVICE_MODEL: &str = "Quest 2";
 pub struct BrowseClient {}
 
 impl ClientWithHeaders for BrowseClient {
-    type Response = BrowseResponse;
+    type Response = FastBrowseResponse;
 
     fn build_headers() -> ClientPrebuild {
         let client = reqwest::Client::new();

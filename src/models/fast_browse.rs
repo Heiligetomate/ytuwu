@@ -2,12 +2,13 @@ use serde::Deserialize;
 
 use crate::{
     error::{Result, YtuwuError},
-    models::response::{Response, Status},
+    id_resolver::{id::Id, video_id::VideoId},
+    models::response::{BrowseResponse, Response, Status},
 };
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct BrowseResponse {
+pub struct FastBrowseResponse {
     error: Option<ErrorResponse>,
     contents: Option<FullResponse>,
     response_context: Option<ResponseContext>,
@@ -130,9 +131,12 @@ impl BrowseHeader {
     }
 }
 
-impl FullResponse {
-    pub fn get_ids(&self) -> Result<Vec<&str>> {
+impl BrowseResponse for FastBrowseResponse {
+    fn get_video_ids(&self) -> Result<Vec<VideoId>> {
         let ids = self
+            .contents
+            .as_ref()
+            .ok_or(YtuwuError::BrowseDataNotFound("contents"))?
             .single_column_browse_results_renderer
             .tabs
             .get(0)
@@ -152,22 +156,21 @@ impl FullResponse {
             .playlist_video_list_renderer
             .as_ref()
             .ok_or(YtuwuError::BrowseDataNotFound("playlist video list renderer"))?
-            .get_ids();
+            .contents
+            .iter()
+            .filter_map(|item| {
+                item.playlist_video_renderer
+                    .video_id
+                    .as_ref()
+            })
+            .map(|id| VideoId::new(id.as_str()))
+            .collect();
+
         Ok(ids)
     }
 }
 
-impl BrowseResponse {
-    pub fn get_ids(&self) -> Result<Vec<&str>> {
-        let ids = self
-            .contents
-            .as_ref()
-            .ok_or(YtuwuError::BrowseDataNotFound("video ids"))?
-            .get_ids()?;
-
-        Ok(ids)
-    }
-
+impl FastBrowseResponse {
     pub fn get_album_title(&self) -> Result<&str> {
         let header = self
             .header
@@ -178,7 +181,7 @@ impl BrowseResponse {
     }
 }
 
-impl Response for BrowseResponse {
+impl Response for FastBrowseResponse {
     fn get_status(&self) -> Status {
         if self.error.is_some() {
             return Status::Error;

@@ -8,8 +8,8 @@ use crate::{
         thumbnail::PlaylistThumbnail,
     },
     error::Result,
-    id_resolver::{id::Id, playlist_id::BrowseId, video_id::VideoId},
-    models::{fast_browse::BrowseResponse, itag::Itag, player::ThumbnailResolution},
+    id_resolver::playlist_id::BrowseId,
+    models::{fast_browse::FastBrowseResponse, itag::Itag, player::ThumbnailResolution, response::BrowseResponse},
     name_trimmer,
     request::core::captcha_bypass,
 };
@@ -36,16 +36,13 @@ impl PlaylistBrowse {
         Self { browse_id: id }
     }
     pub async fn browse(self) -> Result<PlaylistContentBrowse> {
-        let response: BrowseResponse = captcha_bypass(&self.browse_id, 2).await?;
-        let ids = response.get_ids()?;
+        let response: FastBrowseResponse = captcha_bypass(&self.browse_id, 2).await?;
+        let mut ids = response.get_video_ids()?;
         let title = response.get_album_title()?.to_owned();
         let trimmed_title = name_trimmer::trim(title, "-");
         let media: Vec<MediaBrowse> = ids
-            .iter()
-            .map(|id| {
-                let video_id = VideoId::new(*id);
-                MediaBrowse::new(video_id)
-            })
+            .drain(..)
+            .map(|id| MediaBrowse::new(id))
             .collect();
         Ok(PlaylistContentBrowse { title: trimmed_title, media })
     }
