@@ -2,6 +2,7 @@ use std::fmt::Debug;
 
 use crate::{
     downloader::{
+        channel_test::get_channel_ids_blablalba,
         downloaded::{DownloadedDualStreamMedia, DownloadedMedia, DownloadedPlaylist},
         media::MediaBrowse,
         media_stream::{ShortVideoStream, VideoStream},
@@ -9,7 +10,7 @@ use crate::{
         thumbnail::{PlaylistThumbnail, Thumbnail},
     },
     error::Result,
-    id_resolver::{playlist_id::BrowseId, short_id::ShortId, video_id::VideoId},
+    id_resolver::{channel_id::ChannelId, playlist_id::BrowseId, short_id::ShortId, video_id::VideoId},
     itag::ShortVideoItag,
     models::{
         itag::{AudioItag, Itag, VideoItag},
@@ -103,5 +104,11 @@ impl Downloader {
             .download_dual_stream(video_itag, audio_itag, &thumbnail_resolution)
             .await?
         )
+    }
+
+    pub async fn channel_test(&self, id: ChannelId) -> Result<()> {
+        get_channel_ids_blablalba(id).await?;
+
+        Ok(())
     }
 }

@@ -1,5 +1,7 @@
 use serde::Deserialize;
 
+use crate::models::response::Response;
+
 #[derive(Deserialize, Debug)]
 pub struct SlowAlbumResponse {
     contents: AlbumContents,
@@ -116,4 +118,14 @@ struct Thumbnail {
     url: String,
     width: u32,
     height: u32,
+}
+
+impl Response for SlowAlbumResponse {
+    fn get_status(&self) -> super::response::Status {
+        todo!()
+    }
+
+    fn get_visitor_data(&self) -> Option<String> {
+        todo!()
+    }
 }

@@ -12,20 +12,15 @@ async fn main() -> Result<()> {
     //let media_url = "https://music.youtube.com/watch?v=lndG8BiZCmM";
     //let short_url = "https://youtube.com/shorts/any_short";
 
-    let playlist_url = "https://music.youtube.com/playlist?list=OLAK5uy_nVY7Ekmu-3gJilFDUz8xrjkzmVmVnQSMQ";
-    let id_collection = IdCollection::from_url(playlist_url)?;
+    //let playlist_url = "https://music.youtube.com/playlist?list=OLAK5uy_nVY7Ekmu-3gJilFDUz8xrjkzmVmVnQSMQ";
+    
+    let channel_url = "https://music.youtube.com/browse/MPADUC6Tg7GWjZw48EiZ8m5bRtWg";
+
+    let id_collection = IdCollection::from_url(channel_url)?;
 
     let downloader = Downloader::new();
-    let media = downloader
-        .download_full_playlist(
-            id_collection.get_id()?, 
-            AudioItag::highest(), 
-            ThumbnailResolution::Low
-            )
-        .await?;
+    let media = downloader.channel_test(id_collection.get_id()?).await?;
     let path = Path::new("teehee");
-    println!("title: {}", media.metadata.title);
-    media.save(&path)?;
 
     Ok(())
 }
