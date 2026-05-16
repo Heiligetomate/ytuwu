@@ -61,6 +61,16 @@ impl IdCollection {
         if let Some(url_parts) = segments {
             if let Some(first_segment) = url_parts.get(0) {
                 match *first_segment {
+                    "browse" => {
+                        let id = url_parts 
+                            .get(1)
+                            .ok_or(YtuwuError::UrlParsing("failed to get the browse endpoint id"))?;
+                        if id.starts_with("MPAD") {
+                            result.channel_id = Some(ChannelId::new(*id));
+                        } else {
+                            result.browse_id = Some(BrowseId::new(*id));
+                        }
+                    }
                     "channel" => {
                         let id = url_parts
                             .get(1)
