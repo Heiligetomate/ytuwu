@@ -5,3 +5,4 @@ pub mod client;
 mod endpoints;
 pub mod player;
 mod shared_params;
+pub mod slow_browse;
