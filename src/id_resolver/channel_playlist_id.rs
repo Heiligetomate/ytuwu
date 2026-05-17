@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::{id_resolver::id::Id, request::clients::browse::BrowseClient};
+use crate::{id_resolver::id::Id, request::clients::slow_browse::SlowBrowseClient};
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct ChannelPlaylistId {
@@ -8,8 +8,7 @@ pub struct ChannelPlaylistId {
 }
 
 impl Id for ChannelPlaylistId {
-    type Client = BrowseClient; /////// NONASDOJASD IOAJD OIJASDO IJAOSDJI OAISDJ NOOOOO WRONG
-    ///CLIENT
+    type Client = SlowBrowseClient;
 
     fn get_id(self) -> String {
         self.id
