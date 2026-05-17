@@ -46,8 +46,9 @@ where
     }
     pub async fn browse(self) -> Result<PlaylistContentBrowse> {
         println!("{}", self.browse_id.as_str());
-        let test_id = ChannelPlaylistId::new("MPREb_dQoH7BxK35k");
-        let response = captcha_bypass(&self.browse_id, 2).await?;
+        let test_id = ChannelPlaylistId::new("MPREb_ZFVkxH6MkHf");
+        let response: SlowBrowseResponse = captcha_bypass(&test_id, 1).await?;
+        //let response = captcha_bypass(&self.browse_id, 2).await?;
         let mut ids = response.get_video_ids()?;
         let title = response.get_album_title()?.to_owned();
         let trimmed_title = name_trimmer::trim(title, "-");
