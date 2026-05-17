@@ -1,4 +1,4 @@
-use crate::{Result, request::clients::client::ClientWithHeaders};
+use crate::{Result, models::response::BrowseResponse, request::clients::client::ClientWithHeaders};
 
 pub trait GetId<T: Id> {
     fn get_id(&self) -> Result<T>;
@@ -9,4 +9,8 @@ pub trait Id {
     fn new<T: Into<String>>(id: T) -> Self;
     fn get_id(self) -> String;
     fn as_str(&self) -> &str;
+}
+
+pub trait BrowseId: Id {
+    type BrowseResponse: BrowseResponse;
 }

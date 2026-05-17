@@ -1,16 +1,18 @@
 use std::fmt::Debug;
 
+use reqwest::get;
+
 use crate::{
     downloader::{
-        channel_test::get_channel_ids_blablalba,
+        channel_test::get_first_ep_for_testing_meow,
         downloaded::{DownloadedDualStreamMedia, DownloadedMedia, DownloadedPlaylist},
         media::MediaBrowse,
-        media_stream::{ShortVideoStream, VideoStream},
+        media_stream::{AudioStream, ShortVideoStream, VideoStream},
         playlist::PlaylistBrowse,
         thumbnail::{PlaylistThumbnail, Thumbnail},
     },
     error::Result,
-    id_resolver::{channel_id::ChannelId, playlist_id::BrowseId, short_id::ShortId, video_id::VideoId},
+    id_resolver::{channel_id::ChannelId, playlist_id::FastBrowseId, short_id::ShortId, video_id::VideoId},
     itag::ShortVideoItag,
     models::{
         itag::{AudioItag, Itag, VideoItag},
@@ -70,7 +72,7 @@ impl Downloader {
     }
 
     #[rustfmt::skip]
-    pub async fn download_playlist_thumbnails(&self, browse_id: BrowseId, thumbnail_resolution: ThumbnailResolution) -> Result<PlaylistThumbnail> {
+    pub async fn download_playlist_thumbnails(&self, browse_id: FastBrowseId, thumbnail_resolution: ThumbnailResolution) -> Result<PlaylistThumbnail> {
         Ok(PlaylistBrowse::new(browse_id)
             .browse()
             .await?
@@ -81,7 +83,7 @@ impl Downloader {
     }
 
     #[rustfmt::skip]
-    pub async fn download_full_playlist<I>(&self, browse_id: BrowseId, itag: I, thumbnail_resolution: ThumbnailResolution) -> Result<DownloadedPlaylist<I::Stream>>
+    pub async fn download_full_playlist<I>(&self, browse_id: FastBrowseId, itag: I, thumbnail_resolution: ThumbnailResolution) -> Result<DownloadedPlaylist<I::Stream>>
     where
         I: Itag + Copy + Debug,
         I::Stream: Debug,
@@ -106,9 +108,16 @@ impl Downloader {
         )
     }
 
-    pub async fn channel_test(&self, id: ChannelId) -> Result<()> {
-        get_channel_ids_blablalba(id).await?;
+    pub async fn channel_test(&self, id: ChannelId) -> Result<DownloadedPlaylist<AudioStream>> {
+        let ep_id = get_first_ep_for_testing_meow(id).await?;
+        let res = PlaylistBrowse::new(ep_id)
+            .browse()
+            .await?
+            .browse()
+            .await?
+            .download_full(AudioItag::OpusMedium, ThumbnailResolution::Low)
+            .await?;
 
-        Ok(())
+        Ok(res)
     }
 }

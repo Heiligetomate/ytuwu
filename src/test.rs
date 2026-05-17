@@ -3,7 +3,7 @@ use crate::{
     id_resolver::{
         id::{GetId, Id},
         id_collection::IdCollection,
-        playlist_id::BrowseId,
+        playlist_id::FastBrowseId,
         video_id::VideoId,
     },
     models::{
@@ -35,9 +35,9 @@ fn test_id_resolver() {
     let mixed_id_collection = mixed_id_collection.unwrap();
 
     assert_eq!(video_id_collecton.get_id().ok(), Some(VideoId::new("lndG8BiZCmM")));
-    assert_eq!(playlist_id_collection.get_id().ok(), Some(BrowseId::new("OLAK5uy_nVY7Ekmu-3gJilFDUz8xrjkzmVmVnQSMQ")));
+    assert_eq!(playlist_id_collection.get_id().ok(), Some(FastBrowseId::new("OLAK5uy_nVY7Ekmu-3gJilFDUz8xrjkzmVmVnQSMQ")));
     assert_eq!(mixed_id_collection.get_id().ok(), Some(VideoId::new("lndG8BiZCmM")));
-    assert_eq!(mixed_id_collection.get_id().ok(), Some(BrowseId::new("OLAK5uy_mrUmnJrX4QzJd6GeOuqcqT8EUMH1C0eTU")))
+    assert_eq!(mixed_id_collection.get_id().ok(), Some(FastBrowseId::new("OLAK5uy_mrUmnJrX4QzJd6GeOuqcqT8EUMH1C0eTU")))
 }
 
 #[tokio::test]
@@ -55,7 +55,7 @@ async fn test_player_endpoint() {
 
 #[tokio::test]
 async fn test_browse_endpoint() {
-    let browse_id = BrowseId::new("OLAK5uy_nVY7Ekmu-3gJilFDUz8xrjkzmVmVnQSMQ");
+    let browse_id = FastBrowseId::new("OLAK5uy_nVY7Ekmu-3gJilFDUz8xrjkzmVmVnQSMQ");
     let response: Result<FastBrowseResponse> = captcha_bypass(&browse_id, 2).await;
 
     assert!(response.is_ok());

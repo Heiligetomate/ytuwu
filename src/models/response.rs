@@ -5,7 +5,7 @@ pub trait Response {
     fn get_status(&self) -> Status;
 }
 
-pub trait BrowseResponse {
+pub trait BrowseResponse: Response {
     fn get_video_ids(&self) -> Result<Vec<VideoId>>;
     fn get_album_title(&self) -> Result<&str>;
 }

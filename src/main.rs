@@ -21,6 +21,7 @@ async fn main() -> Result<()> {
     let downloader = Downloader::new();
     let media = downloader.channel_test(id_collection.get_id()?).await?;
     let path = Path::new("teehee");
+    media.save(path)?;
 
     Ok(())
 }

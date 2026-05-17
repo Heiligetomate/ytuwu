@@ -2,20 +2,21 @@ use crate::{
     Result,
     error::YtuwuError,
     id_resolver::{
-        id::{GetId, Id},
+        id::{BrowseId, GetId, Id},
         id_collection::IdCollection,
     },
+    models::fast_browse::FastBrowseResponse,
     request::clients::browse::BrowseClient,
 };
 
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
-pub struct BrowseId {
+pub struct FastBrowseId {
     id: String,
 }
 
-impl Id for BrowseId {
+impl Id for FastBrowseId {
     type Client = BrowseClient;
 
     fn new<T: Into<String>>(id: T) -> Self {
@@ -31,11 +32,15 @@ impl Id for BrowseId {
     }
 }
 
-impl GetId<BrowseId> for IdCollection {
-    fn get_id(&self) -> Result<BrowseId> {
+impl GetId<FastBrowseId> for IdCollection {
+    fn get_id(&self) -> Result<FastBrowseId> {
         Ok(self
             .browse_id
             .clone()
             .ok_or(YtuwuError::NoIdFound)?)
     }
+}
+
+impl BrowseId for FastBrowseId {
+    type BrowseResponse = FastBrowseResponse;
 }

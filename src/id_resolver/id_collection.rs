@@ -4,7 +4,7 @@ use url::Url;
 use crate::{
     Result,
     error::YtuwuError,
-    id_resolver::{channel_id::ChannelId, playlist_id::BrowseId, short_id::ShortId, video_id::VideoId},
+    id_resolver::{channel_id::ChannelId, playlist_id::FastBrowseId, short_id::ShortId, video_id::VideoId},
 };
 
 use super::id::Id;
@@ -12,7 +12,7 @@ use super::id::Id;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct IdCollection {
     pub(super) video_id: Option<VideoId>,
-    pub(super) browse_id: Option<BrowseId>,
+    pub(super) browse_id: Option<FastBrowseId>,
     pub(super) short_id: Option<ShortId>,
     pub(super) channel_id: Option<ChannelId>,
 }
@@ -48,7 +48,7 @@ impl IdCollection {
         for param in params.drain(..) {
             match param.0.as_ref() {
                 "v" => result.video_id = Some(VideoId::new(param.1)),
-                "list" => result.browse_id = Some(BrowseId::new(param.1)),
+                "list" => result.browse_id = Some(FastBrowseId::new(param.1)),
                 _ => {}
             }
         }
@@ -63,13 +63,13 @@ impl IdCollection {
             if let Some(first_segment) = url_parts.get(0) {
                 match *first_segment {
                     "browse" => {
-                        let id = url_parts 
+                        let id = url_parts
                             .get(1)
                             .ok_or(YtuwuError::UrlParsing("failed to get the browse endpoint id"))?;
                         if id.starts_with("MPAD") {
                             result.channel_id = Some(ChannelId::new(*id));
                         } else {
-                            result.browse_id = Some(BrowseId::new(*id));
+                            result.browse_id = Some(FastBrowseId::new(*id));
                         }
                     }
                     "channel" => {

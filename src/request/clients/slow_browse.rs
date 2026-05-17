@@ -1,5 +1,5 @@
 use crate::{
-    models::slow_browse::SlowAlbumResponse,
+    models::slow_browse::SlowBrowseResponse,
     request::clients::{
         body::RequestBody,
         client::{ClientPrebuild, ClientWithHeaders},
@@ -18,7 +18,7 @@ const CLIENT_VERSION: &str = "1.20260428.11.00";
 pub struct SlowBrowseClient {}
 
 impl ClientWithHeaders for SlowBrowseClient {
-    type Response = SlowAlbumResponse;
+    type Response = SlowBrowseResponse;
 
     fn build_headers() -> ClientPrebuild {
         let client = reqwest::Client::new();

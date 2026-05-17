@@ -9,7 +9,7 @@ use crate::{
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct SlowAlbumResponse {
+pub struct SlowBrowseResponse {
     contents: Option<AlbumContents>,
     response_context: Option<ResponseContext>,
 }
@@ -144,7 +144,7 @@ struct FlexColumnRun {
     text: String,
 }
 
-impl Response for SlowAlbumResponse {
+impl Response for SlowBrowseResponse {
     fn get_status(&self) -> Status {
         match self.contents {
             Some(_) => Status::Success,
@@ -163,7 +163,7 @@ impl Response for SlowAlbumResponse {
     }
 }
 
-impl BrowseResponse for SlowAlbumResponse {
+impl BrowseResponse for SlowBrowseResponse {
     fn get_video_ids(&self) -> Result<Vec<VideoId>> {
         let ids = self
             .contents

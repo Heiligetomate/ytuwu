@@ -1,5 +1,7 @@
 use std::fmt::Debug;
 
+use serde::de::DeserializeOwned;
+
 use crate::{
     downloaded::DownloadedMedia,
     downloader::{
@@ -7,16 +9,19 @@ use crate::{
         media::{Media, MediaBrowse},
         thumbnail::PlaylistThumbnail,
     },
-    error::Result,
-    id_resolver::playlist_id::BrowseId,
-    models::{fast_browse::FastBrowseResponse, itag::Itag, player::ThumbnailResolution, response::BrowseResponse},
+    error::{Result, YtuwuError},
+    id_resolver::{
+        channel_playlist_id::ChannelPlaylistId,
+        id::{BrowseId, Id},
+    },
+    models::{itag::Itag, player::ThumbnailResolution, response::BrowseResponse, slow_browse::SlowBrowseResponse},
     name_trimmer,
-    request::core::captcha_bypass,
+    request::{clients::client::ClientWithHeaders, core::captcha_bypass},
 };
 
 #[derive(Debug)]
-pub struct PlaylistBrowse {
-    browse_id: BrowseId,
+pub struct PlaylistBrowse<B: BrowseId> {
+    browse_id: B,
 }
 
 #[derive(Debug)]
@@ -31,12 +36,18 @@ pub struct Playlist {
     media: Vec<Media>,
 }
 
-impl PlaylistBrowse {
-    pub fn new(id: BrowseId) -> Self {
+impl<B: BrowseId> PlaylistBrowse<B>
+where
+    <<B as Id>::Client as ClientWithHeaders>::Response: DeserializeOwned + Debug,
+    <<B as Id>::Client as ClientWithHeaders>::Response: BrowseResponse,
+{
+    pub fn new(id: B) -> Self {
         Self { browse_id: id }
     }
     pub async fn browse(self) -> Result<PlaylistContentBrowse> {
-        let response: FastBrowseResponse = captcha_bypass(&self.browse_id, 2).await?;
+        println!("{}", self.browse_id.as_str());
+        let test_id = ChannelPlaylistId::new("MPREb_dQoH7BxK35k");
+        let response = captcha_bypass(&self.browse_id, 2).await?;
         let mut ids = response.get_video_ids()?;
         let title = response.get_album_title()?.to_owned();
         let trimmed_title = name_trimmer::trim(title, "-");
@@ -84,5 +95,11 @@ impl Playlist {
             thumbnails.push(downloaded_thumbnail);
         }
         Ok(PlaylistThumbnail::new(thumbnails))
+    }
+
+    pub fn get_song_by_index(&self, index: usize) -> Result<&Media> {
+        self.media
+            .get(index)
+            .ok_or(YtuwuError::SongInPlaylistNotFound)
     }
 }

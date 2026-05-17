@@ -1,10 +1,17 @@
-use crate::{Result, id_resolver::channel_id::ChannelId, request::core::captcha_bypass};
+use crate::{
+    Result,
+    error::YtuwuError,
+    id_resolver::{channel_id::ChannelId, channel_playlist_id::ChannelPlaylistId},
+    request::core::captcha_bypass,
+};
 
-pub async fn get_channel_ids_blablalba(id: ChannelId) -> Result<()> {
+pub async fn get_first_ep_for_testing_meow(id: ChannelId) -> Result<ChannelPlaylistId> {
     let resp = captcha_bypass(&id, 1).await?;
     let ids = resp.extract_all_releases()?;
+    let test_ep = ids
+        .singles
+        .get(0)
+        .ok_or(YtuwuError::SongInPlaylistNotFound)?;
 
-    println!("{:#?}", ids);
-
-    Ok(())
+    Ok(test_ep.clone())
 }

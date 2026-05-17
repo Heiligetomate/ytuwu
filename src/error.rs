@@ -22,6 +22,7 @@ pub enum YtuwuError {
     WriteToFile,
     InvalidPath,
     NoIdFound,
+    SongInPlaylistNotFound,
 
     UrlParsing(&'static str),
 }
@@ -48,6 +49,7 @@ impl Display for YtuwuError {
             Self::InvalidPath => write!(f, "Invalid path format."),
             &Self::NoIdFound => write!(f, "Could not get id from collection"),
             Self::UrlParsing(e) => write!(f, "Error while parsing the url: {e}"),
+            Self::SongInPlaylistNotFound => write!(f, "Song was not found"),
         }
     }
 }

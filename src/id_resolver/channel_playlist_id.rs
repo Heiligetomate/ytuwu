@@ -1,6 +1,10 @@
 use serde::{Deserialize, Serialize};
 
-use crate::{id_resolver::id::Id, request::clients::slow_browse::SlowBrowseClient};
+use crate::{
+    id_resolver::id::{BrowseId, Id},
+    models::slow_browse::SlowBrowseResponse,
+    request::clients::slow_browse::SlowBrowseClient,
+};
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct ChannelPlaylistId {
@@ -21,4 +25,8 @@ impl Id for ChannelPlaylistId {
     fn new<T: Into<String>>(id: T) -> Self {
         Self { id: id.into() }
     }
+}
+
+impl BrowseId for ChannelPlaylistId {
+    type BrowseResponse = SlowBrowseResponse;
 }
