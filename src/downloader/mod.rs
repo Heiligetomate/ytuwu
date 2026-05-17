@@ -1,5 +1,6 @@
 // mod channel;
 mod channel_test;
+pub(crate) use channel_test::ChannelContentBrowse;
 pub mod core;
 pub mod downloaded;
 mod media;

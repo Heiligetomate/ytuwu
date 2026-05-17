@@ -1,6 +1,7 @@
 use std::fmt::Debug;
 
 use crate::{
+    downloaded::RawDownloadedMedia,
     downloader::{
         downloaded::{DownloadedDualStreamMedia, DownloadedMedia},
         media_stream::{MediaStream, VideoStream},
@@ -44,7 +45,15 @@ impl Media {
             .await?;
         Ok(chunk)
     }
-
+    pub async fn download_raw<I>(&self, itag: I) -> Result<RawDownloadedMedia<I::Stream>>
+    where
+        I: Itag + Copy,
+        I::Stream: Debug,
+    {
+        let stream = self.download_media_stream(itag).await?;
+        let title = &self.title;
+        Ok(RawDownloadedMedia::new(stream, title))
+    }
     //pub async fn download_video_stream<V: VideoStreamItag>
 
     pub async fn download_media_stream<I: Itag + Copy>(&self, itag: I) -> Result<I::Stream> {

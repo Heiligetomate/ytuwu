@@ -19,6 +19,11 @@ pub struct DownloadedMedia<M: MediaStream + Debug> {
     pub stream: M,
 }
 
+pub struct RawDownloadedMedia<M: MediaStream + Debug> {
+    pub title: String,
+    pub stream: M,
+}
+
 #[derive(Debug)]
 pub struct DownloadedDualStreamMedia<V: VideoStream> {
     pub metadata: MediaMetadata,
@@ -31,6 +36,33 @@ pub struct DownloadedDualStreamMedia<V: VideoStream> {
 pub struct DownloadedPlaylist<M: MediaStream + Debug> {
     pub media: Vec<DownloadedMedia<M>>,
     pub metadata: PlaylistMetadata,
+}
+
+pub struct RawDownloadedPlaylist<M: MediaStream + Debug> {
+    pub media: Vec<RawDownloadedMedia<M>>,
+}
+
+impl<M: MediaStream + Debug> RawDownloadedMedia<M> {
+    pub fn new(stream: M, title: &str) -> Self {
+        Self { title: title.to_owned(), stream }
+    }
+
+    pub fn save(&self, path: &Path) -> Result<()> {
+        self.stream.save(path, &self.title)
+    }
+}
+
+impl<M: MediaStream + Debug> RawDownloadedPlaylist<M> {
+    pub fn save(&self, path: &Path) -> Result<()> {
+        for media in self.media.iter() {
+            media.stream.save(path, &media.title)?;
+        }
+        Ok(())
+    }
+
+    pub fn new(media: Vec<RawDownloadedMedia<M>>) -> Self {
+        Self { media }
+    }
 }
 
 impl<V: VideoStream> DownloadedDualStreamMedia<V> {

@@ -2,6 +2,7 @@ use serde::Deserialize;
 
 use crate::{
     Result,
+    downloader::ChannelContentBrowse,
     error::YtuwuError,
     id_resolver::{channel_playlist_id::ChannelPlaylistId, id::Id},
     models::response::{Response, Status},
@@ -174,15 +175,8 @@ pub enum ChannelReleaseType {
     Ep,
 }
 
-#[derive(Debug)]
-pub struct ChannelIdCollection {
-    pub albums: Vec<ChannelPlaylistId>,
-    pub eps: Vec<ChannelPlaylistId>,
-    pub singles: Vec<ChannelPlaylistId>,
-}
-
 impl ChannelBrowseResponse {
-    pub fn extract_all_releases(&self) -> Result<ChannelIdCollection> {
+    pub fn extract_all_releases(&self) -> Result<ChannelContentBrowse> {
         let mut albums: Vec<ChannelPlaylistId> = Vec::new();
         let mut eps: Vec<ChannelPlaylistId> = Vec::new();
         let mut singles: Vec<ChannelPlaylistId> = Vec::new();
@@ -240,7 +234,7 @@ impl ChannelBrowseResponse {
             }
         }
 
-        Ok(ChannelIdCollection { albums, eps, singles })
+        Ok(ChannelContentBrowse { albums, eps, singles })
     }
 }
 

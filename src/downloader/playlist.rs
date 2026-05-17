@@ -3,15 +3,16 @@ use std::fmt::Debug;
 use serde::de::DeserializeOwned;
 
 use crate::{
-    downloaded::DownloadedMedia,
+    downloaded::{DownloadedMedia, RawDownloadedMedia, RawDownloadedPlaylist},
     downloader::{
         downloaded::DownloadedPlaylist,
         media::{Media, MediaBrowse},
+        media_stream::MediaStream,
         thumbnail::PlaylistThumbnail,
     },
     error::{Result, YtuwuError},
     id_resolver::id::{BrowseId, Id},
-    models::{itag::Itag, player::ThumbnailResolution, response::BrowseResponse, slow_browse::SlowBrowseResponse},
+    models::{itag::Itag, player::ThumbnailResolution, response::BrowseResponse},
     name_trimmer,
     request::{clients::client::ClientWithHeaders, core::captcha_bypass},
 };
@@ -65,6 +66,21 @@ impl PlaylistContentBrowse {
 }
 
 impl Playlist {
+    pub async fn download_single_stream<I>(mut self, itag: I) -> Result<RawDownloadedPlaylist<I::Stream>>
+    where
+        I: Itag + Copy,
+        I::Stream: MediaStream + Debug,
+    {
+        let mut downloaded: Vec<RawDownloadedMedia<I::Stream>> = Vec::new();
+
+        for item in self.media.drain(..) {
+            let downloaded_media = item.download_raw(itag).await?;
+            downloaded.push(downloaded_media);
+        }
+
+        Ok(RawDownloadedPlaylist::new(downloaded))
+    }
+
     pub async fn download_full<I>(mut self, itag: I, thumbnail_resolution: ThumbnailResolution) -> Result<DownloadedPlaylist<I::Stream>>
     where
         I: Itag + Copy + Debug,

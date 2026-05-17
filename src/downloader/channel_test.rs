@@ -1,17 +1,118 @@
+use std::{
+    fmt::Debug,
+    path::{Path, PathBuf},
+};
+
 use crate::{
     Result,
-    error::YtuwuError,
+    downloaded::{RawDownloadedMedia, RawDownloadedPlaylist},
+    downloader::{media_stream::MediaStream, playlist::PlaylistBrowse},
     id_resolver::{channel_id::ChannelId, channel_playlist_id::ChannelPlaylistId},
+    itag::Itag,
     request::core::captcha_bypass,
 };
 
-pub async fn get_first_ep_for_testing_meow(id: ChannelId) -> Result<ChannelPlaylistId> {
-    let resp = captcha_bypass(&id, 1).await?;
-    let ids = resp.extract_all_releases()?;
-    let test_ep = ids
-        .albums
-        .get(0)
-        .ok_or(YtuwuError::SongInPlaylistNotFound)?;
+pub struct ChannelBrowse {
+    id: ChannelId,
+}
 
-    Ok(test_ep.clone())
+pub struct ChannelContentBrowse {
+    pub albums: Vec<ChannelPlaylistId>,
+    pub eps: Vec<ChannelPlaylistId>,
+    pub singles: Vec<ChannelPlaylistId>,
+}
+
+pub struct DownloadedChannel<M: MediaStream + Debug> {
+    singles: Vec<RawDownloadedMedia<M>>,
+    eps: Vec<RawDownloadedPlaylist<M>>,
+    albums: Vec<RawDownloadedPlaylist<M>>,
+}
+
+impl ChannelBrowse {
+    pub fn new(channel_id: ChannelId) -> Self {
+        Self { id: channel_id }
+    }
+
+    pub async fn browse(self) -> Result<ChannelContentBrowse> {
+        let resp = captcha_bypass(&self.id, 1).await?;
+        resp.extract_all_releases()
+    }
+}
+
+impl ChannelContentBrowse {
+    pub async fn download<I>(mut self, itag: I) -> Result<DownloadedChannel<I::Stream>>
+    where
+        I: Itag + Copy,
+        I::Stream: Debug + MediaStream,
+    {
+        let mut downloaded_singles: Vec<RawDownloadedMedia<I::Stream>> = Vec::new();
+        let mut downloaded_eps: Vec<RawDownloadedPlaylist<I::Stream>> = Vec::new();
+        let mut downloaded_albums: Vec<RawDownloadedPlaylist<I::Stream>> = Vec::new();
+
+        for single in self.singles.drain(..) {
+            let single = PlaylistBrowse::new(single)
+                .browse()
+                .await?
+                .browse()
+                .await?
+                .get_song_by_index(0)?
+                .download_raw(itag)
+                .await?;
+            downloaded_singles.push(single);
+        }
+
+        for ep in self.eps.drain(..) {
+            let ep = PlaylistBrowse::new(ep)
+                .browse()
+                .await?
+                .browse()
+                .await?
+                .download_single_stream(itag)
+                .await?;
+            downloaded_eps.push(ep);
+        }
+
+        for album in self.albums.drain(..) {
+            let album = PlaylistBrowse::new(album)
+                .browse()
+                .await?
+                .browse()
+                .await?
+                .download_single_stream(itag)
+                .await?;
+            downloaded_albums.push(album);
+        }
+
+        Ok(DownloadedChannel {
+            albums: downloaded_albums,
+            eps: downloaded_eps,
+            singles: downloaded_singles,
+        })
+    }
+}
+
+impl<M: MediaStream + Debug> DownloadedChannel<M> {
+    pub fn save(&self, path: &Path) -> Result<()> {
+        let mut singles_path = PathBuf::from(&path);
+        let mut eps_path = PathBuf::from(&path);
+        let mut albums_path = PathBuf::from(&path);
+
+        singles_path.push("singles");
+        eps_path.push("eps");
+        albums_path.push("albums");
+
+        for single in self.singles.iter() {
+            single.save(&singles_path)?;
+        }
+
+        for ep in self.eps.iter() {
+            ep.save(&eps_path)?;
+        }
+
+        for album in self.albums.iter() {
+            album.save(&albums_path)?;
+        }
+
+        Ok(())
+    }
 }

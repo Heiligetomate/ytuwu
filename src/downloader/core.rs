@@ -1,13 +1,11 @@
 use std::fmt::Debug;
 
-use reqwest::get;
-
 use crate::{
     downloader::{
-        channel_test::get_first_ep_for_testing_meow,
+        channel_test::{ChannelBrowse, DownloadedChannel},
         downloaded::{DownloadedDualStreamMedia, DownloadedMedia, DownloadedPlaylist},
         media::MediaBrowse,
-        media_stream::{AudioStream, ShortVideoStream, VideoStream},
+        media_stream::{ShortVideoStream, VideoStream},
         playlist::PlaylistBrowse,
         thumbnail::{PlaylistThumbnail, Thumbnail},
     },
@@ -108,16 +106,15 @@ impl Downloader {
         )
     }
 
-    pub async fn channel_test(&self, id: ChannelId) -> Result<DownloadedPlaylist<AudioStream>> {
-        let ep_id = get_first_ep_for_testing_meow(id).await?;
-        let res = PlaylistBrowse::new(ep_id)
+    pub async fn download_channel<I>(&self, channel_id: ChannelId, itag: I) -> Result<DownloadedChannel<I::Stream>>
+    where
+        I: Itag + Copy + Debug,
+        I::Stream: Debug,
+    {
+        Ok(ChannelBrowse::new(channel_id)
             .browse()
             .await?
-            .browse()
-            .await?
-            .download_full(AudioItag::OpusMedium, ThumbnailResolution::Low)
-            .await?;
-
-        Ok(res)
+            .download(itag)
+            .await?)
     }
 }

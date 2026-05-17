@@ -3,7 +3,7 @@ use std::path::Path;
 use ytuwu::id_resolver::id::GetId;
 use ytuwu::id_resolver::id_collection::IdCollection;
 use ytuwu::itag::{AudioItag, Itag};
-use ytuwu::{Downloader, Result, ThumbnailResolution};
+use ytuwu::{Downloader, Result, ThumbnailResolution, downloaded};
 
 #[rustfmt::skip]
 #[tokio::main]
@@ -19,9 +19,9 @@ async fn main() -> Result<()> {
     let id_collection = IdCollection::from_url(channel_url)?;
 
     let downloader = Downloader::new();
-    let media = downloader.channel_test(id_collection.get_id()?).await?;
+    let downloaded_channel = downloader.download_channel(id_collection.get_id()?, AudioItag::AacLow).await?;
     let path = Path::new("teehee");
-    media.save(path)?;
+    downloaded_channel.save(path)?;
 
     Ok(())
 }
