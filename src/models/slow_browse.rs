@@ -10,94 +10,94 @@ use crate::{
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct SlowAlbumResponse {
-    pub contents: Option<AlbumContents>,
-    pub response_context: Option<ResponseContext>,
+    contents: Option<AlbumContents>,
+    response_context: Option<ResponseContext>,
 }
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct ResponseContext {
-    pub visitor_data: Option<String>,
+struct ResponseContext {
+    visitor_data: Option<String>,
 }
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct AlbumContents {
-    pub two_column_browse_results_renderer: TwoColumnBrowseResultsRenderer,
+struct AlbumContents {
+    two_column_browse_results_renderer: TwoColumnBrowseResultsRenderer,
 }
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct TwoColumnBrowseResultsRenderer {
-    pub secondary_contents: AlbumSecondaryContents,
+struct TwoColumnBrowseResultsRenderer {
+    secondary_contents: AlbumSecondaryContents,
 }
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct AlbumSecondaryContents {
-    pub section_list_renderer: AlbumSectionListRenderer,
+struct AlbumSecondaryContents {
+    section_list_renderer: AlbumSectionListRenderer,
 }
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct AlbumSectionListRenderer {
-    pub contents: Vec<AlbumSection>,
+struct AlbumSectionListRenderer {
+    contents: Vec<AlbumSection>,
 }
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct AlbumSection {
-    pub music_shelf_renderer: Option<MusicShelfRenderer>,
+struct AlbumSection {
+    music_shelf_renderer: Option<MusicShelfRenderer>,
 }
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct MusicShelfRenderer {
-    pub contents: Vec<AlbumTrackItem>,
+struct MusicShelfRenderer {
+    contents: Vec<AlbumTrackItem>,
 }
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct AlbumTrackItem {
-    pub music_responsive_list_item_renderer: MusicResponsiveListItemRenderer,
+struct AlbumTrackItem {
+    music_responsive_list_item_renderer: MusicResponsiveListItemRenderer,
 }
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct MusicResponsiveListItemRenderer {
-    pub playlist_item_data: PlaylistItemData,
-    pub flex_columns: Vec<FlexColumn>,
+struct MusicResponsiveListItemRenderer {
+    playlist_item_data: PlaylistItemData,
+    flex_columns: Vec<FlexColumn>,
 }
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct PlaylistItemData {
-    pub video_id: String,
-    pub playlist_set_video_id: String,
+struct PlaylistItemData {
+    video_id: String,
+    playlist_set_video_id: String,
 }
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct FlexColumn {
-    pub music_responsive_list_item_flex_column_renderer: FlexColumnRenderer,
+struct FlexColumn {
+    music_responsive_list_item_flex_column_renderer: FlexColumnRenderer,
 }
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct FlexColumnRenderer {
-    pub text: FlexColumnText,
+struct FlexColumnRenderer {
+    text: FlexColumnText,
 }
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct FlexColumnText {
-    pub runs: Vec<FlexColumnRun>,
+struct FlexColumnText {
+    runs: Vec<FlexColumnRun>,
 }
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct FlexColumnRun {
-    pub text: String,
+struct FlexColumnRun {
+    text: String,
 }
 
 impl Response for SlowAlbumResponse {
