@@ -102,26 +102,14 @@ pub struct ResponseContext {
     pub visitor_data: Option<String>,
 }
 
-impl PlaylistVideoListRenderer {
-    pub fn get_ids(&self) -> Vec<&str> {
-        let items = &self.contents;
-        let ids = items
-            .iter()
-            .filter_map(|item| {
-                item.playlist_video_renderer
-                    .video_id
-                    .as_ref()
-            })
-            .map(|id| id.as_str())
-            .collect();
-        ids
-    }
-}
-
-impl BrowseHeader {
-    pub fn get_album_title(&self) -> Result<&str> {
-        let title_object = &self.playlist_header_renderer.title;
-        let title = title_object
+impl BrowseResponse for FastBrowseResponse {
+    fn get_album_title(&self) -> Result<&str> {
+        let title = &self
+            .header
+            .as_ref()
+            .ok_or(YtuwuError::BrowseDataNotFound("header"))?
+            .playlist_header_renderer
+            .title
             .runs
             .get(0)
             .ok_or(YtuwuError::BrowseDataNotFound("album title"))?
@@ -129,9 +117,7 @@ impl BrowseHeader {
             .as_str();
         Ok(title)
     }
-}
 
-impl BrowseResponse for FastBrowseResponse {
     fn get_video_ids(&self) -> Result<Vec<VideoId>> {
         let ids = self
             .contents
@@ -167,17 +153,6 @@ impl BrowseResponse for FastBrowseResponse {
             .collect();
 
         Ok(ids)
-    }
-}
-
-impl FastBrowseResponse {
-    pub fn get_album_title(&self) -> Result<&str> {
-        let header = self
-            .header
-            .as_ref()
-            .ok_or(YtuwuError::BrowseDataNotFound("album title"))?;
-        let title = &header.get_album_title()?;
-        Ok(title)
     }
 }
 

@@ -30,6 +30,50 @@ struct AlbumContents {
 #[serde(rename_all = "camelCase")]
 struct TwoColumnBrowseResultsRenderer {
     secondary_contents: AlbumSecondaryContents,
+    tabs: Vec<Tab>,
+}
+
+#[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+struct Tab {
+    tab_renderer: TabRenderer,
+}
+
+#[derive(Deserialize, Debug)]
+struct TabRenderer {
+    content: TabRendererContent,
+}
+
+#[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+struct TabRendererContent {
+    section_list_renderer: TitleSectionListRenderer,
+}
+
+#[derive(Deserialize, Debug)]
+struct TitleSectionListRenderer {
+    contents: Vec<TitleContents>,
+}
+
+#[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+struct TitleContents {
+    music_responsive_header_renderer: MusicResponsiveHeaderRenderer,
+}
+
+#[derive(Deserialize, Debug)]
+struct MusicResponsiveHeaderRenderer {
+    title: AlbumTitle,
+}
+
+#[derive(Deserialize, Debug)]
+struct AlbumTitle {
+    runs: Vec<AlbumTitleRun>,
+}
+
+#[derive(Deserialize, Debug)]
+struct AlbumTitleRun {
+    text: String,
 }
 
 #[derive(Deserialize, Debug)]
@@ -143,5 +187,30 @@ impl BrowseResponse for SlowAlbumResponse {
             .collect();
 
         Ok(ids)
+    }
+
+    fn get_album_title(&self) -> Result<&str> {
+        let title = &self
+            .contents
+            .as_ref()
+            .ok_or(YtuwuError::BrowseDataNotFound("contents"))?
+            .two_column_browse_results_renderer
+            .tabs
+            .get(0)
+            .ok_or(YtuwuError::BrowseDataNotFound("first content"))?
+            .tab_renderer
+            .content
+            .section_list_renderer
+            .contents
+            .get(0)
+            .ok_or(YtuwuError::BrowseDataNotFound("first content"))?
+            .music_responsive_header_renderer
+            .title
+            .runs
+            .get(0)
+            .ok_or(YtuwuError::BrowseDataNotFound("first Tab"))?
+            .text;
+
+        Ok(title)
     }
 }

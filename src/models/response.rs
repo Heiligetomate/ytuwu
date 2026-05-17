@@ -7,6 +7,7 @@ pub trait Response {
 
 pub trait BrowseResponse {
     fn get_video_ids(&self) -> Result<Vec<VideoId>>;
+    fn get_album_title(&self) -> Result<&str>;
 }
 
 #[derive(PartialEq, Eq, Debug)]
