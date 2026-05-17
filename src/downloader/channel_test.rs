@@ -9,7 +9,7 @@ pub async fn get_first_ep_for_testing_meow(id: ChannelId) -> Result<ChannelPlayl
     let resp = captcha_bypass(&id, 1).await?;
     let ids = resp.extract_all_releases()?;
     let test_ep = ids
-        .singles
+        .albums
         .get(0)
         .ok_or(YtuwuError::SongInPlaylistNotFound)?;
 

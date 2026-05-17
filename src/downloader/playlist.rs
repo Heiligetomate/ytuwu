@@ -10,10 +10,7 @@ use crate::{
         thumbnail::PlaylistThumbnail,
     },
     error::{Result, YtuwuError},
-    id_resolver::{
-        channel_playlist_id::ChannelPlaylistId,
-        id::{BrowseId, Id},
-    },
+    id_resolver::id::{BrowseId, Id},
     models::{itag::Itag, player::ThumbnailResolution, response::BrowseResponse, slow_browse::SlowBrowseResponse},
     name_trimmer,
     request::{clients::client::ClientWithHeaders, core::captcha_bypass},
@@ -45,10 +42,7 @@ where
         Self { browse_id: id }
     }
     pub async fn browse(self) -> Result<PlaylistContentBrowse> {
-        println!("{}", self.browse_id.as_str());
-        let test_id = ChannelPlaylistId::new("MPREb_ZFVkxH6MkHf");
-        let response: SlowBrowseResponse = captcha_bypass(&test_id, 1).await?;
-        //let response = captcha_bypass(&self.browse_id, 2).await?;
+        let response = captcha_bypass(&self.browse_id, 2).await?;
         let mut ids = response.get_video_ids()?;
         let title = response.get_album_title()?.to_owned();
         let trimmed_title = name_trimmer::trim(title, "-");

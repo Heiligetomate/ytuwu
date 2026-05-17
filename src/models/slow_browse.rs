@@ -135,7 +135,7 @@ struct FlexColumnRenderer {
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 struct FlexColumnText {
-    runs: Vec<FlexColumnRun>,
+    runs: Option<Vec<FlexColumnRun>>,
 }
 
 #[derive(Deserialize, Debug)]
