@@ -110,38 +110,12 @@ struct AlbumTrackItem {
 #[serde(rename_all = "camelCase")]
 struct MusicResponsiveListItemRenderer {
     playlist_item_data: PlaylistItemData,
-    flex_columns: Vec<FlexColumn>,
 }
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 struct PlaylistItemData {
     video_id: String,
-    playlist_set_video_id: String,
-}
-
-#[derive(Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
-struct FlexColumn {
-    music_responsive_list_item_flex_column_renderer: FlexColumnRenderer,
-}
-
-#[derive(Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
-struct FlexColumnRenderer {
-    text: FlexColumnText,
-}
-
-#[derive(Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
-struct FlexColumnText {
-    runs: Option<Vec<FlexColumnRun>>,
-}
-
-#[derive(Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
-struct FlexColumnRun {
-    text: String,
 }
 
 impl Response for SlowBrowseResponse {
