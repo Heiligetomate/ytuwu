@@ -52,75 +52,6 @@ struct ChannelTabContent {
 #[derive(Deserialize, Debug)]
 struct ChannelSectionListRenderer {
     contents: Option<Vec<ChannelSection>>,
-    header: Option<ChannelSectionListHeader>,
-}
-
-#[derive(Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
-struct ChannelSectionListHeader {
-    music_side_aligned_item_renderer: MusicSideAlignedItemRenderer,
-}
-
-#[derive(Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
-struct MusicSideAlignedItemRenderer {
-    start_items: Vec<ChipCloud>,
-}
-
-#[derive(Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
-struct ChipCloud {
-    chip_cloud_renderer: ChipCloudRenderer,
-}
-
-#[derive(Deserialize, Debug)]
-struct ChipCloudRenderer {
-    chips: Vec<Chip>,
-}
-
-#[derive(Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
-struct Chip {
-    chip_cloud_chip_renderer: ChipCloudChipRenderer,
-}
-
-#[derive(Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
-struct ChipCloudChipRenderer {
-    text: ChipText,
-    navigation_endpoint: ChipNavigationEndpoint,
-}
-
-#[derive(Deserialize, Debug)]
-struct ChipText {
-    runs: Vec<ChipRun>,
-}
-
-#[derive(Deserialize, Debug)]
-struct ChipRun {
-    text: String, // "Albums" or "Singles & EPs"
-}
-
-#[derive(Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
-struct ChipNavigationEndpoint {
-    browse_section_list_reload_endpoint: BrowseSectionListReloadEndpoint,
-}
-
-#[derive(Deserialize, Debug)]
-struct BrowseSectionListReloadEndpoint {
-    continuation: ContinuationWrapper,
-}
-
-#[derive(Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
-struct ContinuationWrapper {
-    reload_continuation_data: ReloadContinuationData,
-}
-
-#[derive(Deserialize, Debug)]
-struct ReloadContinuationData {
-    continuation: Option<String>,
 }
 
 #[derive(Deserialize, Debug)]
@@ -167,12 +98,6 @@ struct Subtitle {
 #[derive(Deserialize, Debug)]
 struct SubtitleRun {
     text: Option<String>,
-}
-
-pub enum ChannelReleaseType {
-    Album,
-    Single,
-    Ep,
 }
 
 impl ChannelBrowseResponse {
