@@ -2,8 +2,8 @@ use std::path::Path;
 
 use ytuwu::id_resolver::id::GetId;
 use ytuwu::id_resolver::id_collection::IdCollection;
-use ytuwu::itag::{AudioItag, Itag};
-use ytuwu::{Downloader, Result, ThumbnailResolution, downloaded};
+use ytuwu::itag::AudioItag;
+use ytuwu::{Downloader, Result};
 
 #[rustfmt::skip]
 #[tokio::main]

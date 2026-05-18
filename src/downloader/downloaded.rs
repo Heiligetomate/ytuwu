@@ -58,6 +58,10 @@ impl<M: MediaStream + Debug> DownloadedChannel<M> {
         eps_path.push("eps");
         albums_path.push("albums");
 
+        create_dir_all(&singles_path).map_err(|_| YtuwuError::CreateDir)?;
+        create_dir_all(&eps_path).map_err(|_| YtuwuError::CreateDir)?;
+        create_dir_all(&albums_path).map_err(|_| YtuwuError::CreateDir)?;
+
         for single in self.singles.iter() {
             single.save(&singles_path)?;
         }
