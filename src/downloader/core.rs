@@ -1,8 +1,9 @@
 use std::fmt::Debug;
 
 use crate::{
+    downloaded::DownloadedChannel,
     downloader::{
-        channel_test::{ChannelBrowse, DownloadedChannel},
+        channel::ChannelBrowse,
         downloaded::{DownloadedDualStreamMedia, DownloadedMedia, DownloadedPlaylist},
         media::MediaBrowse,
         media_stream::{ShortVideoStream, VideoStream},

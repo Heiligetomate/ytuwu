@@ -42,6 +42,12 @@ pub struct RawDownloadedPlaylist<M: MediaStream + Debug> {
     pub media: Vec<RawDownloadedMedia<M>>,
 }
 
+pub struct DownloadedChannel<M: MediaStream + Debug> {
+    pub singles: Vec<RawDownloadedMedia<M>>,
+    pub eps: Vec<RawDownloadedPlaylist<M>>,
+    pub albums: Vec<RawDownloadedPlaylist<M>>,
+}
+
 impl<M: MediaStream + Debug> RawDownloadedMedia<M> {
     pub fn new(stream: M, title: &str) -> Self {
         Self { title: title.to_owned(), stream }
