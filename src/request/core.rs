@@ -21,7 +21,6 @@ where
         .text()
         .await?;
 
-    //println!("{:#?}", response);
     let result: <<I as Id>::Client as ClientWithHeaders>::Response = serde_json::from_str(&response)?;
     Ok(result)
 }
@@ -32,13 +31,6 @@ where
     I::Client: ClientWithHeaders,
     <<I as Id>::Client as ClientWithHeaders>::Response: DeserializeOwned,
 {
-    let id_type = std::any::type_name::<I>();
-    let client_type = std::any::type_name::<<I as Id>::Client>();
-    let response_type = std::any::type_name::<<<I as Id>::Client as ClientWithHeaders>::Response>();
-
-    println!("got {} as id", id_type);
-    println!("using {} as client", client_type);
-    println!("using {} as response", response_type);
     let mut tries: u16 = 0;
     let mut visitor_data: Option<String> = None;
     while tries < max_tries {
