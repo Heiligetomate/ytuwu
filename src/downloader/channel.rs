@@ -1,7 +1,4 @@
-use std::{
-    fmt::Debug,
-    path::{Path, PathBuf},
-};
+use std::fmt::Debug;
 
 use crate::{
     Result,
@@ -82,31 +79,5 @@ impl ChannelContentBrowse {
             eps: downloaded_eps,
             singles: downloaded_singles,
         })
-    }
-}
-
-impl<M: MediaStream + Debug> DownloadedChannel<M> {
-    pub fn save(&self, path: &Path) -> Result<()> {
-        let mut singles_path = PathBuf::from(&path);
-        let mut eps_path = PathBuf::from(&path);
-        let mut albums_path = PathBuf::from(&path);
-
-        singles_path.push("singles");
-        eps_path.push("eps");
-        albums_path.push("albums");
-
-        for single in self.singles.iter() {
-            single.save(&singles_path)?;
-        }
-
-        for ep in self.eps.iter() {
-            ep.save(&eps_path)?;
-        }
-
-        for album in self.albums.iter() {
-            album.save(&albums_path)?;
-        }
-
-        Ok(())
     }
 }

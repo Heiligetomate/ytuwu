@@ -48,6 +48,32 @@ pub struct DownloadedChannel<M: MediaStream + Debug> {
     pub albums: Vec<RawDownloadedPlaylist<M>>,
 }
 
+impl<M: MediaStream + Debug> DownloadedChannel<M> {
+    pub fn save(&self, path: &Path) -> Result<()> {
+        let mut singles_path = PathBuf::from(&path);
+        let mut eps_path = PathBuf::from(&path);
+        let mut albums_path = PathBuf::from(&path);
+
+        singles_path.push("singles");
+        eps_path.push("eps");
+        albums_path.push("albums");
+
+        for single in self.singles.iter() {
+            single.save(&singles_path)?;
+        }
+
+        for ep in self.eps.iter() {
+            ep.save(&eps_path)?;
+        }
+
+        for album in self.albums.iter() {
+            album.save(&albums_path)?;
+        }
+
+        Ok(())
+    }
+}
+
 impl<M: MediaStream + Debug> RawDownloadedMedia<M> {
     pub fn new(stream: M, title: &str) -> Self {
         Self { title: title.to_owned(), stream }
