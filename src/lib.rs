@@ -10,6 +10,6 @@ mod request;
 #[cfg(test)]
 mod test;
 
-pub use downloader::{core::Downloader, downloaded, metadata};
+pub use downloader::{channel::downloaded::*, core::Downloader, media::downloaded::*, metadata, playlist::downloaded::*};
 pub use error::Result;
 pub use models::{itag, player::ThumbnailResolution};

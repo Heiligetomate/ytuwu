@@ -1,31 +1,22 @@
 use std::fmt::Debug;
 
 use crate::{
-    downloaded::RawDownloadedMedia,
     downloader::{
-        downloaded::{DownloadedDualStreamMedia, DownloadedMedia},
+        media::downloaded::{DownloadedDualStreamMedia, DownloadedMedia, RawDownloadedMedia},
         media_stream::{MediaStream, VideoStream},
         thumbnail::Thumbnail,
         util::*,
     },
     error::Result,
-    id_resolver::{id::Id, short_id::ShortId, video_id::VideoId},
     itag::VideoItag,
     models::{
         itag::{AudioItag, Itag},
         player::{PlayerResponse, ThumbnailResolution},
     },
-    name_trimmer::trim,
-    request::core::captcha_bypass,
 };
 use bytes::Bytes;
 
 const CHUNK_SIZE: u32 = 1024 * 1024;
-
-#[derive(Debug)]
-pub struct MediaBrowse {
-    video_id: VideoId,
-}
 
 #[derive(Debug)]
 pub struct Media {
@@ -34,6 +25,13 @@ pub struct Media {
 }
 
 impl Media {
+    pub fn new(resp: PlayerResponse, title: &str) -> Self {
+        Self {
+            title: title.to_owned(),
+            player_response: resp,
+        }
+    }
+
     pub async fn download_chunk(&self, from: u32, to: u32, url: &str) -> Result<Bytes> {
         let client = reqwest::Client::new();
         let chunk_url = format!("{}&range={}-{}", url, from, to);
@@ -45,6 +43,7 @@ impl Media {
             .await?;
         Ok(chunk)
     }
+
     pub async fn download_raw<I>(&self, itag: I) -> Result<RawDownloadedMedia<I::Stream>>
     where
         I: Itag + Copy,
@@ -118,26 +117,5 @@ impl Media {
         let downloaded_media = DownloadedMedia::new(media, &self.title, thumbnail, self.player_response.get_author()?);
 
         Ok(downloaded_media)
-    }
-}
-
-impl MediaBrowse {
-    pub fn new(id: VideoId) -> Self {
-        Self { video_id: id }
-    }
-
-    pub fn from_short(id: ShortId) -> Self {
-        let video_id = VideoId::new(id.get_id());
-        Self { video_id }
-    }
-
-    pub async fn browse(self) -> Result<Media> {
-        let response: PlayerResponse = captcha_bypass(&self.video_id, 2).await?;
-        let title = response.get_title()?.to_owned();
-        let trimmed_title = trim(title, "-");
-        Ok(Media {
-            title: trimmed_title,
-            player_response: response,
-        })
     }
 }

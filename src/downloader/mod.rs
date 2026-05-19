@@ -1,10 +1,9 @@
-mod channel;
-pub(crate) use channel::ChannelContentBrowse;
+pub mod channel;
+pub(crate) use channel::content_browse::ChannelContentBrowse;
 pub mod core;
-pub mod downloaded;
-mod media;
+pub mod media;
 pub mod media_stream;
 pub mod metadata;
-mod playlist;
+pub mod playlist;
 mod thumbnail;
 mod util;

@@ -1,32 +1,18 @@
 use std::fmt::Debug;
 
-use serde::de::DeserializeOwned;
-
 use crate::{
-    downloaded::{DownloadedMedia, RawDownloadedMedia, RawDownloadedPlaylist},
     downloader::{
-        downloaded::DownloadedPlaylist,
-        media::{Media, MediaBrowse},
+        media::{
+            core::Media,
+            downloaded::{DownloadedMedia, RawDownloadedMedia},
+        },
         media_stream::MediaStream,
+        playlist::downloaded::{DownloadedPlaylist, RawDownloadedPlaylist},
         thumbnail::PlaylistThumbnail,
     },
     error::{Result, YtuwuError},
-    id_resolver::id::{BrowseId, Id},
-    models::{itag::Itag, player::ThumbnailResolution, response::BrowseResponse},
-    name_trimmer,
-    request::{clients::client::ClientWithHeaders, core::captcha_bypass},
+    models::{itag::Itag, player::ThumbnailResolution},
 };
-
-#[derive(Debug)]
-pub struct PlaylistBrowse<B: BrowseId> {
-    browse_id: B,
-}
-
-#[derive(Debug)]
-pub struct PlaylistContentBrowse {
-    title: String,
-    media: Vec<MediaBrowse>,
-}
 
 #[derive(Debug)]
 pub struct Playlist {
@@ -34,38 +20,11 @@ pub struct Playlist {
     media: Vec<Media>,
 }
 
-impl<B: BrowseId> PlaylistBrowse<B>
-where
-    <<B as Id>::Client as ClientWithHeaders>::Response: DeserializeOwned + Debug,
-    <<B as Id>::Client as ClientWithHeaders>::Response: BrowseResponse,
-{
-    pub fn new(id: B) -> Self {
-        Self { browse_id: id }
-    }
-    pub async fn browse(self) -> Result<PlaylistContentBrowse> {
-        let response = captcha_bypass(&self.browse_id, 2).await?;
-        let mut ids = response.get_video_ids()?;
-        let title = response.get_album_title()?.to_owned();
-        let trimmed_title = name_trimmer::trim(title, "-");
-        let media: Vec<MediaBrowse> = ids
-            .drain(..)
-            .map(|id| MediaBrowse::new(id))
-            .collect();
-        Ok(PlaylistContentBrowse { title: trimmed_title, media })
-    }
-}
-
-impl PlaylistContentBrowse {
-    pub async fn browse(mut self) -> Result<Playlist> {
-        let mut media_items: Vec<Media> = Vec::new();
-        for item in self.media.drain(..) {
-            media_items.push(item.browse().await?);
-        }
-        Ok(Playlist { media: media_items, title: self.title })
-    }
-}
-
 impl Playlist {
+    pub fn new(title: &str, media: Vec<Media>) -> Self {
+        Self { title: title.to_owned(), media }
+    }
+
     pub async fn download_single_stream<I>(mut self, itag: I) -> Result<RawDownloadedPlaylist<I::Stream>>
     where
         I: Itag + Copy,

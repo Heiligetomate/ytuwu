@@ -1,13 +1,14 @@
 use std::fmt::Debug;
 
 use crate::{
-    downloaded::DownloadedChannel,
     downloader::{
-        channel::ChannelBrowse,
-        downloaded::{DownloadedDualStreamMedia, DownloadedMedia, DownloadedPlaylist},
-        media::MediaBrowse,
+        channel::{browse::ChannelBrowse, downloaded::DownloadedChannel},
+        media::{
+            browse::MediaBrowse,
+            downloaded::{DownloadedDualStreamMedia, DownloadedMedia},
+        },
         media_stream::{ShortVideoStream, VideoStream},
-        playlist::PlaylistBrowse,
+        playlist::{browse::PlaylistBrowse, downloaded::DownloadedPlaylist},
         thumbnail::{PlaylistThumbnail, Thumbnail},
     },
     error::Result,

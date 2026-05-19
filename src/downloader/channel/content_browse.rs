@@ -2,32 +2,20 @@ use std::fmt::Debug;
 
 use crate::{
     Result,
-    downloaded::{DownloadedChannel, RawDownloadedMedia, RawDownloadedPlaylist},
-    downloader::{media_stream::MediaStream, playlist::PlaylistBrowse},
-    id_resolver::{channel_id::ChannelId, channel_playlist_id::ChannelPlaylistId},
+    downloader::{
+        channel::downloaded::DownloadedChannel,
+        media::downloaded::RawDownloadedMedia,
+        media_stream::MediaStream,
+        playlist::{browse::PlaylistBrowse, downloaded::RawDownloadedPlaylist},
+    },
+    id_resolver::channel_playlist_id::ChannelPlaylistId,
     itag::Itag,
-    request::core::captcha_bypass,
 };
-
-pub struct ChannelBrowse {
-    id: ChannelId,
-}
 
 pub struct ChannelContentBrowse {
     pub albums: Vec<ChannelPlaylistId>,
     pub eps: Vec<ChannelPlaylistId>,
     pub singles: Vec<ChannelPlaylistId>,
-}
-
-impl ChannelBrowse {
-    pub fn new(channel_id: ChannelId) -> Self {
-        Self { id: channel_id }
-    }
-
-    pub async fn browse(self) -> Result<ChannelContentBrowse> {
-        let resp = captcha_bypass(&self.id, 1).await?;
-        resp.extract_all_releases()
-    }
 }
 
 impl ChannelContentBrowse {
