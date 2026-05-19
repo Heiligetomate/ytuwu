@@ -96,7 +96,7 @@ impl Thumbnails {
                     return Some(&thumbnail.url);
                 }
             } else {
-                return None;
+                continue;
             }
         }
         None
