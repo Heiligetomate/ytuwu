@@ -22,6 +22,7 @@ use crate::{
 
 #[derive(Debug)]
 pub struct Downloader {}
+// TODO: better functions :sob:
 
 impl Downloader {
     #[must_use]

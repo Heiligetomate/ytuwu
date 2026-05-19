@@ -80,7 +80,7 @@ const LONG_VIDEO_ORDER: [LongVideoItag; 12] = [
     LongVideoItag::MP4360p,
     LongVideoItag::WebM240p,
     LongVideoItag::MP4240p,
-    LongVideoItag::MP4144p,
+    LongVideoItag::Webm144p,
     LongVideoItag::MP4144p,
 ];
 
