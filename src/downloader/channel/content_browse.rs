@@ -12,7 +12,7 @@ use crate::{
     itag::Itag,
 };
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct ChannelContentBrowse {
     pub albums: Vec<ChannelPlaylistId>,
     pub eps: Vec<ChannelPlaylistId>,
