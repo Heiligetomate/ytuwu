@@ -19,8 +19,18 @@ pub struct FastBrowseId {
 impl Id for FastBrowseId {
     type Client = BrowseClient;
 
-    fn new<T: Into<String>>(id: T) -> Self {
-        Self { id: format!("VL{}", id.into()) }
+    fn new<T: Into<String>>(id: T) -> Result<Self> {
+        let raw_id = id.into();
+
+        if raw_id.len() != 41 {
+            return Err(YtuwuError::InvalidIdLength);
+        }
+
+        if !raw_id.starts_with("OLAK5uy") {
+            return Err(YtuwuError::InvalidIdFormat);
+        }
+
+        Ok(Self { id: format!("VL{}", raw_id) })
     }
 
     fn get_id(self) -> String {

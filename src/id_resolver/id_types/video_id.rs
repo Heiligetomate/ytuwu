@@ -18,8 +18,19 @@ pub struct VideoId {
 impl Id for VideoId {
     type Client = PlayerClient;
 
-    fn new<T: Into<String>>(id: T) -> Self {
-        Self { id: id.into() }
+    fn new<T: Into<String>>(id: T) -> Result<Self> {
+        let raw_id = id.into();
+        if raw_id.len() != 11 {
+            return Err(YtuwuError::InvalidIdLength);
+        }
+        if !raw_id
+            .chars()
+            .all(|c| c.is_alphanumeric() || c == '-' || c == '_')
+        {
+            return Err(YtuwuError::InvalidIdFormat);
+        }
+
+        Ok(Self { id: raw_id })
     }
 
     fn get_id(self) -> String {

@@ -26,6 +26,8 @@ pub enum YtuwuError {
     SongInPlaylistNotFound,
 
     UrlParsing(&'static str),
+    InvalidIdLength,
+    InvalidIdFormat,
 }
 
 impl Display for YtuwuError {
@@ -52,6 +54,8 @@ impl Display for YtuwuError {
             &Self::NoIdFound => write!(f, "Could not get id from collection"),
             Self::UrlParsing(e) => write!(f, "Error while parsing the url: {e}"),
             Self::SongInPlaylistNotFound => write!(f, "Song was not found"),
+            Self::InvalidIdLength => write!(f, "Id has an invalid length"),
+            Self::InvalidIdFormat => write!(f, "Id has an invalid format"),
         }
     }
 }

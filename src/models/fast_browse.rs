@@ -149,7 +149,7 @@ impl BrowseResponse for FastBrowseResponse {
                     .video_id
                     .as_ref()
             })
-            .map(|id| VideoId::new(id.as_str()))
+            .filter_map(|id| VideoId::new(id.as_str()).ok())
             .collect();
 
         Ok(ids)

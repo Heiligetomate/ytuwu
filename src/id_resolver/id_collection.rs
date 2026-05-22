@@ -73,7 +73,7 @@ impl IdCollection {
             .filter(|s| !s.is_empty())
             .ok_or(YtuwuError::UrlParsing("no video id in youtu.be url"))?;
 
-        Ok(Self::with_video(VideoId::new(id)))
+        Ok(Self::with_video(VideoId::new(id)?))
     }
 
     fn from_youtube_com(url: &Url) -> Result<Self> {
@@ -83,26 +83,26 @@ impl IdCollection {
         match first {
             "shorts" => {
                 let id = Self::id_from_segments(segments, 1).ok_or(YtuwuError::UrlParsing("no short id found"))?;
-                Ok(Self::with_short(ShortId::new(id)))
+                Ok(Self::with_short(ShortId::new(id)?))
             }
 
             "embed" | "v" | "e" => {
                 let id = Self::id_from_segments(segments, 1).ok_or(YtuwuError::UrlParsing("no video id found"))?;
-                Ok(Self::with_video(VideoId::new(id)))
+                Ok(Self::with_video(VideoId::new(id)?))
             }
 
             "channel" => {
                 let id = Self::id_from_segments(segments, 1).ok_or(YtuwuError::UrlParsing("no channel id found"))?;
-                Ok(Self::with_channel(ChannelId::new(id)))
+                Ok(Self::with_channel(ChannelId::new(id)?))
             }
 
             s if s.starts_with('@') => {
                 let id = Self::id_from_segments(segments, 0).ok_or(YtuwuError::UrlParsing("no channel id found"))?;
-                Ok(Self::with_channel(ChannelId::new(id)))
+                Ok(Self::with_channel(ChannelId::new(id)?))
             }
             "c" | "user" => {
                 let id = Self::id_from_segments(segments, 1).ok_or(YtuwuError::UrlParsing("no channel id found"))?;
-                Ok(Self::with_channel(ChannelId::new(id)))
+                Ok(Self::with_channel(ChannelId::new(id)?))
             }
 
             "watch" | "playlist" | "" => Self::from_query_params(url),
@@ -120,23 +120,23 @@ impl IdCollection {
                 let id = Self::id_from_segments(segments, 1).ok_or(YtuwuError::UrlParsing("no browse id found"))?;
 
                 if id.starts_with("UC") {
-                    Ok(Self::with_channel(ChannelId::new(id)))
+                    Ok(Self::with_channel(ChannelId::new(id)?))
                 } else if id.starts_with("MPAD") {
                     // idk if that exists
                     panic!("wow didnt know that exists! Please open an issue or smth containing the url you used");
                 } else {
-                    Ok(Self::with_browse(FastBrowseId::new(id)))
+                    Ok(Self::with_browse(FastBrowseId::new(id)?))
                 }
             }
 
             "channel" => {
                 let id = Self::id_from_segments(segments, 1).ok_or(YtuwuError::UrlParsing("no channel id found"))?;
-                Ok(Self::with_channel(ChannelId::new(id)))
+                Ok(Self::with_channel(ChannelId::new(id)?))
             }
 
             s if s.starts_with('@') => {
                 let id = Self::id_from_segments(segments, 0).ok_or(YtuwuError::UrlParsing("no channel id name found"))?;
-                Ok(Self::with_channel_name(ChannelNameId::new(id)))
+                Ok(Self::with_channel_name(ChannelNameId::new(id)?))
             }
 
             "watch" | "playlist" | "" => Self::from_query_params(url),
@@ -149,8 +149,8 @@ impl IdCollection {
         let mut result = Self::empty();
         for (key, value) in url.query_pairs() {
             match key.as_ref() {
-                "v" => result.video_id = Some(VideoId::new(value.as_ref())),
-                "list" => result.browse_id = Some(FastBrowseId::new(value.as_ref())),
+                "v" => result.video_id = Some(VideoId::new(value.as_ref())?),
+                "list" => result.browse_id = Some(FastBrowseId::new(value.as_ref())?),
                 _ => {}
             }
         }

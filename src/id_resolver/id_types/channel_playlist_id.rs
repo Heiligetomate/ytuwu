@@ -1,6 +1,8 @@
 use serde::{Deserialize, Serialize};
 
 use crate::{
+    Result,
+    error::YtuwuError,
     id_resolver::id::{BrowseId, Id},
     models::slow_browse::SlowBrowseResponse,
     request::clients::slow_browse::SlowBrowseClient,
@@ -22,8 +24,18 @@ impl Id for ChannelPlaylistId {
         &self.id
     }
 
-    fn new<T: Into<String>>(id: T) -> Self {
-        Self { id: id.into() }
+    fn new<T: Into<String>>(id: T) -> Result<Self> {
+        let raw_id = id.into();
+
+        if !raw_id.len() == 17 {
+            return Err(YtuwuError::InvalidIdLength);
+        }
+
+        if !raw_id.starts_with("MPREb_") {
+            return Err(YtuwuError::InvalidIdFormat);
+        }
+
+        Ok(Self { id: raw_id })
     }
 }
 

@@ -16,6 +16,6 @@ curl -s -X POST "https://music.youtube.com/youtubei/v1/browse?prettyPrint=false"
       }
     },
 
-    "browseId": "VLOLAK5uy_kj-b44q7Zr368iDGZkXCnKoOzkr-EX6vc",
+    "browseId": "UCHluxE3zTLEXx8CUke1G4Xw",
     }' > channel.json
 

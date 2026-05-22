@@ -141,7 +141,7 @@ impl ChannelBrowseResponse {
                 None => continue,
             };
 
-            let playlist_id = ChannelPlaylistId::new(browse_id);
+            let playlist_id = ChannelPlaylistId::new(browse_id)?;
 
             let type_text = renderer
                 .subtitle

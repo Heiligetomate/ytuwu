@@ -34,15 +34,15 @@ fn test_id_resolver() {
     let playlist_id_collection = playlist_id_collection.unwrap();
     let mixed_id_collection = mixed_id_collection.unwrap();
 
-    assert_eq!(video_id_collecton.get_id().ok(), Some(VideoId::new("lndG8BiZCmM")));
-    assert_eq!(playlist_id_collection.get_id().ok(), Some(FastBrowseId::new("OLAK5uy_nVY7Ekmu-3gJilFDUz8xrjkzmVmVnQSMQ")));
-    assert_eq!(mixed_id_collection.get_id().ok(), Some(VideoId::new("lndG8BiZCmM")));
-    assert_eq!(mixed_id_collection.get_id().ok(), Some(FastBrowseId::new("OLAK5uy_mrUmnJrX4QzJd6GeOuqcqT8EUMH1C0eTU")))
+    assert_eq!(video_id_collecton.get_id().ok(), Some(VideoId::new("lndG8BiZCmM").unwrap()));
+    assert_eq!(playlist_id_collection.get_id().ok(), Some(FastBrowseId::new("OLAK5uy_nVY7Ekmu-3gJilFDUz8xrjkzmVmVnQSMQ").unwrap()));
+    assert_eq!(mixed_id_collection.get_id().ok(), Some(VideoId::new("lndG8BiZCmM").unwrap()));
+    assert_eq!(mixed_id_collection.get_id().ok(), Some(FastBrowseId::new("OLAK5uy_mrUmnJrX4QzJd6GeOuqcqT8EUMH1C0eTU").unwrap()))
 }
 
 #[tokio::test]
 async fn test_player_endpoint() {
-    let video_id = VideoId::new("lndG8BiZCmM");
+    let video_id = VideoId::new("lndG8BiZCmM").unwrap();
     let response: Result<PlayerResponse> = captcha_bypass(&video_id, 2).await;
 
     assert!(response.is_ok());
@@ -55,7 +55,7 @@ async fn test_player_endpoint() {
 
 #[tokio::test]
 async fn test_browse_endpoint() {
-    let browse_id = FastBrowseId::new("OLAK5uy_nVY7Ekmu-3gJilFDUz8xrjkzmVmVnQSMQ");
+    let browse_id = FastBrowseId::new("OLAK5uy_nVY7Ekmu-3gJilFDUz8xrjkzmVmVnQSMQ").unwrap();
     let response: Result<FastBrowseResponse> = captcha_bypass(&browse_id, 2).await;
 
     assert!(response.is_ok());

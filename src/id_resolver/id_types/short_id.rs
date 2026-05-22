@@ -5,6 +5,7 @@ use crate::{
         id::{GetId, Id},
         id_collection::IdCollection,
     },
+    id_types::VideoId,
     request::clients::player::PlayerClient,
 };
 
@@ -18,8 +19,9 @@ pub struct ShortId {
 impl Id for ShortId {
     type Client = PlayerClient;
 
-    fn new<T: Into<String>>(id: T) -> Self {
-        Self { id: id.into() }
+    fn new<T: Into<String>>(id: T) -> Result<Self> {
+        let video_id = VideoId::new(id)?;
+        Ok(Self { id: video_id.get_id() })
     }
 
     fn get_id(self) -> String {

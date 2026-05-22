@@ -150,13 +150,13 @@ impl BrowseResponse for SlowBrowseResponse {
             .iter()
             .filter_map(|section| section.music_shelf_renderer.as_ref())
             .flat_map(|shelf| shelf.contents.iter())
-            .map(|item| {
+            .filter_map(|item| {
                 let id = item
                     .music_responsive_list_item_renderer
                     .playlist_item_data
                     .video_id
                     .as_str();
-                VideoId::new(id)
+                VideoId::new(id).ok()
             })
             .collect();
 

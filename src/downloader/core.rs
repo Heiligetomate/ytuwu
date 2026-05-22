@@ -103,7 +103,7 @@ impl Downloader {
 
     #[rustfmt::skip]
     pub async fn download_short(&self, short_id: ShortId, video_itag: ShortVideoItag, audio_itag: AudioItag, thumbnail_resolution: ThumbnailResolution) -> Result<DownloadedDualStreamMedia<ShortVideoStream>> {
-        let id = MediaBrowse::from_short(short_id);
+        let id = MediaBrowse::from_short(short_id)?;
         Ok(
             id.browse()
             .await?

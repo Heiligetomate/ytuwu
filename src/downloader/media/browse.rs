@@ -16,9 +16,9 @@ impl MediaBrowse {
         Self { video_id: id }
     }
 
-    pub fn from_short(id: ShortId) -> Self {
-        let video_id = VideoId::new(id.get_id());
-        Self { video_id }
+    pub fn from_short(id: ShortId) -> Result<Self> {
+        let video_id = VideoId::new(id.get_id())?;
+        Ok(Self { video_id })
     }
 
     pub async fn browse(self) -> Result<Media> {

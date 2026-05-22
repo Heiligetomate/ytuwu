@@ -44,7 +44,7 @@ impl ChannelNameToIdResponse {
             .browse_id
             .as_ref()
             .ok_or(YtuwuError::ChannelDataNotFound("channel id"))?;
-        Ok(ChannelId::new(id))
+        ChannelId::new(id)
     }
 }
 
