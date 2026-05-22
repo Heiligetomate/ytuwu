@@ -4,7 +4,7 @@ use url::Url;
 use crate::{
     Result,
     error::YtuwuError,
-    id_resolver::{channel_id::ChannelId, id::Id, playlist_id::FastBrowseId, short_id::ShortId, video_id::VideoId},
+    id_resolver::{channel_id::ChannelId, channel_name_id::ChannelNameId, id::Id, playlist_id::FastBrowseId, short_id::ShortId, video_id::VideoId},
 };
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -13,6 +13,7 @@ pub struct IdCollection {
     pub(super) browse_id: Option<FastBrowseId>,
     pub(super) short_id: Option<ShortId>,
     pub(super) channel_id: Option<ChannelId>,
+    pub(super) channel_name: Option<ChannelNameId>,
 }
 
 enum Host {
@@ -39,7 +40,7 @@ impl Host {
 
 impl IdCollection {
     pub fn is_empty(&self) -> bool {
-        return self.video_id.is_none() && self.browse_id.is_none() && self.channel_id.is_none() && self.short_id.is_none();
+        return self.video_id.is_none() && self.browse_id.is_none() && self.channel_id.is_none() && self.short_id.is_none() && self.channel_name.is_none();
     }
 
     pub fn from_url<T: Into<String>>(raw_url: T) -> Result<Self> {
@@ -80,22 +81,28 @@ impl IdCollection {
 
         match first {
             "shorts" => {
-                let id = Self::id_from_segments(segments).ok_or(YtuwuError::UrlParsing("no short id found"))?;
+                let id = Self::id_from_segments(segments, 1).ok_or(YtuwuError::UrlParsing("no short id found"))?;
                 Ok(Self::with_short(ShortId::new(id)))
             }
 
             "embed" | "v" | "e" => {
-                let id = Self::id_from_segments(segments).ok_or(YtuwuError::UrlParsing("no video id found"))?;
+                let id = Self::id_from_segments(segments, 1).ok_or(YtuwuError::UrlParsing("no video id found"))?;
                 Ok(Self::with_video(VideoId::new(id)))
             }
 
             "channel" => {
-                let id = Self::id_from_segments(segments).ok_or(YtuwuError::UrlParsing("no channel id found"))?;
+                let id = Self::id_from_segments(segments, 1).ok_or(YtuwuError::UrlParsing("no channel id found"))?;
                 Ok(Self::with_channel(ChannelId::new(id)))
             }
 
-            s if s.starts_with('@') => Err(YtuwuError::UrlParsing("not suppoerted")),
-            "c" | "user" => Err(YtuwuError::UrlParsing("not suppoerted")),
+            s if s.starts_with('@') => {
+                let id = Self::id_from_segments(segments, 0).ok_or(YtuwuError::UrlParsing("no channel id found"))?;
+                Ok(Self::with_channel(ChannelId::new(id)))
+            }
+            "c" | "user" => {
+                let id = Self::id_from_segments(segments, 1).ok_or(YtuwuError::UrlParsing("no channel id found"))?;
+                Ok(Self::with_channel(ChannelId::new(id)))
+            }
 
             "watch" | "playlist" | "" => Self::from_query_params(url),
 
@@ -109,7 +116,7 @@ impl IdCollection {
 
         match first {
             "browse" => {
-                let id = Self::id_from_segments(segments).ok_or(YtuwuError::UrlParsing("no browse id found"))?;
+                let id = Self::id_from_segments(segments, 1).ok_or(YtuwuError::UrlParsing("no browse id found"))?;
 
                 if id.starts_with("UC") {
                     Ok(Self::with_channel(ChannelId::new(id)))
@@ -122,11 +129,14 @@ impl IdCollection {
             }
 
             "channel" => {
-                let id = Self::id_from_segments(segments).ok_or(YtuwuError::UrlParsing("no channel id found"))?;
+                let id = Self::id_from_segments(segments, 1).ok_or(YtuwuError::UrlParsing("no channel id found"))?;
                 Ok(Self::with_channel(ChannelId::new(id)))
             }
 
-            s if s.starts_with('@') => Err(YtuwuError::UrlParsing("not implemented yet")),
+            s if s.starts_with('@') => {
+                let id = Self::id_from_segments(segments, 0).ok_or(YtuwuError::UrlParsing("no channel id name found"))?;
+                Ok(Self::with_channel_name(ChannelNameId::new(id)))
+            }
 
             "watch" | "" => Self::from_query_params(url),
 
@@ -152,9 +162,9 @@ impl IdCollection {
             .unwrap_or_default()
     }
 
-    fn id_from_segments(segments: Vec<&str>) -> Option<&str> {
+    fn id_from_segments(segments: Vec<&str>, index: usize) -> Option<&str> {
         let id = segments
-            .get(1)
+            .get(index)
             .filter(|s| !s.is_empty());
         id.copied()
     }
@@ -165,6 +175,7 @@ impl IdCollection {
             browse_id: None,
             channel_id: None,
             short_id: None,
+            channel_name: None,
         }
     }
 
@@ -182,5 +193,9 @@ impl IdCollection {
 
     fn with_short(id: ShortId) -> Self {
         Self { short_id: Some(id), ..Self::empty() }
+    }
+
+    fn with_channel_name(id: ChannelNameId) -> Self {
+        Self { channel_name: Some(id), ..Self::empty() }
     }
 }
