@@ -1,7 +1,7 @@
 use crate::{
     id_resolver::{
         id::Id,
-        id_types::{channel_id::ChannelId, channel_playlist_id::ChannelPlaylistId, playlist_id::FastBrowseId, video_id::VideoId},
+        id_types::{ChannelId, ChannelPlaylistId, FastBrowseId, VideoId},
     },
     models::{
         channel_browse::ChannelBrowseResponse,

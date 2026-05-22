@@ -8,7 +8,7 @@ use crate::{
         media_stream::MediaStream,
         playlist::{browse::PlaylistBrowse, downloaded::RawDownloadedPlaylist},
     },
-    id_resolver::id_types::channel_playlist_id::ChannelPlaylistId,
+    id_resolver::id_types::ChannelPlaylistId,
     itag::Itag,
 };
 

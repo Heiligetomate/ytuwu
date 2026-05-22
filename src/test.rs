@@ -3,8 +3,8 @@ use crate::{
     id_resolver::{
         id::{GetId, Id},
         id_collection::IdCollection,
-        id_types::playlist_id::FastBrowseId,
-        id_types::video_id::VideoId,
+        id_types::FastBrowseId,
+        id_types::VideoId,
     },
     models::{
         fast_browse::FastBrowseResponse,
