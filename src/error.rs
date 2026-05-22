@@ -6,6 +6,7 @@ pub type Result<T> = std::result::Result<T, YtuwuError>;
 pub enum YtuwuError {
     BrowseDataNotFound(&'static str),
     PlayerDataNotFound(&'static str),
+    ChannelDataNotFound(&'static str),
     ReqwestError(String),
     CaptchaBypassFailed(u16),
 
@@ -34,6 +35,7 @@ impl Display for YtuwuError {
             Self::PlayerDataNotFound(e) => {
                 write!(f, "Could not get data from player response: {}.", e)
             }
+            Self::ChannelDataNotFound(e) => write!(f, "Could not get data from response: {}", e),
             Self::ReqwestError(e) => write!(f, "Reqwest failed: {e}"),
             Self::CaptchaBypassFailed(e) => {
                 write!(f, "The captcha bypass failed after {} tries.", e)
