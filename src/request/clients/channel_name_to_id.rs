@@ -3,7 +3,7 @@ use crate::{
     request::clients::{
         body::RequestBody,
         client::{ClientPrebuild, ClientWithHeaders},
-        endpoints::BROWSE_ENDPOINT,
+        endpoints::RESOLVE_CHANNEL_NAME_ENDPOINT,
         shared_params::{CLIENT_NAME_HEADER_NAME, CLIENT_VERSION_HEADER_NAME, CONTENT_TYPE_HEADER, GL, HL, ORIGIN_HEADER, TIME_ZONE, USER_AGENT_HEADER_NAME, UTC_OFFSET_MINUTES},
     },
 };
@@ -24,7 +24,7 @@ impl ClientWithHeaders for ChannelNameClient {
         let client = reqwest::Client::new();
 
         client
-            .post(BROWSE_ENDPOINT)
+            .post(RESOLVE_CHANNEL_NAME_ENDPOINT)
             .header(USER_AGENT_HEADER_NAME, USER_AGENT)
             .header(CONTENT_TYPE_HEADER.0, CONTENT_TYPE_HEADER.1)
             .header(CLIENT_NAME_HEADER_NAME, X_CLIENT_NAME)
