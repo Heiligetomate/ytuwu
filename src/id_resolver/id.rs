@@ -15,6 +15,7 @@ pub trait BrowseId: Id {
     type BrowseResponse: BrowseResponse;
 }
 
+#[allow(async_fn_in_trait)]
 pub trait MakeChannelId: Id {
     async fn transform(&self) -> Result<ChannelId>;
 }
