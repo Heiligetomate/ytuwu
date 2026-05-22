@@ -4,7 +4,7 @@ use url::Url;
 use crate::{
     Result,
     error::YtuwuError,
-    id_resolver::{id::Id, id_types::channel_id::ChannelId, id_types::channel_name_id::ChannelNameId, id_types::playlist_id::FastBrowseId, id_types::short_id::ShortId, id_types::video_id::VideoId},
+    id_resolver::{id::Id, id_types::ChannelId, id_types::ChannelNameId, id_types::FastBrowseId, id_types::ShortId, id_types::VideoId},
 };
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -45,6 +45,7 @@ impl IdCollection {
 
     pub fn from_url<T: Into<String>>(raw_url: T) -> Result<Self> {
         let url_string: String = raw_url.into();
+        dbg!(&url_string);
         let url = Url::parse(&url_string).map_err(|_| YtuwuError::UrlParsing("could not parse the url"))?;
 
         let host = Host::parse(
@@ -138,7 +139,7 @@ impl IdCollection {
                 Ok(Self::with_channel_name(ChannelNameId::new(id)))
             }
 
-            "watch" | "" => Self::from_query_params(url),
+            "watch" | "playlist" | "" => Self::from_query_params(url),
 
             _ => Err(YtuwuError::UrlParsing("invalid url path")),
         }
