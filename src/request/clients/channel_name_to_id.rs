@@ -1,5 +1,5 @@
 use crate::{
-    models::channel_browse::ChannelBrowseResponse,
+    models::channel_name_to_id::ChannelNameToIdResponse,
     request::clients::{
         body::RequestBody,
         client::{ClientPrebuild, ClientWithHeaders},
@@ -12,15 +12,13 @@ const USER_AGENT: &str = "User-Agent: Mozilla/5.0 (Linux; Android 10; Quest 2) A
 const X_CLIENT_NAME: &str = "67";
 const X_CLIENT_VERSION: &str = "1.20260428.11.00";
 
-const DEVICE_MAKE: &str = "Oculus";
-const DEVICE_MODEL: &str = "Quest 2";
 const CLIENT_NAME: &str = "WEB_REMIX";
 const CLIENT_VERSION: &str = "1.20260428.11.00";
 
-pub struct ChannelClient {}
+pub struct ChannelNameClient {}
 
-impl ClientWithHeaders for ChannelClient {
-    type Response = ChannelBrowseResponse;
+impl ClientWithHeaders for ChannelNameClient {
+    type Response = ChannelNameToIdResponse;
 
     fn build_headers() -> ClientPrebuild {
         let client = reqwest::Client::new();
@@ -34,14 +32,15 @@ impl ClientWithHeaders for ChannelClient {
             .header(ORIGIN_HEADER.0, ORIGIN_HEADER.1)
     }
 
-    fn build_body<'de>(browse_id: &str, visitor_data: Option<String>) -> super::body::RequestBody<'de> {
+    fn build_body<'de>(channel_name: &str, visitor_data: Option<String>) -> super::body::RequestBody<'de> {
+        let url = format!("https://music.youtube.com/@{channel_name}");
         RequestBody {
             context: super::body::Context {
                 client: super::body::ClientBody {
                     client_name: CLIENT_NAME,
                     client_version: CLIENT_VERSION,
-                    device_make: Some(DEVICE_MAKE),
-                    device_model: Some(DEVICE_MODEL),
+                    device_make: None,
+                    device_model: None,
                     hl: HL,
                     gl: GL,
                     time_zone: TIME_ZONE,
@@ -50,8 +49,8 @@ impl ClientWithHeaders for ChannelClient {
                 },
             },
             video_id: None,
-            browse_id: Some(browse_id.to_owned()),
-            url: None,
+            browse_id: None,
+            url: Some(url),
         }
     }
 }

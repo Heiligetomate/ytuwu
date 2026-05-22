@@ -50,6 +50,7 @@ impl ClientWithHeaders for PlayerClient {
             },
             video_id: Some(video_id.to_owned()),
             browse_id: None,
+            url: None,
         }
     }
 }

@@ -6,6 +6,7 @@ pub struct RequestBody<'de> {
     pub context: Context<'de>,
     pub video_id: Option<String>,
     pub browse_id: Option<String>,
+    pub url: Option<String>,
     // content_check_ok: bool,
     // racy_check_ok: bool,
 }

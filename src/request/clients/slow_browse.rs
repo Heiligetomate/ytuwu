@@ -49,6 +49,7 @@ impl ClientWithHeaders for SlowBrowseClient {
             },
             video_id: None,
             browse_id: Some(browse_id.to_owned()),
+            url: None,
         }
     }
 }
