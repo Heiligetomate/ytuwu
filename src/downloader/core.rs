@@ -12,7 +12,10 @@ use crate::{
         thumbnail::{PlaylistThumbnail, Thumbnail},
     },
     error::Result,
-    id_resolver::id_types::{ChannelId, FastBrowseId, ShortId, VideoId},
+    id_resolver::{
+        id::MakeChannelId,
+        id_types::{FastBrowseId, ShortId, VideoId},
+    },
     itag::ShortVideoItag,
     models::{
         itag::{AudioItag, Itag, VideoItag},
@@ -109,12 +112,14 @@ impl Downloader {
         )
     }
 
-    pub async fn download_channel<I>(&self, channel_id: ChannelId, itag: I) -> Result<DownloadedChannel<I::Stream>>
+    pub async fn download_channel<I, C>(&self, channel_id: C, itag: I) -> Result<DownloadedChannel<I::Stream>>
     where
         I: Itag + Copy + Debug,
         I::Stream: Debug,
+        C: MakeChannelId,
     {
-        Ok(ChannelBrowse::new(channel_id)
+        let id = channel_id.transform().await?;
+        Ok(ChannelBrowse::new(id)
             .browse()
             .await?
             .download(itag)
