@@ -1,6 +1,9 @@
 use crate::{
     downloader::ChannelContentBrowse,
-    id_resolver::{channel_id::ChannelId, channel_playlist_id::ChannelPlaylistId, id::Id, playlist_id::FastBrowseId, video_id::VideoId},
+    id_resolver::{
+        id::Id,
+        id_types::{channel_id::ChannelId, channel_playlist_id::ChannelPlaylistId, playlist_id::FastBrowseId, video_id::VideoId},
+    },
     models::{
         channel_browse::ChannelBrowseResponse,
         fast_browse::FastBrowseResponse,

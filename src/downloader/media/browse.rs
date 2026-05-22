@@ -1,7 +1,7 @@
 use crate::{
     Result,
     downloader::media::core::Media,
-    id_resolver::{id::Id, short_id::ShortId, video_id::VideoId},
+    id_resolver::{id::Id, id_types::short_id::ShortId, id_types::video_id::VideoId},
     name_trimmer::trim,
     request::core::captcha_bypass,
 };

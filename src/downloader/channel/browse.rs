@@ -1,4 +1,4 @@
-use crate::{Result, downloader::channel::content_browse::ChannelContentBrowse, id_resolver::channel_id::ChannelId, request::core::captcha_bypass};
+use crate::{Result, downloader::channel::content_browse::ChannelContentBrowse, id_resolver::id_types::channel_id::ChannelId, request::core::captcha_bypass};
 
 pub struct ChannelBrowse {
     id: ChannelId,

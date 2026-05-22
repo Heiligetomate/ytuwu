@@ -4,7 +4,7 @@ use url::Url;
 use crate::{
     Result,
     error::YtuwuError,
-    id_resolver::{channel_id::ChannelId, channel_name_id::ChannelNameId, id::Id, playlist_id::FastBrowseId, short_id::ShortId, video_id::VideoId},
+    id_resolver::{id::Id, id_types::channel_id::ChannelId, id_types::channel_name_id::ChannelNameId, id_types::playlist_id::FastBrowseId, id_types::short_id::ShortId, id_types::video_id::VideoId},
 };
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -188,7 +188,10 @@ impl IdCollection {
     }
 
     fn with_channel(id: ChannelId) -> Self {
-        Self { channel_id: Some(id), ..Self::empty() }
+        Self {
+            channel_id: Some(id),
+            ..Self::empty()
+        }
     }
 
     fn with_short(id: ShortId) -> Self {
@@ -196,6 +199,9 @@ impl IdCollection {
     }
 
     fn with_channel_name(id: ChannelNameId) -> Self {
-        Self { channel_name: Some(id), ..Self::empty() }
+        Self {
+            channel_name: Some(id),
+            ..Self::empty()
+        }
     }
 }

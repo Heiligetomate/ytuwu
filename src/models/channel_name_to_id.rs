@@ -3,7 +3,7 @@ use serde::Deserialize;
 use crate::{
     Result,
     error::YtuwuError,
-    id_resolver::{channel_id::ChannelId, id::Id},
+    id_resolver::{id::Id, id_types::channel_id::ChannelId},
     models::response::Response,
 };
 

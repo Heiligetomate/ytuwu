@@ -1,8 +1,8 @@
 use ytuwu::{
     Result,
     id_resolver::{
-        channel_name_id::ChannelNameId,
         id::{Id, MakeChannelId},
+        id_types::channel_name_id::ChannelNameId,
     },
 };
 
