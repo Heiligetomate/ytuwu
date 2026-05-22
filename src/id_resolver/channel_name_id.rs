@@ -4,10 +4,11 @@ use crate::{
     Result,
     error::YtuwuError,
     id_resolver::{
-        id::{GetId, Id},
+        channel_id::ChannelId,
+        id::{GetId, Id, MakeChannelId},
         id_collection::IdCollection,
     },
-    request::clients::channel_name_to_id::ChannelNameClient,
+    request::{clients::channel_name_to_id::ChannelNameClient, core::captcha_bypass},
 };
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
@@ -19,7 +20,12 @@ impl Id for ChannelNameId {
     type Client = ChannelNameClient;
 
     fn new<T: Into<String>>(id: T) -> Self {
-        Self { name: id.into() }
+        let name = id.into();
+        let name = name
+            .strip_prefix('@')
+            .unwrap_or(&name)
+            .to_string();
+        Self { name }
     }
 
     fn get_id(self) -> String {
@@ -37,5 +43,12 @@ impl GetId<ChannelNameId> for IdCollection {
             .channel_name
             .clone()
             .ok_or(YtuwuError::NoIdFound)?)
+    }
+}
+
+impl MakeChannelId for ChannelNameId {
+    async fn transform(&self) -> Result<ChannelId> {
+        let response = captcha_bypass(self, 2).await?;
+        response.get_id()
     }
 }

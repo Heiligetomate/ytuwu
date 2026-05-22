@@ -1,4 +1,4 @@
-use crate::{Result, models::response::BrowseResponse, request::clients::client::ClientWithHeaders};
+use crate::{Result, id_resolver::channel_id::ChannelId, models::response::BrowseResponse, request::clients::client::ClientWithHeaders};
 
 pub trait GetId<T: Id> {
     fn get_id(&self) -> Result<T>;
@@ -13,4 +13,8 @@ pub trait Id {
 
 pub trait BrowseId: Id {
     type BrowseResponse: BrowseResponse;
+}
+
+pub trait MakeChannelId: Id {
+    async fn transform(&self) -> Result<ChannelId>;
 }

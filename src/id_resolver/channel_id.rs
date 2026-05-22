@@ -2,7 +2,7 @@ use crate::{
     Result,
     error::YtuwuError,
     id_resolver::{
-        id::{GetId, Id},
+        id::{GetId, Id, MakeChannelId},
         id_collection::IdCollection,
     },
     request::clients::channel::ChannelClient,
@@ -37,5 +37,11 @@ impl GetId<ChannelId> for IdCollection {
             .channel_id
             .clone()
             .ok_or(YtuwuError::NoIdFound)?)
+    }
+}
+
+impl MakeChannelId for ChannelId {
+    async fn transform(&self) -> Result<ChannelId> {
+        Ok(self.clone())
     }
 }

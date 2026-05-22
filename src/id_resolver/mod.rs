@@ -1,4 +1,5 @@
 pub mod channel_id;
+pub mod channel_name_id;
 pub mod channel_playlist_id;
 pub mod id;
 pub mod id_collection;
