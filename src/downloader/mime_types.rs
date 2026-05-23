@@ -1,3 +1,4 @@
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum MimeType {
     MP4,
     M4A,
