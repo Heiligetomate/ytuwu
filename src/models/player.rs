@@ -1,8 +1,12 @@
 use serde::Deserialize;
 
 use crate::{
-    downloader::media::extracted_streams::ExtractedPlayerResponse,
+    downloader::media::{
+        core::Media,
+        extracted_streams::{ExtractedStreams, ExtractedThumbnails},
+    },
     error::{Result, YtuwuError},
+    metadata::MediaMetadata,
     models::response::{Response, Status},
 };
 
@@ -69,19 +73,23 @@ pub enum PlayabilityStatusValue {
 }
 
 impl PlayerResponse {
-    pub fn extract(self) -> Result<ExtractedPlayerResponse> {
+    pub fn extract(self) -> Result<Media> {
         let streaming_data = self
             .streaming_data
             .ok_or(YtuwuError::PlayerDataNotFound("Streaming data"))?;
 
-        let mut media_streams = streaming_data.formats;
-        media_streams.extend(streaming_data.adaptive_formats);
+        let mut extracted_streams = streaming_data.formats;
+        extracted_streams.extend(streaming_data.adaptive_formats);
+        let media_streams = ExtractedStreams::new(extracted_streams);
 
         let video_details = self
             .video_details
             .ok_or(YtuwuError::PlayerDataNotFound("video details"))?;
 
-        Ok(ExtractedPlayerResponse::new(media_streams, video_details))
+        let thumbnail_streams = ExtractedThumbnails::new(video_details.thumbnail.thumbnails);
+        let metadata = MediaMetadata::new(&video_details.title, &video_details.author);
+
+        Ok(Media::new(media_streams, thumbnail_streams, metadata))
     }
 }
 
