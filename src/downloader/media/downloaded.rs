@@ -13,20 +13,20 @@ use crate::{
 };
 
 #[derive(Debug)]
-pub struct DownloadedMedia<M: MediaStream + Debug> {
+pub struct DwnMedia<M: MediaStream + Debug> {
     pub metadata: MediaMetadata,
     pub stream: M,
     pub thumbnail: Option<Thumbnail>,
 }
 
 #[derive(Debug)]
-pub struct MultipleStreamMedia {
+pub struct DwnBundleMedia {
     pub metadata: MediaMetadata,
     pub streams: Vec<AnyStream>,
     pub thumbnail: Option<Thumbnail>,
 }
 
-impl<M: MediaStream + Debug> DownloadedMedia<M> {
+impl<M: MediaStream + Debug> DwnMedia<M> {
     pub fn new(stream: M, metadata: MediaMetadata, thumbnail: Option<Thumbnail>) -> Self {
         Self { metadata, stream, thumbnail }
     }
@@ -62,7 +62,7 @@ impl<M: MediaStream + Debug> DownloadedMedia<M> {
     }
 }
 
-impl MultipleStreamMedia {
+impl DwnBundleMedia {
     pub fn new(streams: Vec<AnyStream>, metadata: MediaMetadata, thumbnail: Option<Thumbnail>) -> Self {
         Self { thumbnail, streams, metadata }
     }

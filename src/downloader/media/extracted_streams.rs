@@ -20,9 +20,9 @@ impl ExtractedThumbnails {
         Self { streams }
     }
 
-    pub fn get_thumbnail_url_by_res(&self, resolution: &ThumbnailResolution) -> Result<&str> {
+    pub fn get_thumbnail_url_by_res(&self, resolution: &ThumbRes) -> Result<&str> {
         for thumbnail in self.streams.iter() {
-            if let Some(thumbnail_resolution) = ThumbnailResolution::from_width(thumbnail.width) {
+            if let Some(thumbnail_resolution) = ThumbRes::from_width(thumbnail.width) {
                 if thumbnail_resolution == *resolution {
                     return Ok(&thumbnail.url);
                 }
@@ -60,14 +60,14 @@ impl ExtractedStreams {
 }
 
 #[derive(Debug, PartialEq, Eq, Clone)]
-pub enum ThumbnailResolution {
+pub enum ThumbRes {
     Low,
     Medium,
     High,
     VeryHigh,
 }
 
-impl ThumbnailResolution {
+impl ThumbRes {
     pub fn from_width(width: u16) -> Option<Self> {
         match width {
             120 => Some(Self::Low),

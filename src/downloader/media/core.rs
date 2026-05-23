@@ -1,12 +1,9 @@
 use std::fmt::Debug;
 
 use crate::{
-    MultipleStreamMedia,
+    DwnBundleMedia, DwnMedia,
     downloader::{
-        media::{
-            downloaded::DownloadedMediaWithThumbnail,
-            extracted_streams::{ExtractedStreams, ExtractedThumbnails, ThumbnailResolution},
-        },
+        media::extracted_streams::{ExtractedStreams, ExtractedThumbnails, ThumbRes},
         media_stream::{AnyStream, MediaStream},
         thumbnail::Thumbnail,
         util::*,
@@ -67,7 +64,7 @@ impl Media {
         Ok(downloaded_stream)
     }
 
-    pub async fn download_thumbnail(&self, resolution: &ThumbnailResolution) -> Result<Thumbnail> {
+    pub async fn download_thumbnail(&self, resolution: &ThumbRes) -> Result<Thumbnail> {
         let url = self
             .thumbnail_streams
             .get_thumbnail_url_by_res(&resolution)?;
@@ -81,8 +78,10 @@ impl Media {
         Ok(Thumbnail::new(thumbnail, &self.metadata.title))
     }
 
-    pub async fn download_streams(self, itags: Vec<AnyItag>) -> Result<MultipleStreamMedia> {
+    pub async fn download_streams(self, itags: Vec<AnyItag>, thumb_res: &Option<ThumbRes>) -> Result<DwnBundleMedia> {
+        let mut thumbnail = None;
         let mut streams = vec![];
+
         for itag in itags {
             let stream = match itag {
                 AnyItag::Audio(i) => AnyStream::Audio(self.download_stream(i).await?),
@@ -92,20 +91,34 @@ impl Media {
             };
             streams.push(stream);
         }
-        Ok(MultipleStreamMedia { metadata: self.metadata, streams })
+
+        if let Some(res) = thumb_res {
+            let dwn_thumb = self.download_thumbnail(res).await?;
+            thumbnail = Some(dwn_thumb)
+        }
+
+        Ok(DwnBundleMedia {
+            metadata: self.metadata,
+            streams,
+            thumbnail,
+        })
     }
 
-    pub async fn download_full<I>(self, itag: I, thumbnail_resolution: &ThumbnailResolution) -> Result<DownloadedMediaWithThumbnail<I::Stream>>
+    pub async fn download_full<I>(self, itag: I, thumb_res: &Option<ThumbRes>) -> Result<DwnMedia<I::Stream>>
     where
         I: Itag + Copy + Debug,
         I::Stream: Debug,
     {
-        let thumbnail = self
-            .download_thumbnail(&thumbnail_resolution)
-            .await?;
+        let mut thumbnail = None;
+
+        if let Some(res) = thumb_res {
+            let dwn_thumb = self.download_thumbnail(res).await?;
+            thumbnail = Some(dwn_thumb)
+        }
+
         let media = self.download_stream(itag).await?;
 
-        let downloaded_media = DownloadedMediaWithThumbnail::new(media, thumbnail, self.metadata);
+        let downloaded_media = DwnMedia::new(media, self.metadata, thumbnail);
 
         Ok(downloaded_media)
     }
