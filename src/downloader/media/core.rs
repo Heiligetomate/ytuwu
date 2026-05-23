@@ -1,18 +1,20 @@
 use std::fmt::Debug;
 
 use crate::{
+    MultipleStreamMedia,
     downloader::{
-        media::downloaded::{DownloadedDualStreamMedia, DownloadedMedia, RawDownloadedMedia},
-        media_stream::{MediaStream, VideoStream},
+        media::{
+            downloaded::DownloadedMediaWithThumbnail,
+            extracted_streams::{ExtractedStreams, ExtractedThumbnails, ThumbnailResolution},
+        },
+        media_stream::{AnyStream, MediaStream},
         thumbnail::Thumbnail,
         util::*,
     },
     error::Result,
-    itag::VideoItag,
-    models::{
-        itag::{AudioItag, Itag},
-        player::{PlayerResponse, ThumbnailResolution},
-    },
+    itag::AnyItag,
+    metadata::MediaMetadata,
+    models::itag::Itag,
 };
 use bytes::Bytes;
 
@@ -20,19 +22,21 @@ const CHUNK_SIZE: u32 = 1024 * 1024;
 
 #[derive(Debug)]
 pub struct Media {
-    pub title: String,
-    player_response: PlayerResponse,
+    media_streams: ExtractedStreams,
+    thumbnail_streams: ExtractedThumbnails,
+    metadata: MediaMetadata,
 }
 
 impl Media {
-    pub fn new(resp: PlayerResponse, title: &str) -> Self {
+    pub fn new(media_streams: ExtractedStreams, thumbnail_streams: ExtractedThumbnails, metadata: MediaMetadata) -> Self {
         Self {
-            title: title.to_owned(),
-            player_response: resp,
+            media_streams,
+            thumbnail_streams,
+            metadata,
         }
     }
 
-    pub async fn download_chunk(&self, from: u32, to: u32, url: &str) -> Result<Bytes> {
+    async fn download_chunk(&self, from: u32, to: u32, url: &str) -> Result<Bytes> {
         let client = reqwest::Client::new();
         let chunk_url = format!("{}&range={}-{}", url, from, to);
         let chunk = client
@@ -44,20 +48,9 @@ impl Media {
         Ok(chunk)
     }
 
-    pub async fn download_raw<I>(&self, itag: I) -> Result<RawDownloadedMedia<I::Stream>>
-    where
-        I: Itag + Copy,
-        I::Stream: Debug,
-    {
-        let stream = self.download_media_stream(itag).await?;
-        let title = &self.title;
-        Ok(RawDownloadedMedia::new(stream, title))
-    }
-    //pub async fn download_video_stream<V: VideoStreamItag>
-
-    pub async fn download_media_stream<I: Itag + Copy>(&self, itag: I) -> Result<I::Stream> {
+    async fn download_stream<I: Itag + Copy>(&self, itag: I) -> Result<I::Stream> {
         let url = self
-            .player_response
+            .media_streams
             .get_best_stream(&itag)?;
         let size = extract_size(url)?;
         let mut downloaded_stream = itag.new_stream();
@@ -74,25 +67,9 @@ impl Media {
         Ok(downloaded_stream)
     }
 
-    pub async fn download_dual_stream<V: VideoItag + Copy>(&self, video_itag: V, audio_itag: AudioItag, thumbnail_resolution: &ThumbnailResolution) -> Result<DownloadedDualStreamMedia<<V as Itag>::Stream>>
-    where
-        <V as Itag>::Stream: VideoStream,
-    {
-        let video_stream = self
-            .download_media_stream(video_itag)
-            .await?;
-        let audio_stream = self
-            .download_media_stream(audio_itag)
-            .await?;
-        let thumbnail = self
-            .download_thumbnail(thumbnail_resolution)
-            .await?;
-        Ok(DownloadedDualStreamMedia::new(audio_stream, video_stream, thumbnail, &self.title, &self.player_response.get_author()?))
-    }
-
     pub async fn download_thumbnail(&self, resolution: &ThumbnailResolution) -> Result<Thumbnail> {
         let url = self
-            .player_response
+            .thumbnail_streams
             .get_thumbnail_url_by_res(&resolution)?;
         let client = reqwest::Client::new();
         let thumbnail = client
@@ -101,10 +78,24 @@ impl Media {
             .await?
             .bytes()
             .await?;
-        Ok(Thumbnail::new(thumbnail, &self.title))
+        Ok(Thumbnail::new(thumbnail, &self.metadata.title))
     }
 
-    pub async fn download_full<I>(self, itag: I, thumbnail_resolution: &ThumbnailResolution) -> Result<DownloadedMedia<I::Stream>>
+    pub async fn download_streams(self, itags: Vec<AnyItag>) -> Result<MultipleStreamMedia> {
+        let mut streams = vec![];
+        for itag in itags {
+            let stream = match itag {
+                AnyItag::Audio(i) => AnyStream::Audio(self.download_stream(i).await?),
+                AnyItag::LongVideo(i) => AnyStream::LongVideo(self.download_stream(i).await?),
+                AnyItag::ShortVideo(i) => AnyStream::ShortVideo(self.download_stream(i).await?),
+                AnyItag::Muxed(i) => AnyStream::Muxed(self.download_stream(i).await?),
+            };
+            streams.push(stream);
+        }
+        Ok(MultipleStreamMedia { metadata: self.metadata, streams })
+    }
+
+    pub async fn download_full<I>(self, itag: I, thumbnail_resolution: &ThumbnailResolution) -> Result<DownloadedMediaWithThumbnail<I::Stream>>
     where
         I: Itag + Copy + Debug,
         I::Stream: Debug,
@@ -112,9 +103,9 @@ impl Media {
         let thumbnail = self
             .download_thumbnail(&thumbnail_resolution)
             .await?;
-        let media = self.download_media_stream(itag).await?;
+        let media = self.download_stream(itag).await?;
 
-        let downloaded_media = DownloadedMedia::new(media, &self.title, thumbnail, self.player_response.get_author()?);
+        let downloaded_media = DownloadedMediaWithThumbnail::new(media, thumbnail, self.metadata);
 
         Ok(downloaded_media)
     }

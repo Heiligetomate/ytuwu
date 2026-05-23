@@ -1,8 +1,7 @@
 use crate::{
-    Result,
+    Id, Result,
     downloader::media::core::Media,
-    id_resolver::{id::Id, id_types::ShortId, id_types::VideoId},
-    name_trimmer::trim,
+    id_types::{ShortId, VideoId},
     request::core::captcha_bypass,
 };
 
@@ -23,8 +22,6 @@ impl MediaBrowse {
 
     pub async fn browse(self) -> Result<Media> {
         let response = captcha_bypass(&self.video_id, 2).await?;
-        let title = response.get_title()?.to_owned();
-        let trimmed_title = trim(title, "-");
-        Ok(Media::new(response, &trimmed_title))
+        response.extract()
     }
 }
