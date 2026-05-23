@@ -10,6 +10,8 @@ pub enum YtuwuError {
     ReqwestError(String),
     CaptchaBypassFailed(u16),
 
+    NoThumbnail,
+
     YoutubeAPIReturn,
     Deserialize,
 
@@ -59,6 +61,7 @@ impl Display for YtuwuError {
             Self::InvalidIdLength => write!(f, "Id has an invalid length"),
             Self::InvalidIdFormat => write!(f, "Id has an invalid format"),
             Self::NoMatchingThumbnail => write!(f, "No matching thumbnail found"),
+            Self::NoThumbnail => write!(f, "No Thumbnail"),
         }
     }
 }

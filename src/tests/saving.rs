@@ -4,7 +4,7 @@ use bytes::Bytes;
 
 use crate::{
     downloader::media_stream::{AudioStream, LongVideoStream, MediaStream, MuxedStream, ShortVideoStream},
-    itag::{LongVideoItag, MuxedItag, ShortVideoItag},
+    models::itag::*,
 };
 
 #[test]
@@ -14,7 +14,7 @@ fn test_save_audio_stream() {
     let bytes = Bytes::from("meow");
     let expected_path = path.join("audio_stream_opus.webm");
 
-    let mut audio_stream = AudioStream::new(crate::itag::AudioItag::OpusMedium);
+    let mut audio_stream = AudioStream::new(AudioItag::OpusMedium);
     audio_stream.push_data(bytes);
     audio_stream
         .save(path, "audio_stream_opus")

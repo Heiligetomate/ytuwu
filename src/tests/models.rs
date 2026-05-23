@@ -112,8 +112,11 @@ async fn player_resp() {
     let res: PlayerResponse = captcha_bypass(&id, 2).await.unwrap();
 
     assert_eq!(res.get_status(), Status::Success);
-    assert_eq!(res.get_title().unwrap(), "Damnation");
-    assert_eq!(res.get_author().unwrap(), "BLIND GUARDIAN - Topic");
+
+    let extr_res = res.extract().unwrap();
+
+    assert_eq!(extr_res.metadata.title, "Damnation");
+    assert_eq!(extr_res.metadata.author, "BLIND GUARDIAN - Topic");
 }
 
 #[tokio::test]

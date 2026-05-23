@@ -21,7 +21,7 @@ const CHUNK_SIZE: u32 = 1024 * 1024;
 pub struct Media {
     media_streams: ExtractedStreams,
     thumbnail_streams: ExtractedThumbnails,
-    metadata: MediaMetadata,
+    pub metadata: MediaMetadata,
 }
 
 impl Media {
