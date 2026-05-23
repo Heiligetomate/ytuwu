@@ -1,9 +1,11 @@
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    downloader::media_stream::{AudioStream, LongVideoStream, MediaStream, MuxedStream, ShortVideoStream, VideoStream},
+    downloader::{
+        media_stream::{AudioStream, LongVideoStream, MediaStream, MuxedStream, ShortVideoStream, VideoStream},
+        mime_types::MimeType,
+    },
     error::{Result, YtuwuError},
-    models::constants::*,
 };
 
 pub trait Itag {
@@ -15,7 +17,7 @@ pub trait Itag {
         Self: Sized;
 
     fn to_int(&self) -> u16;
-    fn get_mime_type(&self) -> &str;
+    fn get_mime_type(&self) -> MimeType;
 
     fn new_stream(self) -> Self::Stream;
 }
@@ -123,20 +125,20 @@ impl Itag for LongVideoItag {
         }
     }
 
-    fn get_mime_type(&self) -> &str {
+    fn get_mime_type(&self) -> MimeType {
         match &self {
-            Self::WebM1080p => WEBM_FORMAT,
-            Self::MP41080p => MP4_FORMAT,
-            Self::WebM720p => WEBM_FORMAT,
-            Self::MP4720p => MP4_FORMAT,
-            Self::Webm480p => WEBM_FORMAT,
-            Self::MP4480p => MP4_FORMAT,
-            Self::WebM360p => WEBM_FORMAT,
-            Self::MP4360p => MP4_FORMAT,
-            Self::WebM240p => WEBM_FORMAT,
-            Self::MP4240p => MP4_FORMAT,
-            Self::Webm144p => WEBM_FORMAT,
-            Self::MP4144p => MP4_FORMAT,
+            Self::WebM1080p => MimeType::Webm,
+            Self::MP41080p => MimeType::MP4,
+            Self::WebM720p => MimeType::Webm,
+            Self::MP4720p => MimeType::MP4,
+            Self::Webm480p => MimeType::Webm,
+            Self::MP4480p => MimeType::MP4,
+            Self::WebM360p => MimeType::Webm,
+            Self::MP4360p => MimeType::MP4,
+            Self::WebM240p => MimeType::Webm,
+            Self::MP4240p => MimeType::MP4,
+            Self::Webm144p => MimeType::Webm,
+            Self::MP4144p => MimeType::MP4,
         }
     }
 
@@ -176,12 +178,12 @@ impl Itag for AudioItag {
         }
     }
 
-    fn get_mime_type(&self) -> &str {
+    fn get_mime_type(&self) -> MimeType {
         match &self {
-            Self::OpusMedium => WEBM_FORMAT,
-            Self::OpusLow => WEBM_FORMAT,
-            Self::AacMedium => M4A_FORMAT,
-            Self::AacLow => M4A_FORMAT,
+            Self::OpusMedium => MimeType::Webm,
+            Self::OpusLow => MimeType::Webm,
+            Self::AacMedium => MimeType::M4A,
+            Self::AacLow => MimeType::M4A,
         }
     }
 
@@ -222,8 +224,8 @@ impl Itag for ShortVideoItag {
         }
     }
 
-    fn get_mime_type(&self) -> &str {
-        MP4_FORMAT
+    fn get_mime_type(&self) -> MimeType {
+        MimeType::MP4
     }
 
     fn new_stream(self) -> Self::Stream {
@@ -246,8 +248,8 @@ impl Itag for MuxedItag {
         Err(YtuwuError::NoLowerItagFound)
     }
 
-    fn get_mime_type(&self) -> &str {
-        MP4_FORMAT
+    fn get_mime_type(&self) -> MimeType {
+        MimeType::MP4
     }
 
     fn new_stream(self) -> Self::Stream {
