@@ -33,7 +33,7 @@ impl Id for ChannelId {
             }
         };
 
-        if !id_with_prfx.len() == 28 {
+        if id_with_prfx.len() != 28 {
             return Err(YtuwuError::InvalidIdLength);
         }
 

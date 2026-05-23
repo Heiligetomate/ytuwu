@@ -27,7 +27,7 @@ impl Id for ChannelPlaylistId {
     fn new<T: Into<String>>(id: T) -> Result<Self> {
         let raw_id = id.into();
 
-        if !raw_id.len() == 17 {
+        if raw_id.len() != 17 {
             return Err(YtuwuError::InvalidIdLength);
         }
 
