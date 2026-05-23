@@ -78,16 +78,16 @@ impl Media {
         Ok(Thumbnail::new(thumbnail, &self.metadata.title))
     }
 
-    pub async fn download_streams(self, itags: Vec<AnyItag>, thumb_res: &Option<ThumbRes>) -> Result<DwnBundleMedia> {
+    pub async fn download_streams(self, itags: &Vec<AnyItag>, thumb_res: &Option<ThumbRes>) -> Result<DwnBundleMedia> {
         let mut thumbnail = None;
         let mut streams = vec![];
 
         for itag in itags {
             let stream = match itag {
-                AnyItag::Audio(i) => AnyStream::Audio(self.download_stream(i).await?),
-                AnyItag::LongVideo(i) => AnyStream::LongVideo(self.download_stream(i).await?),
-                AnyItag::ShortVideo(i) => AnyStream::ShortVideo(self.download_stream(i).await?),
-                AnyItag::Muxed(i) => AnyStream::Muxed(self.download_stream(i).await?),
+                AnyItag::Audio(i) => AnyStream::Audio(self.download_stream(*i).await?),
+                AnyItag::LongVideo(i) => AnyStream::LongVideo(self.download_stream(*i).await?),
+                AnyItag::ShortVideo(i) => AnyStream::ShortVideo(self.download_stream(*i).await?),
+                AnyItag::Muxed(i) => AnyStream::Muxed(self.download_stream(*i).await?),
             };
             streams.push(stream);
         }
