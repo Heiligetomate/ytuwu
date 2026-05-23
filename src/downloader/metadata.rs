@@ -2,7 +2,6 @@
 pub struct MediaMetadata {
     pub title: String,
     pub author: String,
-    pub album: Option<String>,
 }
 
 #[derive(Debug)]
@@ -13,11 +12,10 @@ pub struct PlaylistMetadata {
 }
 
 impl MediaMetadata {
-    pub fn new(title: &str, author: &str, album: Option<&str>) -> Self {
+    pub fn new(title: &str, author: &str) -> Self {
         Self {
             title: title.to_owned(),
             author: author.to_owned(),
-            album: album.map(|s| s.to_owned()),
         }
     }
 }
