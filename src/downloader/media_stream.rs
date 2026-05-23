@@ -178,3 +178,10 @@ where
         .map_err(|_| YtuwuError::WriteToFile)?;
     Ok(())
 }
+
+pub enum AnyStream {
+    Audio(AudioStream),
+    LongVideo(LongVideoStream),
+    ShortVideo(ShortVideoStream),
+    Muxed(MuxedStream),
+}

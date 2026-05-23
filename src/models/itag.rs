@@ -11,7 +11,9 @@ use crate::{
 pub trait Itag {
     type Stream: MediaStream;
 
-    fn highest() -> Self;
+    fn highest() -> Self
+    where
+        Self: Sized;
     fn next_best(self) -> Result<Self>
     where
         Self: Sized;
@@ -255,4 +257,11 @@ impl Itag for MuxedItag {
     fn new_stream(self) -> Self::Stream {
         MuxedStream::new(self)
     }
+}
+
+pub enum AnyItag {
+    Audio(AudioItag),
+    LongVideo(LongVideoItag),
+    ShortVideo(ShortVideoItag),
+    Muxed(MuxedItag),
 }
