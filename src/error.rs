@@ -16,6 +16,8 @@ pub enum YtuwuError {
     NoLowerItagFound,
     NoMatchingItag,
 
+    NoMatchingThumbnail,
+
     UrlSizeExtract,
 
     CreateFile,
@@ -56,6 +58,7 @@ impl Display for YtuwuError {
             Self::SongInPlaylistNotFound => write!(f, "Song was not found"),
             Self::InvalidIdLength => write!(f, "Id has an invalid length"),
             Self::InvalidIdFormat => write!(f, "Id has an invalid format"),
+            Self::NoMatchingThumbnail => write!(f, "No matching thumbnail found"),
         }
     }
 }
