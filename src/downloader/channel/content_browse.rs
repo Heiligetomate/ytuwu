@@ -1,13 +1,8 @@
 use std::fmt::Debug;
 
 use crate::{
-    Result,
-    downloader::{
-        channel::downloaded::DownloadedChannel,
-        media::downloaded::RawDownloadedMedia,
-        media_stream::MediaStream,
-        playlist::{browse::PlaylistBrowse, downloaded::RawDownloadedPlaylist},
-    },
+    Dwnlist, Result,
+    downloader::{channel::downloaded::DwnChannel, media::downloaded::DwnMedia, media_stream::MediaStream, playlist::browse::PlaylistBrowse},
     id_resolver::id_types::ChannelPlaylistId,
     itag::Itag,
 };
@@ -20,14 +15,14 @@ pub struct ChannelContentBrowse {
 }
 
 impl ChannelContentBrowse {
-    pub async fn download<I>(mut self, itag: I) -> Result<DownloadedChannel<I::Stream>>
+    pub async fn download<I>(mut self, itag: I) -> Result<DwnChannel<I::Stream>>
     where
-        I: Itag + Copy,
+        I: Itag + Copy + Debug,
         I::Stream: Debug + MediaStream,
     {
-        let mut downloaded_singles: Vec<RawDownloadedMedia<I::Stream>> = Vec::new();
-        let mut downloaded_eps: Vec<RawDownloadedPlaylist<I::Stream>> = Vec::new();
-        let mut downloaded_albums: Vec<RawDownloadedPlaylist<I::Stream>> = Vec::new();
+        let mut downloaded_singles: Vec<DwnMedia<I::Stream>> = Vec::new();
+        let mut downloaded_eps: Vec<Dwnlist<I::Stream>> = Vec::new();
+        let mut downloaded_albums: Vec<Dwnlist<I::Stream>> = Vec::new();
 
         for single in self.singles.drain(..) {
             let single = PlaylistBrowse::new(single)
@@ -36,7 +31,7 @@ impl ChannelContentBrowse {
                 .browse()
                 .await?
                 .get_song_by_index(0)?
-                .download_raw(itag)
+                .download(itag, &None)
                 .await?;
             downloaded_singles.push(single);
         }
@@ -47,7 +42,7 @@ impl ChannelContentBrowse {
                 .await?
                 .browse()
                 .await?
-                .download_single_stream(itag)
+                .download(itag, &None)
                 .await?;
             downloaded_eps.push(ep);
         }
@@ -58,12 +53,12 @@ impl ChannelContentBrowse {
                 .await?
                 .browse()
                 .await?
-                .download_single_stream(itag)
+                .download(itag, &None)
                 .await?;
             downloaded_albums.push(album);
         }
 
-        Ok(DownloadedChannel {
+        Ok(DwnChannel {
             albums: downloaded_albums,
             eps: downloaded_eps,
             singles: downloaded_singles,
