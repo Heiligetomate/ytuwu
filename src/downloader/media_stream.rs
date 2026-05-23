@@ -5,6 +5,7 @@ use std::{
 };
 
 use crate::{
+    downloader::mime_types::MimeType,
     error::{Result, YtuwuError},
     itag::LongVideoItag,
 };
@@ -13,8 +14,8 @@ use bytes::{BufMut, Bytes, BytesMut};
 use crate::models::itag::{AudioItag, Itag, MuxedItag, ShortVideoItag};
 
 pub trait MediaStream {
+    fn get_mime_type(&self) -> MimeType;
     fn save(&self, path: &Path, file_name: &str) -> Result<()>;
-    fn get_itag(&self) -> impl Itag;
     fn get_data(&self) -> &BytesMut;
     fn push_data(&mut self, data: Bytes);
 }
@@ -28,25 +29,25 @@ impl VideoStream for ShortVideoStream {}
 #[derive(Debug)]
 pub struct AudioStream {
     data: BytesMut,
-    itag: AudioItag,
+    mime_type: MimeType,
 }
 
 #[derive(Debug)]
 pub struct LongVideoStream {
     data: BytesMut,
-    itag: LongVideoItag,
+    mime_type: MimeType,
 }
 
 #[derive(Debug)]
 pub struct ShortVideoStream {
     data: BytesMut,
-    itag: ShortVideoItag,
+    mime_type: MimeType,
 }
 
 #[derive(Debug)]
 pub struct MuxedStream {
     data: BytesMut,
-    itag: MuxedItag,
+    mime_type: MimeType,
 }
 
 impl MediaStream for AudioStream {
@@ -59,12 +60,12 @@ impl MediaStream for AudioStream {
         Ok(())
     }
 
-    fn get_itag(&self) -> impl Itag {
-        self.itag
-    }
-
     fn push_data(&mut self, data: Bytes) {
         self.data.put(data);
+    }
+
+    fn get_mime_type(&self) -> MimeType {
+        self.mime_type
     }
 }
 
@@ -78,12 +79,12 @@ impl MediaStream for LongVideoStream {
         Ok(())
     }
 
-    fn get_itag(&self) -> impl Itag {
-        self.itag
-    }
-
     fn push_data(&mut self, data: Bytes) {
         self.data.put(data);
+    }
+
+    fn get_mime_type(&self) -> MimeType {
+        self.mime_type
     }
 }
 
@@ -97,12 +98,12 @@ impl MediaStream for ShortVideoStream {
         Ok(())
     }
 
-    fn get_itag(&self) -> impl Itag {
-        self.itag
-    }
-
     fn push_data(&mut self, data: Bytes) {
         self.data.put(data);
+    }
+
+    fn get_mime_type(&self) -> MimeType {
+        self.mime_type
     }
 }
 
@@ -116,41 +117,56 @@ impl MediaStream for MuxedStream {
         Ok(())
     }
 
-    fn get_itag(&self) -> impl Itag {
-        self.itag
-    }
-
     fn push_data(&mut self, data: Bytes) {
         self.data.put(data);
+    }
+
+    fn get_mime_type(&self) -> MimeType {
+        self.mime_type
     }
 }
 
 impl AudioStream {
     pub fn new(itag: AudioItag) -> Self {
-        Self { data: BytesMut::new(), itag }
+        Self {
+            data: BytesMut::new(),
+            mime_type: itag.get_mime_type(),
+        }
     }
 }
 
 impl LongVideoStream {
     pub fn new(itag: LongVideoItag) -> Self {
-        Self { data: BytesMut::new(), itag }
+        Self {
+            data: BytesMut::new(),
+            mime_type: itag.get_mime_type(),
+        }
     }
 }
 
 impl ShortVideoStream {
     pub fn new(itag: ShortVideoItag) -> Self {
-        Self { data: BytesMut::new(), itag }
+        Self {
+            data: BytesMut::new(),
+            mime_type: itag.get_mime_type(),
+        }
     }
 }
 
 impl MuxedStream {
     pub fn new(itag: MuxedItag) -> Self {
-        Self { data: BytesMut::new(), itag }
+        Self {
+            data: BytesMut::new(),
+            mime_type: itag.get_mime_type(),
+        }
     }
 }
 
-fn save_media_stream(path: &Path, file_name: &str, media_stream: &impl MediaStream) -> Result<()> {
-    let file_name = format!("{}.{}", file_name, media_stream.get_itag().get_mime_type());
+fn save_media_stream<M>(path: &Path, file_name: &str, media_stream: &M) -> Result<()>
+where
+    M: MediaStream,
+{
+    let file_name = format!("{}.{}", file_name, media_stream.get_mime_type().as_str());
     if !path.is_dir() {
         return Err(YtuwuError::InvalidPath);
     }
