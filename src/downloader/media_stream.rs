@@ -179,9 +179,21 @@ where
     Ok(())
 }
 
+#[derive(Debug)]
 pub enum AnyStream {
     Audio(AudioStream),
     LongVideo(LongVideoStream),
     ShortVideo(ShortVideoStream),
     Muxed(MuxedStream),
+}
+
+impl AnyStream {
+    pub fn into_dyn(self) -> Box<dyn MediaStream> {
+        match self {
+            Self::Audio(s) => Box::new(s),
+            Self::LongVideo(s) => Box::new(s),
+            Self::ShortVideo(s) => Box::new(s),
+            Self::Muxed(s) => Box::new(s),
+        }
+    }
 }
