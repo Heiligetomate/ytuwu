@@ -1,4 +1,4 @@
-use std::{fmt::Debug, path::Path};
+use std::{collections::HashMap, fmt::Debug, path::Path};
 
 use bytes::{Bytes, BytesMut};
 
@@ -8,70 +8,98 @@ use crate::{
         media_stream::{AnyStream, MediaStream},
         thumbnail::Thumbnail,
     },
+    error::YtuwuError,
     metadata::MediaMetadata,
 };
-
-#[derive(Debug)]
-pub struct DownloadedMediaWithThumbnail<M: MediaStream + Debug> {
-    pub metadata: MediaMetadata,
-    pub thumbnail: Thumbnail,
-    pub stream: M,
-}
 
 #[derive(Debug)]
 pub struct DownloadedMedia<M: MediaStream + Debug> {
     pub metadata: MediaMetadata,
     pub stream: M,
+    pub thumbnail: Option<Thumbnail>,
 }
 
 #[derive(Debug)]
 pub struct MultipleStreamMedia {
     pub metadata: MediaMetadata,
     pub streams: Vec<AnyStream>,
+    pub thumbnail: Option<Thumbnail>,
 }
 
 impl<M: MediaStream + Debug> DownloadedMedia<M> {
-    pub fn new(stream: M, metadata: MediaMetadata) -> Self {
-        Self { metadata, stream }
-    }
-
-    pub fn save(&self, path: &Path) -> Result<()> {
-        self.stream
-            .save(path, &self.metadata.title)
+    pub fn new(stream: M, metadata: MediaMetadata, thumbnail: Option<Thumbnail>) -> Self {
+        Self { metadata, stream, thumbnail }
     }
 
     pub fn bytes(&self) -> &BytesMut {
         self.stream.get_data()
     }
-}
 
-impl<M: MediaStream + Debug> DownloadedMediaWithThumbnail<M> {
-    pub fn new(stream: M, thumbnail: Thumbnail, metadata: MediaMetadata) -> Self {
-        Self { thumbnail, stream, metadata }
-    }
-
-    pub fn save_thumbnail(&self, path: &Path) -> Result<()> {
-        self.thumbnail.save(path)?;
-        Ok(())
+    pub fn get_thumbnail(&self) -> Result<&Thumbnail> {
+        self.thumbnail
+            .as_ref()
+            .ok_or(YtuwuError::NoThumbnail)
     }
 
     pub fn save_media_stream(&self, path: &Path) -> Result<()> {
         self.stream
-            .save(path, &self.metadata.title)?;
+            .save(path, &self.metadata.title)
+    }
+
+    pub fn save_thumbnail(&self, path: &Path) -> Result<()> {
+        self.get_thumbnail()?.save(path)?;
         Ok(())
     }
 
-    pub fn save(&self, path: &Path) -> Result<()> {
+    pub fn save_full(&self, path: &Path) -> Result<()> {
         self.save_thumbnail(&path)?;
         self.save_media_stream(&path)?;
         Ok(())
     }
 
-    pub fn thumbnail_bytes(&self) -> &Bytes {
-        self.thumbnail.bytes()
+    pub fn thumbnail_bytes(&self) -> Result<&Bytes> {
+        Ok(self.get_thumbnail()?.bytes())
+    }
+}
+
+impl MultipleStreamMedia {
+    pub fn new(streams: Vec<AnyStream>, metadata: MediaMetadata, thumbnail: Option<Thumbnail>) -> Self {
+        Self { thumbnail, streams, metadata }
     }
 
-    pub fn bytes(&self) -> &BytesMut {
-        self.stream.get_data()
+    pub fn get_thumbnail(&self) -> Result<&Thumbnail> {
+        self.thumbnail
+            .as_ref()
+            .ok_or(YtuwuError::NoThumbnail)
+    }
+
+    pub fn save_thumbnail(&self, path: &Path) -> Result<()> {
+        self.get_thumbnail()?.save(path)
+    }
+
+    pub fn save_media_stream(&self, path: &Path) -> Result<()> {
+        let mut seen: HashMap<String, u32> = HashMap::new();
+        for stream in self.streams.iter() {
+            let dyn_stream = stream.into_dyn();
+            let mime_type = dyn_stream
+                .get_mime_type()
+                .as_str()
+                .to_owned();
+            let count = seen.entry(mime_type).or_insert(0);
+            let name = if *count == 0 { self.metadata.title.clone() } else { format!("{}-{}", self.metadata.title, count) };
+            *count += 1;
+            dyn_stream.save(path, &name)?;
+        }
+        Ok(())
+    }
+
+    pub fn save_full(&self, path: &Path) -> Result<()> {
+        self.save_thumbnail(&path)?;
+        self.save_media_stream(&path)?;
+        Ok(())
+    }
+
+    pub fn thumbnail_bytes(&self) -> Result<&Bytes> {
+        Ok(self.get_thumbnail()?.bytes())
     }
 }
