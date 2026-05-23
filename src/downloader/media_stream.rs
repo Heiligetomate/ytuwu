@@ -188,7 +188,7 @@ pub enum AnyStream {
 }
 
 impl AnyStream {
-    pub fn into_dyn(self) -> Box<dyn MediaStream> {
+    pub fn into_dyn(&self) -> Box<&dyn MediaStream> {
         match self {
             Self::Audio(s) => Box::new(s),
             Self::LongVideo(s) => Box::new(s),
