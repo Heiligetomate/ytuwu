@@ -23,7 +23,11 @@ impl Thumbnail {
         Self { data, name: name.to_owned() }
     }
 
-    // dont use this lmao
+    pub fn bytes(&self) -> &Bytes {
+        &self.data
+    }
+
+    // dont use this lmao TODO: wtf
     pub fn save_file(&self, path: &Path) -> Result<()> {
         let mut file = fs::File::create(path).map_err(|_| YtuwuError::CreateFile)?;
         file.write_all(&self.data)
