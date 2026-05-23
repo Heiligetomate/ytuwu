@@ -56,11 +56,12 @@ impl Response for ChannelNameToIdResponse {
         super::response::Status::Error
     }
 
-    fn get_visitor_data(&self) -> Option<String> {
-        if let Some(response_context) = &self.response_context {
-            if let Some(visitor_data) = &response_context.visitor_data {
-                return Some(visitor_data.to_owned());
-            }
+    fn get_visitor_data(&self) -> Option<&str> {
+        if let Some(ctx) = &self.response_context {
+            return ctx
+                .visitor_data
+                .as_ref()
+                .map(|vd| vd.as_str());
         }
         None
     }

@@ -167,9 +167,12 @@ impl StreamingData {
 }
 
 impl Response for PlayerResponse {
-    fn get_visitor_data(&self) -> Option<String> {
+    fn get_visitor_data(&self) -> Option<&str> {
         if let Some(response_context) = &self.response_context {
-            return response_context.visitor_data.clone();
+            return response_context
+                .visitor_data
+                .as_ref()
+                .map(|vd| vd.as_str());
         }
         None
     }

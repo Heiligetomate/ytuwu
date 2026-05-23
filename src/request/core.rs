@@ -41,7 +41,9 @@ where
             Status::Success => return Ok(resp),
             Status::Login => println!("trying to bypass captcha for {}", id.as_str()),
         }
-        visitor_data = resp.get_visitor_data();
+        visitor_data = resp
+            .get_visitor_data()
+            .map(|vd| vd.to_owned());
     }
     Err(YtuwuError::CaptchaBypassFailed(max_tries))
 }
