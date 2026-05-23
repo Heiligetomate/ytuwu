@@ -1,4 +1,4 @@
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct MediaMetadata {
     pub title: String,
     pub author: String,
