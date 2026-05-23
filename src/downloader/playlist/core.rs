@@ -1,17 +1,14 @@
 use std::fmt::Debug;
 
 use crate::{
+    DwnBundleList, DwnMedia, Dwnlist,
     downloader::{
-        media::{
-            core::Media,
-            downloaded::{DownloadedMedia, RawDownloadedMedia},
-        },
+        media::{core::Media, extracted_streams::ThumbRes},
         media_stream::MediaStream,
-        playlist::downloaded::{DownloadedPlaylist, RawDownloadedPlaylist},
-        thumbnail::PlaylistThumbnail,
     },
     error::{Result, YtuwuError},
-    models::{itag::Itag, player::ThumbnailResolution},
+    itag::AnyItag,
+    models::itag::Itag,
 };
 
 #[derive(Debug)]
@@ -25,46 +22,32 @@ impl Playlist {
         Self { title: title.to_owned(), media }
     }
 
-    pub async fn download_single_stream<I>(mut self, itag: I) -> Result<RawDownloadedPlaylist<I::Stream>>
-    where
-        I: Itag + Copy,
-        I::Stream: MediaStream + Debug,
-    {
-        let mut downloaded: Vec<RawDownloadedMedia<I::Stream>> = Vec::new();
-
-        for item in self.media.drain(..) {
-            let downloaded_media = item.download_raw(itag).await?;
-            downloaded.push(downloaded_media);
-        }
-
-        Ok(RawDownloadedPlaylist::new(downloaded))
-    }
-
-    pub async fn download_full<I>(mut self, itag: I, thumbnail_resolution: ThumbnailResolution) -> Result<DownloadedPlaylist<I::Stream>>
+    pub async fn download<I>(mut self, itag: I, thumb_res: &Option<ThumbRes>) -> Result<Dwnlist<I::Stream>>
     where
         I: Itag + Copy + Debug,
-        I::Stream: Debug,
+        I::Stream: MediaStream + Debug,
     {
-        let mut downloaded: Vec<DownloadedMedia<I::Stream>> = Vec::new();
+        let mut downloaded: Vec<DwnMedia<I::Stream>> = Vec::new();
 
         for item in self.media.drain(..) {
-            let downloaded_media = item
-                .download_full(itag, &thumbnail_resolution)
-                .await?;
+            let downloaded_media = item.download(itag, thumb_res).await?;
             downloaded.push(downloaded_media);
         }
-        Ok(DownloadedPlaylist::new(&self.title, downloaded))
+
+        Ok(Dwnlist::new(downloaded, &self.title))
     }
 
-    pub async fn download_thumbnails(&self, thumbnail_resolution: ThumbnailResolution) -> Result<PlaylistThumbnail> {
-        let mut thumbnails = Vec::new();
-        for item in self.media.iter() {
-            let downloaded_thumbnail = item
-                .download_thumbnail(&thumbnail_resolution)
-                .await?;
-            thumbnails.push(downloaded_thumbnail);
+    pub async fn download_streams(mut self, itags: Vec<AnyItag>, thumb_res: &Option<ThumbRes>) -> Result<DwnBundleList> {
+        let mut downloaded = Vec::new();
+
+        for item in self.media.drain(..) {
+            downloaded.push(
+                item.download_streams(&itags, thumb_res)
+                    .await?,
+            );
         }
-        Ok(PlaylistThumbnail::new(thumbnails))
+
+        Ok(DwnBundleList::new(downloaded, &self.title))
     }
 
     pub fn get_song_by_index(&self, index: usize) -> Result<&Media> {
