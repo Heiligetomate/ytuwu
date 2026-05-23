@@ -104,7 +104,7 @@ impl Media {
         })
     }
 
-    pub async fn download<I>(self, itag: I, thumb_res: &Option<ThumbRes>) -> Result<DwnMedia<I::Stream>>
+    pub async fn download<I>(&self, itag: I, thumb_res: &Option<ThumbRes>) -> Result<DwnMedia<I::Stream>>
     where
         I: Itag + Copy + Debug,
         I::Stream: Debug,
@@ -118,7 +118,7 @@ impl Media {
 
         let media = self.download_stream(itag).await?;
 
-        let downloaded_media = DwnMedia::new(media, self.metadata, thumbnail);
+        let downloaded_media = DwnMedia::new(media, self.metadata.clone(), thumbnail);
 
         Ok(downloaded_media)
     }
