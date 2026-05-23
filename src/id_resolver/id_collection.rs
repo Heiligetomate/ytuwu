@@ -119,11 +119,8 @@ impl IdCollection {
             "browse" => {
                 let id = Self::id_from_segments(segments, 1).ok_or(YtuwuError::UrlParsing("no browse id found"))?;
 
-                if id.starts_with("UC") {
+                if id.starts_with("UC") || id.starts_with("MPADUC") {
                     Ok(Self::with_channel(ChannelId::new(id)?))
-                } else if id.starts_with("MPAD") {
-                    // idk if that exists
-                    panic!("wow didnt know that exists! Please open an issue or smth containing the url you used");
                 } else {
                     Ok(Self::with_browse(FastBrowseId::new(id)?))
                 }
