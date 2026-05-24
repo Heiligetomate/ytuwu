@@ -1,23 +1,22 @@
 use std::path::Path;
 
-use ytuwu::{
-    Downloader, GetId, IdCollection, Result,
-    itag::{Itag, VideoItag},
-};
+use ytuwu::{Downloader, GetId, IdCollection, Result, id_types::ChannelId, itag::AudioItag};
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    let playlist_url = "https://music.youtube.com/watch?v=hTWKbfoikeg&list=OLAK5uy_lYnxawfGdkGePjdFhIYaS6LjP-Md6UYf0";
-    let id_collection = IdCollection::from_url(playlist_url)?;
+    let url = "https://music.youtube.com/channel/UCwp0yHVvrCeO2DBRmoxrRcQ";
+
+    let ids = IdCollection::from_url(url)?;
 
     let downloader = Downloader::new();
 
-    let media = downloader
-        .download_media(id_collection.get_id()?, VideoItag::highest(), None)
+    let channel = downloader
+        .download_channel(GetId::<ChannelId>::get_id(&ids)?, AudioItag::Highest)
         .await?;
 
     let path = Path::new("teehee");
-    println!("title: {}", media.metadata.title);
-    media.save_media_stream(&path)?;
+
+    channel.save(path)?;
+
     Ok(())
 }

@@ -53,11 +53,8 @@ impl<M: MediaStream + Debug> Dwnlist<M> {
     }
 
     pub fn save(&self, path: &Path) -> Result<()> {
-        let mut full_path = PathBuf::from(path);
-        full_path.push(&self.metadata.title);
-        create_dir_all(&full_path).map_err(|_| YtuwuError::CreateDir)?;
         for media in self.media.iter() {
-            media.save_media_stream(&full_path)?
+            media.save_media_stream(path)?
         }
         Ok(())
     }
