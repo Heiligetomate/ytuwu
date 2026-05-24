@@ -7,11 +7,11 @@ use std::{
 use crate::{
     downloader::mime_types::MimeType,
     error::{Result, YtuwuError},
-    itag::LongVideoItag,
+    itag::VideoItag,
 };
 use bytes::{BufMut, Bytes, BytesMut};
 
-use crate::models::itag::{AudioItag, Itag, MuxedItag, ShortVideoItag};
+use crate::models::itag::{AudioItag, Itag, MuxedItag, ShortItag};
 
 pub trait MediaStream {
     fn get_mime_type(&self) -> MimeType;
@@ -136,7 +136,7 @@ impl AudioStream {
 }
 
 impl LongVideoStream {
-    pub fn new(itag: LongVideoItag) -> Self {
+    pub fn new(itag: VideoItag) -> Self {
         Self {
             data: BytesMut::new(),
             mime_type: itag.get_mime_type(),
@@ -145,7 +145,7 @@ impl LongVideoStream {
 }
 
 impl ShortVideoStream {
-    pub fn new(itag: ShortVideoItag) -> Self {
+    pub fn new(itag: ShortItag) -> Self {
         Self {
             data: BytesMut::new(),
             mime_type: itag.get_mime_type(),

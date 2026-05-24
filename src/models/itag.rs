@@ -30,7 +30,7 @@ pub enum MuxedItag {
 }
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone, Copy)]
-pub enum LongVideoItag {
+pub enum VideoItag {
     MP41080p,  // 137
     WebM1080p, // 248
     MP4720p,   // 136
@@ -46,7 +46,7 @@ pub enum LongVideoItag {
 }
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone, Copy)]
-pub enum ShortVideoItag {
+pub enum ShortItag {
     Low,  // 779
     High, // 780
 }
@@ -59,26 +59,26 @@ pub enum AudioItag {
     OpusMedium, // 251
 }
 
-const SHORT_LONG_VIDEO_ORDER: [ShortVideoItag; 2] = [ShortVideoItag::High, ShortVideoItag::Low];
+const SHORT_LONG_VIDEO_ORDER: [ShortItag; 2] = [ShortItag::High, ShortItag::Low];
 
 const AUDIO_ORDER: [AudioItag; 4] = [AudioItag::OpusMedium, AudioItag::AacMedium, AudioItag::OpusLow, AudioItag::AacLow];
 
-const LONG_VIDEO_ORDER: [LongVideoItag; 12] = [
-    LongVideoItag::WebM1080p,
-    LongVideoItag::MP41080p,
-    LongVideoItag::WebM720p,
-    LongVideoItag::MP4720p,
-    LongVideoItag::Webm480p,
-    LongVideoItag::MP4480p,
-    LongVideoItag::WebM360p,
-    LongVideoItag::MP4360p,
-    LongVideoItag::WebM240p,
-    LongVideoItag::MP4240p,
-    LongVideoItag::Webm144p,
-    LongVideoItag::MP4144p,
+const LONG_VIDEO_ORDER: [VideoItag; 12] = [
+    VideoItag::WebM1080p,
+    VideoItag::MP41080p,
+    VideoItag::WebM720p,
+    VideoItag::MP4720p,
+    VideoItag::Webm480p,
+    VideoItag::MP4480p,
+    VideoItag::WebM360p,
+    VideoItag::MP4360p,
+    VideoItag::WebM240p,
+    VideoItag::MP4240p,
+    VideoItag::Webm144p,
+    VideoItag::MP4144p,
 ];
 
-impl Itag for LongVideoItag {
+impl Itag for VideoItag {
     type Stream = LongVideoStream;
 
     fn highest() -> Self {
@@ -184,7 +184,7 @@ impl Itag for AudioItag {
     }
 }
 
-impl Itag for ShortVideoItag {
+impl Itag for ShortItag {
     type Stream = ShortVideoStream;
 
     fn highest() -> Self {
@@ -251,7 +251,7 @@ impl Itag for MuxedItag {
 
 pub enum AnyItag {
     Audio(AudioItag),
-    LongVideo(LongVideoItag),
-    ShortVideo(ShortVideoItag),
+    LongVideo(VideoItag),
+    ShortVideo(ShortItag),
     Muxed(MuxedItag),
 }

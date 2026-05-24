@@ -34,7 +34,7 @@ fn test_save_long_video_stream() {
     let path = dir.path();
     let bytes = Bytes::from("meow");
     let expected_path = path.join("long_video_stream.webm");
-    let mut stream = LongVideoStream::new(LongVideoItag::WebM1080p);
+    let mut stream = LongVideoStream::new(VideoItag::WebM1080p);
     stream.push_data(bytes);
     stream
         .save(path, "long_video_stream")
@@ -54,7 +54,7 @@ fn test_save_short_video_stream() {
     let path = dir.path();
     let bytes = Bytes::from("meow");
     let expected_path = path.join("short_video_stream.mp4");
-    let mut stream = ShortVideoStream::new(ShortVideoItag::High);
+    let mut stream = ShortVideoStream::new(ShortItag::High);
     stream.push_data(bytes);
     stream
         .save(path, "short_video_stream")

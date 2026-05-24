@@ -2,7 +2,7 @@ use std::path::Path;
 
 use ytuwu::{
     Downloader, GetId, IdCollection, Result,
-    itag::{Itag, LongVideoItag},
+    itag::{Itag, VideoItag},
 };
 
 #[tokio::main]
@@ -13,7 +13,7 @@ async fn main() -> Result<()> {
     let downloader = Downloader::new();
 
     let media = downloader
-        .download_media(id_collection.get_id()?, LongVideoItag::highest(), None)
+        .download_media(id_collection.get_id()?, VideoItag::highest(), None)
         .await?;
 
     let path = Path::new("teehee");
