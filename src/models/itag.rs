@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     downloader::{
-        media_stream::{AudioStream, LongVideoStream, MediaStream, MuxedStream, ShortVideoStream, VideoStream},
+        media_stream::{AudioStream, LongVideoStream, MediaStream, MuxedStream, ShortVideoStream},
         mime_types::MimeType,
     },
     error::{Result, YtuwuError},
@@ -23,16 +23,6 @@ pub trait Itag {
 
     fn new_stream(self) -> Self::Stream;
 }
-
-pub trait VideoItag: Itag
-where
-    <Self as Itag>::Stream: VideoStream,
-{
-}
-
-impl VideoItag for LongVideoItag {}
-
-impl VideoItag for ShortVideoItag {}
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone, Copy)]
 pub enum MuxedItag {

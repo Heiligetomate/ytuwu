@@ -6,6 +6,7 @@ use crate::{
         id_collection::IdCollection,
     },
     id_types::VideoId,
+    itag::LongVideoItag,
     request::clients::player::PlayerClient,
 };
 
@@ -39,5 +40,11 @@ impl GetId<ShortId> for IdCollection {
             .short_id
             .clone()
             .ok_or(YtuwuError::NoIdFound)?)
+    }
+}
+
+impl ShortId {
+    pub fn transform(self) -> Result<VideoId> {
+        VideoId::new(self.get_id())
     }
 }

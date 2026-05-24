@@ -13,6 +13,7 @@ use crate::{
         id::MakeChannelId,
         id_types::{FastBrowseId, VideoId},
     },
+    id_types::ShortId,
     itag::AnyItag,
     models::itag::Itag,
 };
@@ -27,7 +28,7 @@ impl Downloader {
     }
 
     #[rustfmt::skip]
-    pub async fn download_thumbnail_media(&self, video_id: VideoId, resolution: ThumbRes) -> Result<Thumbnail> {
+    pub async fn download_media_thumb(&self, video_id: VideoId, resolution: ThumbRes) -> Result<Thumbnail> {
         Ok(MediaBrowse::new(video_id)
             .browse()
             .await?
@@ -91,16 +92,18 @@ impl Downloader {
             .await?)
     }
 
-    // #[rustfmt::skip]
-    // pub async fn download_short(&self, short_id: ShortId, video_itag: ShortVideoItag, audio_itag: AudioItag, thumbnail_resolution: ThumbnailResolution) -> Result<DownloadedDualStreamMedia<ShortVideoStream>> {
-    //     let id = MediaBrowse::from_short(short_id)?;
-    //     Ok(
-    //         id.browse()
-    //         .await?
-    //         .download_dual_stream(video_itag, audio_itag, &thumbnail_resolution)
-    //         .await?
-    //     )
-    // }
+    #[rustfmt::skip]
+    pub async fn download_short<I>(&self, short_id: ShortId, itag: I, thumbnail_resolution: Option<ThumbRes>) -> Result<DwnMedia<I::Stream>>
+    where
+        I: Itag + Copy + Debug,
+        I::Stream: Debug,
+    {
+        let video_id = short_id.transform()?;
+
+        Ok(self
+            .download_media(video_id, itag, thumbnail_resolution)
+            .await?)
+    }
 
     pub async fn download_channel<I, C>(&self, channel_id: C, itag: I) -> Result<DwnChannel<I::Stream>>
     where
