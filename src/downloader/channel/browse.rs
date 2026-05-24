@@ -10,7 +10,7 @@ impl ChannelBrowse {
     }
 
     pub async fn browse(self) -> Result<ChannelContentBrowse> {
-        let resp = captcha_bypass(&self.id, 1).await?;
+        let resp = captcha_bypass(&self.id, 2).await?;
         resp.extract_all_releases()
     }
 }
