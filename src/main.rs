@@ -1,22 +1,32 @@
-use std::path::Path;
+use std::{path::Path, time::SystemTime};
 
-use ytuwu::{Downloader, GetId, IdCollection, Result, id_types::ChannelId, itag::AudioItag};
+use ytuwu::{
+    Downloader, GetId, IdCollection, Result, ThumbRes,
+    itag::{AnyItag, AudioItag},
+};
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    let url = "https://music.youtube.com/channel/UCwp0yHVvrCeO2DBRmoxrRcQ";
+    let start_time = SystemTime::now();
+
+    let url = "https://www.youtube.com/watch?v=AFNmwFpyB3E";
 
     let ids = IdCollection::from_url(url)?;
 
     let downloader = Downloader::new();
 
-    let channel = downloader
-        .download_channel(GetId::<ChannelId>::get_id(&ids)?, AudioItag::Highest)
+    let downloaded = downloader
+        .download_media_bundle(
+            ids.get_id()?,
+            vec![AnyItag::Audio(AudioItag::AacMedium), AnyItag::LongVideo(ytuwu::itag::VideoItag::Highest)],
+            Some(ThumbRes::High),
+        )
         .await?;
 
     let path = Path::new("teehee");
+    downloaded.save_full(path)?;
 
-    channel.save(path)?;
+    println!("took: {:?}", start_time.elapsed().unwrap());
 
     Ok(())
 }

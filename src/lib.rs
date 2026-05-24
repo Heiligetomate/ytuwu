@@ -6,9 +6,6 @@ mod name_trimmer;
 mod request;
 
 #[cfg(test)]
-mod test;
-
-#[cfg(test)]
 mod tests;
 
 pub use downloader::media::extracted_streams::ThumbRes;
