@@ -13,11 +13,6 @@ pub struct Thumbnail {
     data: Bytes,
 }
 
-#[derive(Debug)]
-pub struct PlaylistThumbnail {
-    data: Vec<Thumbnail>,
-}
-
 impl Thumbnail {
     pub fn new(data: Bytes, name: &str) -> Self {
         Self { data, name: name.to_owned() }
@@ -45,20 +40,6 @@ impl Thumbnail {
         file_path.push(file_name);
 
         self.save_file(&file_path)?;
-        Ok(())
-    }
-}
-
-impl PlaylistThumbnail {
-    pub fn new(data: Vec<Thumbnail>) -> Self {
-        Self { data }
-    }
-
-    pub fn save(&self, path: &Path) -> Result<()> {
-        fs::create_dir_all(path).map_err(|_| YtuwuError::CreateDir)?;
-        for thumbnail in self.data.iter() {
-            thumbnail.save(&path)?
-        }
         Ok(())
     }
 }

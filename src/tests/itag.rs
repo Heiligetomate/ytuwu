@@ -42,6 +42,8 @@ fn test_muxed_mime_type() {
     let itag = MuxedItag::MuxedMP4;
     assert_eq!(itag.get_mime_type().as_str(), "mp4", "{:?} shoud have mp4 as ending", itag);
 }
+
+#[test]
 fn test_short_mime_type() {
     let short_mp4 = vec![ShortItag::High, ShortItag::Low];
 

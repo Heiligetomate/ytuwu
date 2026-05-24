@@ -6,7 +6,6 @@ use crate::{
         id_collection::IdCollection,
     },
     id_types::VideoId,
-    itag::VideoItag,
     request::clients::player::PlayerClient,
 };
 
