@@ -45,7 +45,6 @@ impl IdCollection {
 
     pub fn from_url<T: Into<String>>(raw_url: T) -> Result<Self> {
         let url_string: String = raw_url.into();
-        dbg!(&url_string);
         let url = Url::parse(&url_string).map_err(|_| YtuwuError::UrlParsing("could not parse the url"))?;
 
         let host = Host::parse(
