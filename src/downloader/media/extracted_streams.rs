@@ -49,13 +49,19 @@ impl ExtractedStreams {
     }
 
     pub fn get_best_stream<I: Itag + Copy>(&self, itag: &I) -> Result<&str> {
+        if itag.is_highest() {
+            return self
+                .get_url_by_itag(itag)
+                .ok_or(YtuwuError::NoMatchingStream);
+        }
+
         let mut current_itag = *itag;
         let mut url: Option<&str> = self.get_url_by_itag(&current_itag);
         while url.is_none() {
             current_itag = current_itag.next_best()?;
             url = self.get_url_by_itag(&current_itag);
         }
-        Ok(url.ok_or(YtuwuError::NoMatchingItag)?)
+        Ok(url.ok_or(YtuwuError::NoMatchingStream)?)
     }
 }
 

@@ -16,7 +16,7 @@ pub enum YtuwuError {
     Deserialize,
 
     NoLowerItagFound,
-    NoMatchingItag,
+    NoMatchingStream,
 
     NoMatchingThumbnail,
 
@@ -49,7 +49,7 @@ impl Display for YtuwuError {
             Self::YoutubeAPIReturn => write!(f, "Youtube API gave an unexpected reply."),
             Self::Deserialize => write!(f, "Could not deserialize the response."),
             Self::NoLowerItagFound => write!(f, "Could not find any lower itag."),
-            Self::NoMatchingItag => write!(f, "No matching stream found for this itag."),
+            Self::NoMatchingStream => write!(f, "No matching stream found for this itag."),
             Self::UrlSizeExtract => write!(f, "Failed to extract the size from the url."),
             Self::CreateFile => write!(f, "Failed to create the file."),
             Self::CreateDir => write!(f, "Failed to create the dir."),
