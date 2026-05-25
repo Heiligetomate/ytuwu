@@ -11,13 +11,6 @@ use crate::{
 #[serde(rename_all = "camelCase")]
 pub struct SlowBrowseResponse {
     contents: Option<AlbumContents>,
-    response_context: Option<ResponseContext>,
-}
-
-#[derive(Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
-struct ResponseContext {
-    visitor_data: Option<String>,
 }
 
 #[derive(Deserialize, Debug)]
@@ -122,8 +115,8 @@ impl Response for SlowBrowseResponse {
     fn get_status(&self) -> Status {
         match self.contents {
             Some(_) => Status::Success,
-            None => match self.response_context {
-                Some(_) => Status::Login,
+            None => match self.contents {
+                Some(_) => Status::Success,
                 None => Status::Error,
             },
         }

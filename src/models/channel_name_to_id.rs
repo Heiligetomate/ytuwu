@@ -10,14 +10,7 @@ use crate::{
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ChannelNameToIdResponse {
-    response_context: Option<ResponseContext>,
     endpoint: Option<Endpoint>,
-}
-
-#[derive(Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct ResponseContext {
-    visitor_data: Option<String>,
 }
 
 #[derive(Deserialize)]

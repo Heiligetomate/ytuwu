@@ -11,7 +11,6 @@ use crate::{
 pub struct FastBrowseResponse {
     error: Option<ErrorResponse>,
     contents: Option<FullResponse>,
-    response_context: Option<ResponseContext>,
     header: Option<BrowseHeader>,
 }
 
@@ -94,12 +93,6 @@ struct PlaylistContent {
 #[serde(rename_all = "camelCase")]
 struct PlaylistVideoRenderer {
     video_id: Option<String>,
-}
-
-#[derive(Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
-pub struct ResponseContext {
-    pub visitor_data: Option<String>,
 }
 
 impl BrowseResponse for FastBrowseResponse {

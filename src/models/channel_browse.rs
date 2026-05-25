@@ -12,13 +12,6 @@ use crate::{
 #[serde(rename_all = "camelCase")]
 pub struct ChannelBrowseResponse {
     contents: Option<ChannelContents>,
-    response_context: Option<ResponseContext>,
-}
-
-#[derive(Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
-struct ResponseContext {
-    visitor_data: Option<String>,
 }
 
 #[derive(Deserialize, Debug)]
