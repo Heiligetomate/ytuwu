@@ -1,4 +1,4 @@
-use crate::{Result, downloader::channel::content_browse::ChannelContentBrowse, id_resolver::id_types::ChannelId, request::core::captcha_bypass};
+use crate::{Result, downloader::channel::content_browse::ChannelContentBrowse, id_resolver::id_types::ChannelId, request::core::api_request};
 
 pub struct ChannelBrowse {
     id: ChannelId,
@@ -10,7 +10,7 @@ impl ChannelBrowse {
     }
 
     pub async fn browse(self) -> Result<ChannelContentBrowse> {
-        let resp = captcha_bypass(&self.id, 2).await?;
+        let resp = api_request(&self.id).await?;
         resp.extract_all_releases()
     }
 }

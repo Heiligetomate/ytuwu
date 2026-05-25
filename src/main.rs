@@ -9,22 +9,18 @@ use ytuwu::{
 async fn main() -> Result<()> {
     let start_time = SystemTime::now();
 
-    let url = "https://www.youtube.com/watch?v=AFNmwFpyB3E";
+    let url = "https://music.youtube.com/playlist?list=OLAK5uy_lYnxawfGdkGePjdFhIYaS6LjP-Md6UYf0";
 
     let ids = IdCollection::from_url(url)?;
 
     let downloader = Downloader::new();
 
     let downloaded = downloader
-        .download_media_bundle(
-            ids.get_id()?,
-            vec![AnyItag::Audio(AudioItag::AacMedium), AnyItag::LongVideo(ytuwu::itag::VideoItag::Highest)],
-            Some(ThumbRes::High),
-        )
+        .download_playlist(ids.get_id()?, AudioItag::OpusMedium, None)
         .await?;
 
     let path = Path::new("teehee");
-    downloaded.save_full(path)?;
+    downloaded.save_with_dir(path)?;
 
     println!("took: {:?}", start_time.elapsed().unwrap());
 

@@ -22,7 +22,7 @@ pub struct PlayerResponse {
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 struct ResponseContext {
-    pub visitor_data: Option<String>,
+    visitor_data: Option<String>,
 }
 
 #[derive(Deserialize, Debug)]
@@ -58,7 +58,8 @@ pub struct ThumbnailStream {
 
 #[derive(Deserialize, Debug)]
 struct PlayabilityStatus {
-    pub status: PlayabilityStatusValue,
+    status: PlayabilityStatusValue,
+    reason: Option<String>,
 }
 
 #[derive(Deserialize, Debug, Clone, Copy, PartialEq, Eq)]
@@ -90,6 +91,17 @@ impl PlayerResponse {
         let metadata = MediaMetadata::new(&video_details.title, &video_details.author);
 
         Ok(Media::new(media_streams, thumbnail_streams, metadata))
+    }
+
+    pub fn get_playability_reason(&self) -> Result<&str> {
+        let mesage = self
+            .playability_status
+            .as_ref()
+            .ok_or(YtuwuError::PlayerDataNotFound("playability_status"))?
+            .reason
+            .as_ref()
+            .ok_or(YtuwuError::PlayerDataNotFound("status message"))?;
+        Ok(mesage)
     }
 }
 

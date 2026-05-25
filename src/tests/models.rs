@@ -11,13 +11,13 @@ use crate::{
         response::{BrowseResponse, Response, Status},
         slow_browse::SlowBrowseResponse,
     },
-    request::core::captcha_bypass,
+    request::core::api_request,
 };
 
 #[tokio::test]
 async fn browse_resp() {
     let id = FastBrowseId::new("OLAK5uy_lrCrcAdxFG4aMzMrebs7o9TU384xyF240").unwrap();
-    let res: FastBrowseResponse = captcha_bypass(&id, 2).await.unwrap();
+    let res: FastBrowseResponse = api_request(&id).await.unwrap();
 
     let expected_ids = vec![
         VideoId::new("CDko2ux1bkE").unwrap(),
@@ -40,7 +40,7 @@ async fn browse_resp() {
 #[tokio::test]
 async fn channel_resp() {
     let id = ChannelId::new("MPADUC6Tg7GWjZw48EiZ8m5bRtWg").unwrap();
-    let res: ChannelBrowseResponse = captcha_bypass(&id, 2).await.unwrap();
+    let res: ChannelBrowseResponse = api_request(&id).await.unwrap();
     let expected_ids = ChannelContentBrowse {
         albums: vec![
             ChannelPlaylistId::new("MPREb_k6mvR8GoZj2").unwrap(),
@@ -109,7 +109,7 @@ async fn channel_resp() {
 #[tokio::test]
 async fn player_resp() {
     let id = VideoId::new("lndG8BiZCmM").unwrap();
-    let res: PlayerResponse = captcha_bypass(&id, 2).await.unwrap();
+    let res: PlayerResponse = api_request(&id).await.unwrap();
 
     assert_eq!(res.get_status(), Status::Success);
 
@@ -122,7 +122,7 @@ async fn player_resp() {
 #[tokio::test]
 async fn slow_browse_resp() {
     let id = ChannelPlaylistId::new("MPREb_dQoH7BxK35k").unwrap();
-    let res: SlowBrowseResponse = captcha_bypass(&id, 2).await.unwrap();
+    let res: SlowBrowseResponse = api_request(&id).await.unwrap();
 
     let expected_ids = vec![
         VideoId::new("7akaJCRoOYs").unwrap(),

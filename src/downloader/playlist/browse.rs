@@ -8,7 +8,7 @@ use crate::{
     id_resolver::id::{BrowseId, Id},
     models::response::BrowseResponse,
     name_trimmer,
-    request::{clients::client::ClientWithHeaders, core::captcha_bypass},
+    request::{clients::client::ClientWithHeaders, core::api_request},
 };
 
 #[derive(Debug)]
@@ -25,7 +25,7 @@ where
         Self { browse_id: id }
     }
     pub async fn browse(self) -> Result<PlaylistContentBrowse> {
-        let response = captcha_bypass(&self.browse_id, 2).await?;
+        let response = api_request(&self.browse_id).await?;
         let mut ids = response.get_video_ids()?;
         let title = response.get_album_title()?.to_owned();
         let trimmed_title = name_trimmer::trim(title, "-");

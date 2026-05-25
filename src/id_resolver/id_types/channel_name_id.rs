@@ -8,7 +8,7 @@ use crate::{
         id_collection::IdCollection,
         id_types::channel_id::ChannelId,
     },
-    request::{clients::channel_name_to_id::ChannelNameClient, core::captcha_bypass},
+    request::{clients::channel_name_to_id::ChannelNameClient, core::api_request},
 };
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
@@ -48,7 +48,7 @@ impl GetId<ChannelNameId> for IdCollection {
 
 impl MakeChannelId for ChannelNameId {
     async fn transform(&self) -> Result<ChannelId> {
-        let response = captcha_bypass(self, 2).await?;
+        let response = api_request(self).await?;
         response.get_id()
     }
 }
