@@ -80,7 +80,7 @@ downloaded_channel.save(path)?;
 - download full playlists
 - download short
 - most of the metadata
-- download full channels (just one stream rn)
+- download full channels 
 
 ## todos: 
 - better file save handling 
@@ -88,5 +88,4 @@ downloaded_channel.save(path)?;
 - more metadata
 - save chunks when crashing while downloading and continue the download afterwards
 - cache 
-- age verification 
 - continuation
