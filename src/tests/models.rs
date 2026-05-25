@@ -11,7 +11,7 @@ use crate::{
         response::{BrowseResponse, Response, Status},
         slow_browse::SlowBrowseResponse,
     },
-    request::core::api_request,
+    request::core::{api_captcha_bypass, api_request},
 };
 
 #[tokio::test]
@@ -109,7 +109,9 @@ async fn channel_resp() {
 #[tokio::test]
 async fn player_resp() {
     let id = VideoId::new("lndG8BiZCmM").unwrap();
-    let res: PlayerResponse = api_request(&id).await.unwrap();
+    let res: PlayerResponse = api_captcha_bypass(&id, 2)
+        .await
+        .unwrap();
 
     assert_eq!(res.get_status(), Status::Success);
 
