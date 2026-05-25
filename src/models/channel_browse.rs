@@ -170,16 +170,4 @@ impl Response for ChannelBrowseResponse {
         }
         Status::Success
     }
-
-    fn get_visitor_data(&self) -> Option<&str> {
-        if let Some(ctx) = &self.response_context {
-            return ctx
-                .visitor_data
-                .as_ref()
-                .map(|vd| vd.as_str());
-        }
-        None
-    }
 }
-
-// TODO: Remove useless stuff

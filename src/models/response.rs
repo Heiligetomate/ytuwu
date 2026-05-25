@@ -1,7 +1,6 @@
 use crate::{Result, id_resolver::id_types::VideoId};
 
 pub trait Response {
-    fn get_visitor_data(&self) -> Option<&str>;
     fn get_status(&self) -> Status;
 }
 

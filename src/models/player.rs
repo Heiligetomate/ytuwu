@@ -103,10 +103,8 @@ impl PlayerResponse {
             .ok_or(YtuwuError::PlayerDataNotFound("status message"))?;
         Ok(mesage)
     }
-}
 
-impl Response for PlayerResponse {
-    fn get_visitor_data(&self) -> Option<&str> {
+    pub fn get_visitor_data(&self) -> Option<&str> {
         if let Some(response_context) = &self.response_context {
             return response_context
                 .visitor_data
@@ -115,7 +113,9 @@ impl Response for PlayerResponse {
         }
         None
     }
+}
 
+impl Response for PlayerResponse {
     fn get_status(&self) -> Status {
         if let Some(playability_status) = &self.playability_status {
             return match playability_status.status {
