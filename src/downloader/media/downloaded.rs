@@ -5,7 +5,7 @@ use bytes::{Bytes, BytesMut};
 use crate::{
     Result,
     downloader::{
-        media_stream::{AnyStream, MediaStream},
+        streams::{AnyStream, MediaStream},
         thumbnail::Thumbnail,
     },
     error::YtuwuError,

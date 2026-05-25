@@ -1,10 +1,6 @@
 use std::{path::Path, time::SystemTime};
 
-use ytuwu::{
-    Downloader, GetId, IdCollection, Result, ThumbRes,
-    id_types::{ChannelId, ChannelNameId},
-    itag::{AnyItag, AudioItag},
-};
+use ytuwu::{Downloader, GetId, IdCollection, Result, id_types::ChannelNameId, itag::AudioItag};
 
 #[tokio::main]
 async fn main() -> Result<()> {

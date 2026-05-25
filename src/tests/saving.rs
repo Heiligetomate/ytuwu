@@ -3,7 +3,7 @@ use std::fs;
 use bytes::Bytes;
 
 use crate::{
-    downloader::media_stream::{AudioStream, LongVideoStream, MediaStream, MuxedStream, ShortVideoStream},
+    downloader::streams::{AudioStream, LongVideoStream, MediaStream, MuxedStream, ShortVideoStream},
     models::itag::*,
 };
 

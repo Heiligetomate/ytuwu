@@ -2,8 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     downloader::{
-        media_stream::{AudioStream, LongVideoStream, MediaStream, MuxedStream, ShortVideoStream},
         mime_types::MimeType,
+        streams::{AudioStream, LongVideoStream, MediaStream, MuxedStream, ShortVideoStream},
     },
     error::{Result, YtuwuError},
 };

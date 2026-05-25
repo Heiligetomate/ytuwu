@@ -2,7 +2,7 @@ use std::fmt::Debug;
 
 use crate::{
     Dwnlist, Result,
-    downloader::{channel::downloaded::DwnChannel, media::downloaded::DwnMedia, media_stream::MediaStream, playlist::browse::PlaylistBrowse},
+    downloader::{channel::downloaded::DwnChannel, media::downloaded::DwnMedia, playlist::browse::PlaylistBrowse, streams::MediaStream},
     id_resolver::id_types::ChannelPlaylistId,
     itag::Itag,
 };

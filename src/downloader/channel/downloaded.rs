@@ -6,7 +6,7 @@ use std::{
 
 use crate::{
     DwnBundleList, DwnBundleMedia, Dwnlist, Result,
-    downloader::{media::downloaded::DwnMedia, media_stream::MediaStream},
+    downloader::{media::downloaded::DwnMedia, streams::MediaStream},
     error::YtuwuError,
 };
 

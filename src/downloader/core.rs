@@ -15,8 +15,8 @@ use crate::{
     },
     id_types::ShortId,
     itag::AnyItag,
-    media_stream::MediaStream,
     models::itag::Itag,
+    streams::MediaStream,
 };
 
 #[derive(Debug)]

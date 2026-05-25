@@ -4,7 +4,7 @@ use crate::{
     DwnBundleMedia, DwnMedia,
     downloader::{
         media::extracted_streams::{ExtractedStreams, ExtractedThumbnails, ThumbRes},
-        media_stream::{AnyStream, MediaStream},
+        streams::{AnyStream, MediaStream},
         thumbnail::Thumbnail,
         util::*,
     },

@@ -9,7 +9,7 @@ mod request;
 mod tests;
 
 pub use downloader::media::extracted_streams::ThumbRes;
-pub use downloader::media_stream;
+pub use downloader::streams;
 pub use downloader::{channel::downloaded::*, core::Downloader, media::downloaded::*, metadata, playlist::downloaded::*};
 pub use error::Result;
 pub use id_resolver::id::GetId;

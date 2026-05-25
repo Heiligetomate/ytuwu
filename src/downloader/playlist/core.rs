@@ -4,7 +4,7 @@ use crate::{
     DwnBundleList, DwnMedia, Dwnlist,
     downloader::{
         media::{core::Media, extracted_streams::ThumbRes},
-        media_stream::MediaStream,
+        streams::MediaStream,
     },
     error::{Result, YtuwuError},
     itag::AnyItag,
