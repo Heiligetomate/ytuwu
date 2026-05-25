@@ -25,8 +25,7 @@ impl Thumbnail {
         &self.data
     }
 
-    // dont use this lmao TODO: wtf
-    pub fn save_file(&self, path: &Path) -> Result<()> {
+    fn save_file(&self, path: &Path) -> Result<()> {
         let mut file = fs::File::create(path).map_err(|_| YtuwuError::CreateFile)?;
         file.write_all(&self.data)
             .map_err(|_| YtuwuError::WriteToFile)?;
