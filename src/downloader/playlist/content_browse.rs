@@ -19,16 +19,24 @@ impl PlaylistContentBrowse {
 
     pub async fn browse(mut self) -> Result<Playlist> {
         let mut media_items: Vec<Media> = Vec::new();
+        let mut tasks = Vec::new();
+
         for item in self.media.drain(..) {
-            let video_id = item.video_id.as_str().to_string();
-            let browsed_item = match item.browse().await {
+            tasks.push(tokio::spawn(async move {
+                let id = item.video_id.as_str().to_string();
+                item.browse().await.map_err(|e| (id, e))
+            }));
+        }
+
+        for task in tasks {
+            let media = match task.await? {
                 Ok(item) => item,
-                Err(_) => {
-                    println!("Following item was skipped: {}", video_id);
+                Err((id, _)) => {
+                    println!("Following item was skipped: {}", id);
                     continue;
                 }
             };
-            media_items.push(browsed_item);
+            media_items.push(media);
         }
         Ok(Playlist::new(&self.title, media_items))
     }
