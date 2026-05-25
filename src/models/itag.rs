@@ -274,6 +274,7 @@ impl Itag for MuxedItag {
     }
 }
 
+#[derive(Debug, Clone, Copy)]
 pub enum AnyItag {
     Audio(AudioItag),
     LongVideo(VideoItag),

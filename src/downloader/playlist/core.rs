@@ -22,37 +22,49 @@ impl Playlist {
         Self { title: title.to_owned(), media }
     }
 
-    pub async fn download<I>(mut self, itag: I, thumb_res: &Option<ThumbRes>) -> Result<Dwnlist<I::Stream>>
+    pub async fn download<I>(mut self, itag: I, thumb_res: Option<ThumbRes>) -> Result<Dwnlist<I::Stream>>
     where
-        I: Itag + Copy + Debug,
-        I::Stream: MediaStream + Debug,
+        I: Itag + Copy + Debug + Send + 'static,
+        I::Stream: MediaStream + Debug + Send,
     {
         let mut downloaded: Vec<DwnMedia<I::Stream>> = Vec::new();
 
+        let mut tasks = Vec::new();
+
         for item in self.media.drain(..) {
-            let downloaded_media = item.download(itag, thumb_res).await?;
-            downloaded.push(downloaded_media);
+            let thumb_res = thumb_res.clone();
+            tasks.push(tokio::spawn(item.download(itag, thumb_res)));
+        }
+
+        for task in tasks {
+            downloaded.push(task.await??);
         }
 
         Ok(Dwnlist::new(downloaded, &self.title))
     }
 
-    pub async fn download_streams(mut self, itags: Vec<AnyItag>, thumb_res: &Option<ThumbRes>) -> Result<DwnBundleList> {
+    pub async fn download_streams(mut self, itags: Vec<AnyItag>, thumb_res: Option<ThumbRes>) -> Result<DwnBundleList> {
         let mut downloaded = Vec::new();
 
+        let mut tasks = Vec::new();
+
         for item in self.media.drain(..) {
-            downloaded.push(
-                item.download_streams(&itags, thumb_res)
-                    .await?,
-            );
+            let thumb_res = thumb_res.clone();
+            let itags = itags.clone();
+            tasks.push(tokio::spawn(item.download_streams(itags, thumb_res)));
+        }
+
+        for task in tasks {
+            downloaded.push(task.await??);
         }
 
         Ok(DwnBundleList::new(downloaded, &self.title))
     }
 
-    pub fn get_song_by_index(&self, index: usize) -> Result<&Media> {
+    pub fn get_first(mut self) -> Result<Media> {
         self.media
-            .get(index)
+            .drain(..)
+            .nth(0)
             .ok_or(YtuwuError::SongInPlaylistNotFound)
     }
 }

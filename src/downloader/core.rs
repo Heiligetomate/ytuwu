@@ -15,6 +15,7 @@ use crate::{
     },
     id_types::ShortId,
     itag::AnyItag,
+    media_stream::MediaStream,
     models::itag::Itag,
 };
 
@@ -32,7 +33,7 @@ impl Downloader {
         Ok(MediaBrowse::new(video_id)
             .browse()
             .await?
-            .download_thumbnail(&resolution)
+            .download_thumbnail(resolution)
             .await?)
     }
 
@@ -54,7 +55,7 @@ impl Downloader {
         Ok(MediaBrowse::new(video_id)
             .browse()
             .await?
-            .download(itag, &thumbnail_resolution)
+            .download(itag, thumbnail_resolution)
             .await?)
     }
 
@@ -62,22 +63,22 @@ impl Downloader {
         Ok(MediaBrowse::new(video_id)
             .browse()
             .await?
-            .download_streams(&itags, &thumbnail_resolution)
+            .download_streams(itags, thumbnail_resolution)
             .await?)
     }
 
     #[rustfmt::skip]
     pub async fn download_playlist<I>(&self, browse_id: FastBrowseId, itag: I, thumbnail_resolution: Option<ThumbRes>) -> Result<Dwnlist<I::Stream>>
     where
-        I: Itag + Copy + Debug,
-        I::Stream: Debug,
+    I: Itag + Copy + Debug + Send + 'static,
+    I::Stream: MediaStream + Debug + Send,
     {
         Ok(PlaylistBrowse::new(browse_id)
             .browse()
             .await?
             .browse()
             .await?
-            .download(itag, &thumbnail_resolution)
+            .download(itag, thumbnail_resolution)
             .await?)
     }
 
@@ -88,7 +89,7 @@ impl Downloader {
             .await?
             .browse()
             .await?
-            .download_streams(itags, &thumbnail_resolution)
+            .download_streams(itags, thumbnail_resolution)
             .await?)
     }
 
@@ -107,8 +108,8 @@ impl Downloader {
 
     pub async fn download_channel<I, C>(&self, channel_id: C, itag: I) -> Result<DwnChannel<I::Stream>>
     where
-        I: Itag + Copy + Debug,
-        I::Stream: Debug,
+        I: Itag + Copy + Debug + Send + 'static,
+        I::Stream: MediaStream + Debug + Send,
         C: MakeChannelId,
     {
         let id = channel_id.transform().await?;

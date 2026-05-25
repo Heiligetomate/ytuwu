@@ -93,7 +93,7 @@ impl Media {
         Ok(downloaded_stream)
     }
 
-    pub async fn download_thumbnail(&self, resolution: &ThumbRes) -> Result<Thumbnail> {
+    pub async fn download_thumbnail(&self, resolution: ThumbRes) -> Result<Thumbnail> {
         let url = self
             .thumbnail_streams
             .get_thumbnail_url_by_res(&resolution)?;
@@ -107,16 +107,16 @@ impl Media {
         Ok(Thumbnail::new(thumbnail, &self.metadata.title))
     }
 
-    pub async fn download_streams(self, itags: &Vec<AnyItag>, thumb_res: &Option<ThumbRes>) -> Result<DwnBundleMedia> {
+    pub async fn download_streams(self, itags: Vec<AnyItag>, thumb_res: Option<ThumbRes>) -> Result<DwnBundleMedia> {
         let mut thumbnail = None;
         let mut streams = vec![];
 
         for itag in itags {
             let stream = match itag {
-                AnyItag::Audio(i) => AnyStream::Audio(self.download_stream(*i).await?),
-                AnyItag::LongVideo(i) => AnyStream::LongVideo(self.download_stream(*i).await?),
-                AnyItag::ShortVideo(i) => AnyStream::ShortVideo(self.download_stream(*i).await?),
-                AnyItag::Muxed(i) => AnyStream::Muxed(self.download_stream(*i).await?),
+                AnyItag::Audio(i) => AnyStream::Audio(self.download_stream(i).await?),
+                AnyItag::LongVideo(i) => AnyStream::LongVideo(self.download_stream(i).await?),
+                AnyItag::ShortVideo(i) => AnyStream::ShortVideo(self.download_stream(i).await?),
+                AnyItag::Muxed(i) => AnyStream::Muxed(self.download_stream(i).await?),
             };
             streams.push(stream);
         }
@@ -133,7 +133,7 @@ impl Media {
         })
     }
 
-    pub async fn download<I>(&self, itag: I, thumb_res: &Option<ThumbRes>) -> Result<DwnMedia<I::Stream>>
+    pub async fn download<I>(self, itag: I, thumb_res: Option<ThumbRes>) -> Result<DwnMedia<I::Stream>>
     where
         I: Itag + Copy + Debug,
         I::Stream: Debug,

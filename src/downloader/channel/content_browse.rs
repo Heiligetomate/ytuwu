@@ -17,8 +17,8 @@ pub struct ChannelContentBrowse {
 impl ChannelContentBrowse {
     pub async fn download<I>(mut self, itag: I) -> Result<DwnChannel<I::Stream>>
     where
-        I: Itag + Copy + Debug,
-        I::Stream: Debug + MediaStream,
+        I: Itag + Copy + Debug + Send + 'static,
+        I::Stream: MediaStream + Debug + Send,
     {
         let mut downloaded_singles: Vec<DwnMedia<I::Stream>> = Vec::new();
         let mut downloaded_eps: Vec<Dwnlist<I::Stream>> = Vec::new();
@@ -30,8 +30,8 @@ impl ChannelContentBrowse {
                 .await?
                 .browse()
                 .await?
-                .get_song_by_index(0)?
-                .download(itag, &None)
+                .get_first()?
+                .download(itag, None)
                 .await?;
             downloaded_singles.push(single);
         }
@@ -42,7 +42,7 @@ impl ChannelContentBrowse {
                 .await?
                 .browse()
                 .await?
-                .download(itag, &None)
+                .download(itag, None)
                 .await?;
             downloaded_eps.push(ep);
         }
@@ -53,7 +53,7 @@ impl ChannelContentBrowse {
                 .await?
                 .browse()
                 .await?
-                .download(itag, &None)
+                .download(itag, None)
                 .await?;
             downloaded_albums.push(album);
         }
