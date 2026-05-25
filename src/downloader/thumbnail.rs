@@ -4,7 +4,10 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use crate::error::{Result, YtuwuError};
+use crate::{
+    downloader::mime_types::MimeType,
+    error::{Result, YtuwuError},
+};
 use bytes::Bytes;
 
 #[derive(Debug)]
@@ -36,7 +39,7 @@ impl Thumbnail {
             return Err(YtuwuError::InvalidPath);
         }
         let mut file_path = PathBuf::from(path);
-        let file_name = format!("{}.png", &self.name);
+        let file_name = format!("{}.{}", &self.name, MimeType::Png.as_str());
         file_path.push(file_name);
 
         self.save_file(&file_path)?;

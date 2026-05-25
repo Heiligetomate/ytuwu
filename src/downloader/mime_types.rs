@@ -3,6 +3,7 @@ pub enum MimeType {
     MP4,
     M4A,
     Webm,
+    Png,
 }
 
 impl MimeType {
@@ -11,6 +12,7 @@ impl MimeType {
             Self::MP4 => "mp4",
             Self::M4A => "m4a",
             Self::Webm => "webm",
+            Self::Png => "png",
         }
     }
 }
