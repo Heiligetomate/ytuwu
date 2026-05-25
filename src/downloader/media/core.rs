@@ -24,6 +24,33 @@ pub struct Media {
     pub metadata: MediaMetadata,
 }
 
+struct DownloadTask {
+    from: u32,
+    to: u32,
+    url: String,
+}
+
+impl DownloadTask {
+    fn new(from: u32, to: u32, url: &str) -> Self {
+        Self { from, to, url: url.to_owned() }
+    }
+
+    async fn download(&self) -> Result<Bytes> {
+        let client = reqwest::Client::new();
+
+        println!("downloading chunk {} to {}", self.from, self.to);
+
+        let chunk_url = format!("{}&range={}-{}", self.url, self.from, self.to);
+        let chunk = client
+            .get(&chunk_url)
+            .send()
+            .await?
+            .bytes()
+            .await?;
+        Ok(chunk)
+    }
+}
+
 impl Media {
     pub fn new(media_streams: ExtractedStreams, thumbnail_streams: ExtractedThumbnails, metadata: MediaMetadata) -> Self {
         Self {
@@ -33,19 +60,8 @@ impl Media {
         }
     }
 
-    async fn download_chunk(&self, from: u32, to: u32, url: &str) -> Result<Bytes> {
-        let client = reqwest::Client::new();
-        let chunk_url = format!("{}&range={}-{}", url, from, to);
-        let chunk = client
-            .get(&chunk_url)
-            .send()
-            .await?
-            .bytes()
-            .await?;
-        Ok(chunk)
-    }
-
     pub async fn download_stream<I: Itag + Copy>(&self, itag: I) -> Result<I::Stream> {
+        // TODO: multiple tokio spawn thningies
         let url = self
             .media_streams
             .get_best_stream(&itag)?;
@@ -53,14 +69,27 @@ impl Media {
         let mut downloaded_stream = itag.new_stream();
         let mut current_position: u32 = 0;
 
+        let mut ops = Vec::new();
+        let mut tasks = Vec::new();
+
         while size > current_position {
-            println!("downloading chunk {} to {}", current_position, current_position + CHUNK_SIZE);
-            let chunk = self
-                .download_chunk(current_position, current_position + CHUNK_SIZE, url)
-                .await?;
-            downloaded_stream.push_data(chunk);
+            // let chunk = self
+            // .download_chunk(current_position, current_position + CHUNK_SIZE, url)
+            // .await?;
+            //downloaded_stream.push_data(chunk);
+            let op = DownloadTask::new(current_position, current_position + CHUNK_SIZE, url);
+            ops.push(op);
             current_position += CHUNK_SIZE + 1
         }
+
+        for op in ops {
+            tasks.push(tokio::spawn(async move { op.download().await }));
+        }
+
+        for task in tasks {
+            downloaded_stream.push_data(task.await??);
+        }
+
         Ok(downloaded_stream)
     }
 

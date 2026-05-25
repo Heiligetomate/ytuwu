@@ -32,11 +32,14 @@ pub enum YtuwuError {
     UrlParsing(&'static str),
     InvalidIdLength,
     InvalidIdFormat,
+
+    Tokio(String),
 }
 
 impl Display for YtuwuError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
+            Self::Tokio(e) => write!(f, "tokio error: {}", e),
             Self::BrowseDataNotFound(e) => write!(f, "Could not get data from response: {}.", e),
             Self::PlayerDataNotFound(e) => {
                 write!(f, "Could not get data from player response: {}.", e)
@@ -87,5 +90,11 @@ impl From<serde_json::Error> for YtuwuError {
 impl From<reqwest::Error> for YtuwuError {
     fn from(value: reqwest::Error) -> Self {
         Self::ReqwestError(value.to_string())
+    }
+}
+
+impl From<tokio::task::JoinError> for YtuwuError {
+    fn from(value: tokio::task::JoinError) -> Self {
+        Self::Tokio(value.to_string())
     }
 }
