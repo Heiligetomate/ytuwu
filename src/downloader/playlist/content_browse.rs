@@ -1,5 +1,5 @@
 use crate::{
-    Result,
+    Id, Result,
     downloader::{
         media::{browse::MediaBrowse, core::Media},
         playlist::core::Playlist,
@@ -20,7 +20,15 @@ impl PlaylistContentBrowse {
     pub async fn browse(mut self) -> Result<Playlist> {
         let mut media_items: Vec<Media> = Vec::new();
         for item in self.media.drain(..) {
-            media_items.push(item.browse().await?);
+            let video_id = item.video_id.as_str().to_string();
+            let browsed_item = match item.browse().await {
+                Ok(item) => item,
+                Err(_) => {
+                    println!("Following item was skipped: {}", video_id);
+                    continue;
+                }
+            };
+            media_items.push(browsed_item);
         }
         Ok(Playlist::new(&self.title, media_items))
     }

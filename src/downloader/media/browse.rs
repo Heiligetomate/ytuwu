@@ -2,7 +2,7 @@ use crate::{Result, downloader::media::core::Media, id_types::VideoId, request::
 
 #[derive(Debug)]
 pub struct MediaBrowse {
-    video_id: VideoId,
+    pub video_id: VideoId,
 }
 
 impl MediaBrowse {
