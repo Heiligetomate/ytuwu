@@ -77,7 +77,7 @@ impl DwnBundleMedia {
         self.get_thumbnail()?.save(path)
     }
 
-    pub fn save_media_stream(&self, path: &Path) -> Result<()> {
+    pub fn save_media_streams(&self, path: &Path) -> Result<()> {
         let mut seen: HashMap<String, u32> = HashMap::new();
         for stream in self.streams.iter() {
             let dyn_stream = stream.into_dyn();
@@ -95,7 +95,7 @@ impl DwnBundleMedia {
 
     pub fn save_full(&self, path: &Path) -> Result<()> {
         self.save_thumbnail(&path)?;
-        self.save_media_stream(&path)?;
+        self.save_media_streams(&path)?;
         Ok(())
     }
 

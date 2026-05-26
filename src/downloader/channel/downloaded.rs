@@ -27,7 +27,7 @@ impl DwnBundelChannel {
         let (singles_path, eps_path, albums_path) = create_paths(path)?;
 
         for single in self.singles.iter() {
-            single.save_media_stream(&singles_path)?;
+            single.save_media_streams(&singles_path)?;
         }
 
         for ep in self.eps.iter() {
