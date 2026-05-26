@@ -25,14 +25,6 @@ impl Thumbnail {
         &self.data
     }
 
-    fn save_file(&self, path: &Path) -> Result<()> {
-        let mut file = fs::File::create(path).map_err(|_| YtuwuError::CreateFile)?;
-        file.write_all(&self.data)
-            .map_err(|_| YtuwuError::WriteToFile)?;
-        Ok(())
-    }
-
-    /// the path is the directory where the file should be stored.  
     pub fn save(&self, path: &Path) -> Result<()> {
         if !path.is_dir() {
             return Err(YtuwuError::InvalidPath);
@@ -41,7 +33,12 @@ impl Thumbnail {
         let file_name = format!("{}.{}", &self.name, MimeType::Png.as_str());
         file_path.push(file_name);
 
-        self.save_file(&file_path)?;
+        let mut file = fs::File::create(path).map_err(|_| YtuwuError::CreateFile)?;
+        file.write_all(&self.data)
+            .map_err(|_| YtuwuError::WriteToFile)?;
+
         Ok(())
     }
 }
+
+// TODO: Maybe use this as a media stream
