@@ -10,12 +10,14 @@ use crate::{
     error::YtuwuError,
 };
 
+#[derive(Debug)]
 pub struct DwnChannel<M: MediaStream + Debug> {
     pub singles: Vec<DwnMedia<M>>,
     pub eps: Vec<Dwnlist<M>>,
     pub albums: Vec<Dwnlist<M>>,
 }
 
+#[derive(Debug)]
 pub struct DwnBundelChannel {
     pub singles: Vec<DwnBundleMedia>,
     pub eps: Vec<DwnBundleList>,
