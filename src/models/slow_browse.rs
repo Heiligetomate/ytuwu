@@ -102,7 +102,7 @@ struct AlbumTrackItem {
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 struct MusicResponsiveListItemRenderer {
-    playlist_item_data: PlaylistItemData,
+    playlist_item_data: Option<PlaylistItemData>,
 }
 
 #[derive(Deserialize, Debug)]
@@ -137,6 +137,7 @@ impl BrowseResponse for SlowBrowseResponse {
                 let id = item
                     .music_responsive_list_item_renderer
                     .playlist_item_data
+                    .as_ref()?
                     .video_id
                     .as_str();
                 VideoId::new(id).ok()
