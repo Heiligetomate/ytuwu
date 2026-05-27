@@ -13,7 +13,7 @@ async fn main() -> Result<()> {
     let downloader = Downloader::new();
 
     let downloaded = downloader
-        .download_channel(GetId::<ChannelNameId>::get_id(&ids)?, AudioItag::OpusMedium)
+        .download_channel(GetId::<ChannelNameId>::get_id(&ids)?, AudioItag::AacLow)
         .await?;
 
     let path = Path::new("teehee");

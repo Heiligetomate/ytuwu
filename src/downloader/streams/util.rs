@@ -10,7 +10,7 @@ pub fn save_media_stream<M>(path: &Path, file_name: &str, media_stream: &M) -> R
 where
     M: MediaStream,
 {
-    let file_name = format!("{}.{}", file_name, media_stream.get_mime_type().as_str());
+    let file_name = format!("{}.{}", trim_filename(file_name), media_stream.get_mime_type().as_str());
     if !path.is_dir() {
         return Err(YtuwuError::InvalidPath);
     }
@@ -21,4 +21,19 @@ where
     file.write_all(&media_stream.get_data())
         .map_err(|_| YtuwuError::WriteToFile)?;
     Ok(())
+}
+
+pub fn trim_filename(filename: &str) -> String {
+    // TODO: This is really bad
+    filename
+        .replace('/', "-")
+        .replace('\\', "-")
+        .replace(':', "-")
+        .replace('*', "-")
+        .replace('?', "-")
+        .replace('"', "-")
+        .replace('<', "-")
+        .replace('>', "-")
+        .replace('|', "-")
+        .to_owned()
 }
