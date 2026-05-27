@@ -115,10 +115,7 @@ impl Response for SlowBrowseResponse {
     fn get_status(&self) -> Status {
         match self.contents {
             Some(_) => Status::Success,
-            None => match self.contents {
-                Some(_) => Status::Success,
-                None => Status::Error,
-            },
+            None => Status::Error,
         }
     }
 }
