@@ -34,9 +34,11 @@ impl ChannelContentBrowse {
                 .await?
                 .browse()
                 .await?
-                .get_first()?
-                .download(itag, None);
-            single_tasks.push(tokio::spawn(single));
+                .get_first();
+            match single {
+                Ok(media) => single_tasks.push(tokio::spawn(media.download(itag, None))),
+                Err(_) => continue,
+            }
         }
 
         for ep in self.eps.drain(..) {
