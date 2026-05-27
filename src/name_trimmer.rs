@@ -21,3 +21,5 @@ fn trim_doubled_special_chars(mut input: String) -> String {
     }
     new_name
 }
+
+// TODO: This is garbage

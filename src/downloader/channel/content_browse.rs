@@ -24,6 +24,10 @@ impl ChannelContentBrowse {
         let mut downloaded_eps: Vec<Dwnlist<I::Stream>> = Vec::new();
         let mut downloaded_albums: Vec<Dwnlist<I::Stream>> = Vec::new();
 
+        let mut single_tasks = Vec::new();
+        let mut ep_tasks = Vec::new();
+        let mut album_tasks = Vec::new();
+
         for single in self.singles.drain(..) {
             let single = PlaylistBrowse::new(single)
                 .browse()
@@ -31,9 +35,8 @@ impl ChannelContentBrowse {
                 .browse()
                 .await?
                 .get_first()?
-                .download(itag, None)
-                .await?;
-            downloaded_singles.push(single);
+                .download(itag, None);
+            single_tasks.push(tokio::spawn(single));
         }
 
         for ep in self.eps.drain(..) {
@@ -42,9 +45,8 @@ impl ChannelContentBrowse {
                 .await?
                 .browse()
                 .await?
-                .download(itag, None)
-                .await?;
-            downloaded_eps.push(ep);
+                .download(itag, None);
+            ep_tasks.push(tokio::spawn(ep));
         }
 
         for album in self.albums.drain(..) {
@@ -53,9 +55,20 @@ impl ChannelContentBrowse {
                 .await?
                 .browse()
                 .await?
-                .download(itag, None)
-                .await?;
-            downloaded_albums.push(album);
+                .download(itag, None);
+            album_tasks.push(tokio::spawn(album));
+        }
+
+        for task in single_tasks {
+            downloaded_singles.push(task.await??);
+        }
+
+        for task in ep_tasks {
+            downloaded_eps.push(task.await??);
+        }
+
+        for task in album_tasks {
+            downloaded_albums.push(task.await??);
         }
 
         Ok(DwnChannel {
