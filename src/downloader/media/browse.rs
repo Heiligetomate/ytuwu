@@ -1,4 +1,9 @@
-use crate::{Result, downloader::media::core::Media, id_types::VideoId, request::core::api_captcha_bypass};
+use crate::{
+    Result,
+    downloader::{core::SharedVd, media::core::Media},
+    id_types::VideoId,
+    request::core::api_captcha_bypass,
+};
 
 #[derive(Debug)]
 pub struct MediaBrowse {
@@ -10,8 +15,8 @@ impl MediaBrowse {
         Self { video_id: id }
     }
 
-    pub async fn browse(self) -> Result<Media> {
-        let response = api_captcha_bypass(&self.video_id, 2).await?;
+    pub async fn browse(self, vd: &SharedVd) -> Result<Media> {
+        let response = api_captcha_bypass(&self.video_id, 2, vd).await?;
         response.extract()
     }
 }

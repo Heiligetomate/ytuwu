@@ -1,3 +1,7 @@
+use std::sync::Arc;
+
+use tokio::sync::Mutex;
+
 use crate::{
     downloader::ChannelContentBrowse,
     id_resolver::{
@@ -109,7 +113,7 @@ async fn channel_resp() {
 #[tokio::test]
 async fn player_resp() {
     let id = VideoId::new("lndG8BiZCmM").unwrap();
-    let res: PlayerResponse = api_captcha_bypass(&id, 2)
+    let res: PlayerResponse = api_captcha_bypass(&id, 2, &Arc::new(Mutex::new(None)))
         .await
         .unwrap();
 

@@ -1,6 +1,9 @@
+use std::sync::Arc;
+
 use crate::{
     Id, Result,
     downloader::{
+        core::SharedVd,
         media::{browse::MediaBrowse, core::Media},
         playlist::core::Playlist,
     },
@@ -17,14 +20,17 @@ impl PlaylistContentBrowse {
         Self { title: title.to_owned(), media }
     }
 
-    pub async fn browse(mut self) -> Result<Playlist> {
+    pub async fn browse(mut self, vd: &SharedVd) -> Result<Playlist> {
         let mut media_items: Vec<Media> = Vec::new();
         let mut tasks = Vec::new();
 
         for item in self.media.drain(..) {
+            let vd_cloned = Arc::clone(vd);
             tasks.push(tokio::spawn(async move {
                 let id = item.video_id.as_str().to_string();
-                item.browse().await.map_err(|e| (id, e))
+                item.browse(&vd_cloned)
+                    .await
+                    .map_err(|e| (id, e))
             }));
         }
 

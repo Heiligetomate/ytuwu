@@ -1,4 +1,6 @@
-use std::fmt::Debug;
+use std::{fmt::Debug, sync::Arc};
+
+use tokio::sync::Mutex;
 
 use crate::{
     DwnBundleList, DwnBundleMedia, DwnMedia, Dwnlist,
@@ -19,19 +21,25 @@ use crate::{
     streams::MediaStream,
 };
 
+pub type SharedVd = Arc<Mutex<Option<String>>>;
+
 #[derive(Debug)]
-pub struct Downloader {}
+pub struct Downloader {
+    visitor_data: Arc<Mutex<Option<String>>>,
+}
 
 impl Downloader {
     #[must_use]
     pub fn new() -> Self {
-        Self {}
+        Self {
+            visitor_data: Arc::new(Mutex::new(None)),
+        }
     }
 
     #[rustfmt::skip]
     pub async fn download_media_thumb(&self, video_id: VideoId, resolution: ThumbRes) -> Result<Thumbnail> {
         Ok(MediaBrowse::new(video_id)
-            .browse()
+            .browse(&self.visitor_data)
             .await?
             .download_thumbnail(resolution)
             .await?)
@@ -40,7 +48,7 @@ impl Downloader {
     #[rustfmt::skip]
     pub async fn download_media_stream<I: Itag + Copy>(&self, video_id: VideoId, itag: I) -> Result<I::Stream> {
         Ok(MediaBrowse::new(video_id)
-            .browse()
+            .browse(&self.visitor_data)
             .await?
             .download_stream(itag)
             .await?)
@@ -53,7 +61,7 @@ impl Downloader {
         I::Stream: Debug,
     {
         Ok(MediaBrowse::new(video_id)
-            .browse()
+            .browse(&self.visitor_data)
             .await?
             .download(itag, thumbnail_resolution)
             .await?)
@@ -61,7 +69,7 @@ impl Downloader {
 
     pub async fn download_media_bundle(&self, video_id: VideoId, itags: Vec<AnyItag>, thumbnail_resolution: Option<ThumbRes>) -> Result<DwnBundleMedia> {
         Ok(MediaBrowse::new(video_id)
-            .browse()
+            .browse(&self.visitor_data)
             .await?
             .download_streams(itags, thumbnail_resolution)
             .await?)
@@ -76,7 +84,7 @@ impl Downloader {
         Ok(PlaylistBrowse::new(browse_id)
             .browse()
             .await?
-            .browse()
+            .browse(&self.visitor_data)
             .await?
             .download(itag, thumbnail_resolution)
             .await?)
@@ -87,7 +95,7 @@ impl Downloader {
         Ok(PlaylistBrowse::new(browse_id)
             .browse()
             .await?
-            .browse()
+            .browse(&self.visitor_data)
             .await?
             .download_streams(itags, thumbnail_resolution)
             .await?)
@@ -116,7 +124,7 @@ impl Downloader {
         Ok(ChannelBrowse::new(id)
             .browse()
             .await?
-            .download(itag)
+            .download(itag, &self.visitor_data)
             .await?)
     }
 }

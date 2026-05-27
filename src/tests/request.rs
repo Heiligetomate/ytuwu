@@ -1,3 +1,7 @@
+use std::sync::Arc;
+
+use tokio::sync::Mutex;
+
 use crate::{
     id_resolver::{
         id::Id,
@@ -30,7 +34,7 @@ async fn channel_client() {
 #[tokio::test]
 async fn player_client() {
     let id = VideoId::new("lndG8BiZCmM").unwrap();
-    let res: PlayerResponse = api_captcha_bypass(&id, 2)
+    let res: PlayerResponse = api_captcha_bypass(&id, 2, &Arc::new(Mutex::new(None)))
         .await
         .unwrap();
     assert_eq!(res.get_status(), Status::Success);

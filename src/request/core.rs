@@ -1,4 +1,5 @@
 use crate::{
+    downloader::core::SharedVd,
     error::{Result, YtuwuError},
     id_resolver::id::Id,
     id_types::VideoId,
@@ -38,16 +39,16 @@ where
     make_request(id, None).await
 }
 
-pub async fn api_captcha_bypass(id: &VideoId, max_tries: u16) -> Result<PlayerResponse>
+pub async fn api_captcha_bypass(id: &VideoId, max_tries: u16, visitor_data: &SharedVd) -> Result<PlayerResponse>
 where {
     let mut tries: u16 = 0;
-    let mut visitor_data: Option<String> = None;
 
     let mut error_message = String::from("unknown");
 
     while tries < max_tries {
         tries += 1;
-        let resp: PlayerResponse = make_request(id, visitor_data).await?;
+        let vd = visitor_data.lock().await.clone();
+        let resp: PlayerResponse = make_request(id, vd).await?;
         match resp.get_status() {
             Status::Error => return Err(YtuwuError::YoutubeAPIReturn),
             Status::Success => return Ok(resp),
@@ -59,7 +60,7 @@ where {
                 println!("trying to bypass captcha for {}", id.as_str())
             }
         }
-        visitor_data = resp
+        *visitor_data.lock().await = resp
             .get_visitor_data()
             .map(|vd| vd.to_owned());
     }

@@ -2,7 +2,7 @@ use std::fmt::Debug;
 
 use crate::{
     Dwnlist, Result,
-    downloader::{channel::downloaded::DwnChannel, media::downloaded::DwnMedia, playlist::browse::PlaylistBrowse, streams::MediaStream},
+    downloader::{channel::downloaded::DwnChannel, core::SharedVd, media::downloaded::DwnMedia, playlist::browse::PlaylistBrowse, streams::MediaStream},
     id_resolver::id_types::ChannelPlaylistId,
     itag::Itag,
 };
@@ -15,7 +15,7 @@ pub struct ChannelContentBrowse {
 }
 
 impl ChannelContentBrowse {
-    pub async fn download<I>(mut self, itag: I) -> Result<DwnChannel<I::Stream>>
+    pub async fn download<I>(mut self, itag: I, vd: &SharedVd) -> Result<DwnChannel<I::Stream>>
     where
         I: Itag + Copy + Debug + Send + 'static,
         I::Stream: MediaStream + Debug + Send,
@@ -32,7 +32,7 @@ impl ChannelContentBrowse {
             let single = PlaylistBrowse::new(single)
                 .browse()
                 .await?
-                .browse()
+                .browse(&vd)
                 .await?
                 .get_first();
             match single {
@@ -45,7 +45,7 @@ impl ChannelContentBrowse {
             let ep = PlaylistBrowse::new(ep)
                 .browse()
                 .await?
-                .browse()
+                .browse(&vd)
                 .await?
                 .download(itag, None);
             ep_tasks.push(tokio::spawn(ep));
@@ -55,7 +55,7 @@ impl ChannelContentBrowse {
             let album = PlaylistBrowse::new(album)
                 .browse()
                 .await?
-                .browse()
+                .browse(&vd)
                 .await?
                 .download(itag, None);
             album_tasks.push(tokio::spawn(album));
