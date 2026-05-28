@@ -4,7 +4,7 @@ use crate::{
     Dwnlist, Result,
     downloader::{channel::downloaded::DwnChannel, core::SharedVd, media::downloaded::DwnMedia, playlist::browse::PlaylistBrowse, streams::MediaStream},
     id_resolver::id_types::ChannelPlaylistId,
-    itag::Itag,
+    itags::Itag,
 };
 
 #[derive(Debug, PartialEq, Eq)]

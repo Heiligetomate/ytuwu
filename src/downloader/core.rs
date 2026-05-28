@@ -15,8 +15,8 @@ use crate::{
         id_types::{FastBrowseId, VideoId},
     },
     id_types::ShortId,
-    itag::AnyItag,
-    models::itag::Itag,
+    itags::AnyItag,
+    itags::Itag,
     streams::{MediaStream, Thumbnail},
 };
 
@@ -30,7 +30,9 @@ pub struct Downloader {
 impl Downloader {
     #[must_use]
     pub fn new() -> Self {
-        Self { visitor_data: Arc::new(Mutex::new(None)) }
+        Self {
+            visitor_data: Arc::new(Mutex::new(None)),
+        }
     }
 
     #[rustfmt::skip]

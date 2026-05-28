@@ -11,7 +11,7 @@ use crate::{
             util::save_media_stream,
         },
     },
-    itag::{Itag, VideoItag},
+    itags::{Itag, VideoItag},
 };
 
 #[derive(Debug)]

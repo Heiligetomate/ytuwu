@@ -5,8 +5,8 @@ use bytes::Bytes;
 use crate::{
     DwnBundleMedia, DwnMedia,
     downloader::streams::{AudioStream, LongVideoStream, MediaStream, MuxedStream, ShortVideoStream},
+    itags::*,
     metadata::MediaMetadata,
-    models::itag::*,
     streams::{AnyStream, Thumbnail},
 };
 

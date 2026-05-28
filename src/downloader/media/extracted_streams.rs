@@ -1,7 +1,7 @@
 use crate::{
     Result,
     error::YtuwuError,
-    itag::Itag,
+    itags::Itag,
     models::player::{Stream, ThumbnailStream},
 };
 

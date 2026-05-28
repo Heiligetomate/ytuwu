@@ -8,7 +8,7 @@ use crate::{
         mime_types::MimeType,
         streams::{core::MediaStream, util::save_media_stream},
     },
-    itag::{AudioItag, Itag},
+    itags::{AudioItag, Itag},
 };
 
 #[derive(Debug)]

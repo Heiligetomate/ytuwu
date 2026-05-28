@@ -2,6 +2,7 @@ pub mod channel;
 pub mod mime_types;
 pub(crate) use channel::content_browse::ChannelContentBrowse;
 pub mod core;
+pub mod itags;
 pub mod media;
 pub mod metadata;
 pub mod playlist;

@@ -1,4 +1,4 @@
-use crate::itag::{AudioItag, Itag, MuxedItag, ShortItag, VideoItag};
+use crate::itags::{AudioItag, Itag, MuxedItag, ShortItag, VideoItag};
 
 #[test]
 fn test_video_mime_type() {

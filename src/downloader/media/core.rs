@@ -8,9 +8,9 @@ use crate::{
         util::*,
     },
     error::Result,
-    itag::AnyItag,
+    itags::AnyItag,
+    itags::Itag,
     metadata::MediaMetadata,
-    models::itag::Itag,
 };
 use bytes::Bytes;
 
@@ -52,7 +52,11 @@ impl DownloadTask {
 
 impl Media {
     pub fn new(media_streams: ExtractedStreams, thumbnail_streams: ExtractedThumbnails, metadata: MediaMetadata) -> Self {
-        Self { media_streams, thumbnail_streams, metadata }
+        Self {
+            media_streams,
+            thumbnail_streams,
+            metadata,
+        }
     }
 
     pub async fn download_stream<I: Itag + Copy>(&self, itag: I) -> Result<I::Stream> {
@@ -121,7 +125,11 @@ impl Media {
             thumbnail = Some(dwn_thumb)
         }
 
-        Ok(DwnBundleMedia { metadata: self.metadata, streams, thumbnail })
+        Ok(DwnBundleMedia {
+            metadata: self.metadata,
+            streams,
+            thumbnail,
+        })
     }
 
     pub async fn download<I>(self, itag: I, thumb_res: Option<ThumbRes>) -> Result<DwnMedia<I::Stream>>

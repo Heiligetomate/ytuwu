@@ -7,8 +7,8 @@ use crate::{
         streams::MediaStream,
     },
     error::{Result, YtuwuError},
-    itag::AnyItag,
-    models::itag::Itag,
+    itags::AnyItag,
+    itags::Itag,
 };
 
 #[derive(Debug)]
