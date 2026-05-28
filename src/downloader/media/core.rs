@@ -4,8 +4,7 @@ use crate::{
     DwnBundleMedia, DwnMedia,
     downloader::{
         media::extracted_streams::{ExtractedStreams, ExtractedThumbnails, ThumbRes},
-        streams::{AnyStream, MediaStream},
-        thumbnail::Thumbnail,
+        streams::{AnyStream, MediaStream, Thumbnail},
         util::*,
     },
     error::Result,
@@ -53,11 +52,7 @@ impl DownloadTask {
 
 impl Media {
     pub fn new(media_streams: ExtractedStreams, thumbnail_streams: ExtractedThumbnails, metadata: MediaMetadata) -> Self {
-        Self {
-            media_streams,
-            thumbnail_streams,
-            metadata,
-        }
+        Self { media_streams, thumbnail_streams, metadata }
     }
 
     pub async fn download_stream<I: Itag + Copy>(&self, itag: I) -> Result<I::Stream> {
@@ -104,7 +99,7 @@ impl Media {
             .await?
             .bytes()
             .await?;
-        Ok(Thumbnail::new(thumbnail, &self.metadata.title))
+        Ok(Thumbnail::new(thumbnail))
     }
 
     pub async fn download_streams(self, itags: Vec<AnyItag>, thumb_res: Option<ThumbRes>) -> Result<DwnBundleMedia> {
@@ -126,11 +121,7 @@ impl Media {
             thumbnail = Some(dwn_thumb)
         }
 
-        Ok(DwnBundleMedia {
-            metadata: self.metadata,
-            streams,
-            thumbnail,
-        })
+        Ok(DwnBundleMedia { metadata: self.metadata, streams, thumbnail })
     }
 
     pub async fn download<I>(self, itag: I, thumb_res: Option<ThumbRes>) -> Result<DwnMedia<I::Stream>>

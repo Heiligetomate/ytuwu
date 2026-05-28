@@ -1,13 +1,10 @@
 use std::{collections::HashMap, fmt::Debug, path::Path};
 
-use bytes::{Bytes, BytesMut};
+use bytes::BytesMut;
 
 use crate::{
     Result,
-    downloader::{
-        streams::{AnyStream, MediaStream},
-        thumbnail::Thumbnail,
-    },
+    downloader::streams::{AnyStream, MediaStream, Thumbnail},
     error::YtuwuError,
     metadata::MediaMetadata,
 };
@@ -47,7 +44,8 @@ impl<M: MediaStream + Debug> DwnMedia<M> {
     }
 
     pub fn save_thumbnail(&self, path: &Path) -> Result<()> {
-        self.get_thumbnail()?.save(path)?;
+        self.get_thumbnail()?
+            .save(path, &self.metadata.title)?;
         Ok(())
     }
 
@@ -57,8 +55,8 @@ impl<M: MediaStream + Debug> DwnMedia<M> {
         Ok(())
     }
 
-    pub fn thumbnail_bytes(&self) -> Result<&Bytes> {
-        Ok(self.get_thumbnail()?.bytes())
+    pub fn thumbnail_bytes(&self) -> Result<&BytesMut> {
+        Ok(self.get_thumbnail()?.get_data())
     }
 }
 
@@ -74,7 +72,8 @@ impl DwnBundleMedia {
     }
 
     pub fn save_thumbnail(&self, path: &Path) -> Result<()> {
-        self.get_thumbnail()?.save(path)
+        self.get_thumbnail()?
+            .save(path, &self.metadata.title)
     }
 
     pub fn save_media_streams(&self, path: &Path) -> Result<()> {
@@ -99,7 +98,7 @@ impl DwnBundleMedia {
         Ok(())
     }
 
-    pub fn thumbnail_bytes(&self) -> Result<&Bytes> {
-        Ok(self.get_thumbnail()?.bytes())
+    pub fn thumbnail_bytes(&self) -> Result<&BytesMut> {
+        Ok(self.get_thumbnail()?.get_data())
     }
 }

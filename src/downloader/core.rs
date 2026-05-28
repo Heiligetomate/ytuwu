@@ -8,7 +8,6 @@ use crate::{
         channel::{browse::ChannelBrowse, downloaded::DwnChannel},
         media::{browse::MediaBrowse, extracted_streams::ThumbRes},
         playlist::browse::PlaylistBrowse,
-        thumbnail::Thumbnail,
     },
     error::Result,
     id_resolver::{
@@ -18,7 +17,7 @@ use crate::{
     id_types::ShortId,
     itag::AnyItag,
     models::itag::Itag,
-    streams::MediaStream,
+    streams::{MediaStream, Thumbnail},
 };
 
 pub type SharedVd = Arc<Mutex<Option<String>>>;
@@ -31,9 +30,7 @@ pub struct Downloader {
 impl Downloader {
     #[must_use]
     pub fn new() -> Self {
-        Self {
-            visitor_data: Arc::new(Mutex::new(None)),
-        }
+        Self { visitor_data: Arc::new(Mutex::new(None)) }
     }
 
     #[rustfmt::skip]
