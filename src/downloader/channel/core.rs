@@ -1,8 +1,16 @@
-use std::fmt::Debug;
+use std::{fmt::Debug, sync::Arc};
+
+use tokio::io::sink;
 
 use crate::{
     Dwnlist, Result,
-    downloader::{channel::downloaded::DwnChannel, core::SharedVd, media::downloaded::DwnMedia, playlist::browse::PlaylistBrowse, streams::MediaStream},
+    downloader::{
+        channel::downloaded::DwnChannel,
+        core::SharedVd,
+        media::downloaded::DwnMedia,
+        playlist::{browse::PlaylistBrowse, content_browse},
+        streams::MediaStream,
+    },
     id_resolver::id_types::ChannelPlaylistId,
     itags::Itag,
 };
@@ -15,31 +23,57 @@ pub struct ChannelContentBrowse {
 }
 
 impl ChannelContentBrowse {
+    async fn download_singles<I>(&self, itag: I, vd: &SharedVd) -> Result<Vec<DwnMedia<I::Stream>>>
+    where
+        I: Itag + Copy + Debug + Send + 'static,
+        I::Stream: MediaStream + Debug + Send,
+    {
+        let mut browse_tasks = Vec::new();
+        let mut content_browse_tasks = Vec::new();
+        let mut download_tasks = Vec::new();
+        let mut downloaded: Vec<DwnMedia<I::Stream>> = Vec::new();
+
+        for single in self.singles.iter() {
+            browse_tasks.push(tokio::spawn(PlaylistBrowse::new(single.clone()).browse()));
+        }
+
+        let mut browse_results = Vec::new();
+        for task in browse_tasks {
+            browse_results.push(task.await??);
+        }
+
+        for result in browse_results {
+            let vd_cloned = Arc::clone(vd);
+            content_browse_tasks.push(tokio::spawn(async move { result.browse(&vd_cloned).await }));
+        }
+
+        let mut content_browse_results = Vec::new();
+        for task in content_browse_tasks {
+            content_browse_results.push(task.await??.get_first()?);
+        }
+
+        for media in content_browse_results {
+            download_tasks.push(tokio::spawn(media.download(itag, None)));
+        }
+
+        for task in download_tasks {
+            downloaded.push(task.await??);
+        }
+
+        Ok(downloaded)
+    }
+
     pub async fn download<I>(mut self, itag: I, vd: &SharedVd) -> Result<DwnChannel<I::Stream>>
     where
         I: Itag + Copy + Debug + Send + 'static,
         I::Stream: MediaStream + Debug + Send,
     {
-        let mut downloaded_singles: Vec<DwnMedia<I::Stream>> = Vec::new();
+        let downloaded_singles: Vec<DwnMedia<I::Stream>> = self.download_singles(itag, vd).await?;
         let mut downloaded_eps: Vec<Dwnlist<I::Stream>> = Vec::new();
         let mut downloaded_albums: Vec<Dwnlist<I::Stream>> = Vec::new();
 
-        let mut single_tasks = Vec::new();
         let mut ep_tasks = Vec::new();
         let mut album_tasks = Vec::new();
-
-        for single in self.singles.drain(..) {
-            let single = PlaylistBrowse::new(single)
-                .browse()
-                .await?
-                .browse(&vd)
-                .await?
-                .get_first();
-            match single {
-                Ok(media) => single_tasks.push(tokio::spawn(media.download(itag, None))),
-                Err(_) => continue,
-            }
-        }
 
         for ep in self.eps.drain(..) {
             let ep = PlaylistBrowse::new(ep)
@@ -59,10 +93,6 @@ impl ChannelContentBrowse {
                 .await?
                 .download(itag, None);
             album_tasks.push(tokio::spawn(album));
-        }
-
-        for task in single_tasks {
-            downloaded_singles.push(task.await??);
         }
 
         for task in ep_tasks {
