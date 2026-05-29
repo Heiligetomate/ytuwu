@@ -60,22 +60,20 @@ impl Media {
     }
 
     pub async fn download_stream<I: Itag + Copy>(&self, itag: I) -> Result<I::Stream> {
-        // TODO: multiple tokio spawn thningies
         let url = self
             .media_streams
             .get_best_stream(&itag)?;
+
         let size = extract_size(url)?;
-        let mut downloaded_stream = itag.new_stream();
+        let total_chunks = size.div_ceil(CHUNK_SIZE);
         let mut current_position: u32 = 0;
+
+        let mut downloaded_stream = itag.new_stream();
 
         let mut ops = Vec::new();
         let mut tasks = Vec::new();
 
-        while size > current_position {
-            // let chunk = self
-            // .download_chunk(current_position, current_position + CHUNK_SIZE, url)
-            // .await?;
-            //downloaded_stream.push_data(chunk);
+        for i in 0..total_chunks {
             let op = DownloadTask::new(current_position, current_position + CHUNK_SIZE, url);
             ops.push(op);
             current_position += CHUNK_SIZE + 1
