@@ -27,8 +27,8 @@ impl HandleProgress for Progress {
 async fn main() -> Result<()> {
     let start_time = SystemTime::now();
 
-    set_progress_handler(Arc::new(Progress {}));
     //let url = "https://music.youtube.com/@ntomusic";
+    set_progress_handler(Arc::new(Progress {}));
 
     let id = VideoId::new("CDko2ux1bkE")?;
 

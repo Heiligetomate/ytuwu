@@ -22,6 +22,12 @@ impl ProgressChanger {
         Err(YtuwuError::ProgressHandler)
     }
 
+    pub fn check() {
+        if ProgressChanger::get_handler().is_err() {
+            panic!("Progress handler is not set");
+        }
+    }
+
     pub fn start_media_download(title: &str, id: Uuid, total: u32) -> Result<()> {
         let handler = Self::get_handler()?;
         handler.on_download_start(title, id, total);

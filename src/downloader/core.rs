@@ -8,6 +8,7 @@ use crate::{
         channel::{browse::ChannelBrowse, downloaded::DwnChannel},
         media::{browse::MediaBrowse, extracted_streams::ThumbRes},
         playlist::browse::PlaylistBrowse,
+        progress::ProgressChanger,
     },
     error::Result,
     id_resolver::{
@@ -15,8 +16,7 @@ use crate::{
         id_types::{FastBrowseId, VideoId},
     },
     id_types::ShortId,
-    itags::AnyItag,
-    itags::Itag,
+    itags::{AnyItag, Itag},
     streams::{MediaStream, Thumbnail},
 };
 
@@ -30,6 +30,7 @@ pub struct Downloader {
 impl Downloader {
     #[must_use]
     pub fn new() -> Self {
+        ProgressChanger::check();
         Self {
             visitor_data: Arc::new(Mutex::new(None)),
         }
