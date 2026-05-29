@@ -24,7 +24,8 @@ pub type SharedVd = Arc<Mutex<Option<String>>>;
 
 #[derive(Debug)]
 pub struct Downloader {
-    visitor_data: Arc<Mutex<Option<String>>>,
+    visitor_data: SharedVd,
+    // TODO: put the progress aids in here
 }
 
 impl Downloader {
@@ -36,7 +37,6 @@ impl Downloader {
         }
     }
 
-    #[rustfmt::skip]
     pub async fn download_media_thumb(&self, video_id: VideoId, resolution: ThumbRes) -> Result<Thumbnail> {
         Ok(MediaBrowse::new(video_id)
             .browse(&self.visitor_data)
@@ -45,7 +45,6 @@ impl Downloader {
             .await?)
     }
 
-    #[rustfmt::skip]
     pub async fn download_media_stream<I: Itag + Copy>(&self, video_id: VideoId, itag: I) -> Result<I::Stream> {
         Ok(MediaBrowse::new(video_id)
             .browse(&self.visitor_data)
@@ -54,7 +53,6 @@ impl Downloader {
             .await?)
     }
 
-    #[rustfmt::skip]
     pub async fn download_media<I>(&self, video_id: VideoId, itag: I, thumbnail_resolution: Option<ThumbRes>) -> Result<DwnMedia<I::Stream>>
     where
         I: Itag + Copy + Debug,
@@ -75,11 +73,10 @@ impl Downloader {
             .await?)
     }
 
-    #[rustfmt::skip]
     pub async fn download_playlist<I>(&self, browse_id: FastBrowseId, itag: I, thumbnail_resolution: Option<ThumbRes>) -> Result<Dwnlist<I::Stream>>
     where
-    I: Itag + Copy + Debug + Send + 'static,
-    I::Stream: MediaStream + Debug + Send,
+        I: Itag + Copy + Debug + Send + 'static,
+        I::Stream: MediaStream + Debug + Send,
     {
         Ok(PlaylistBrowse::new(browse_id)
             .browse()
@@ -90,7 +87,6 @@ impl Downloader {
             .await?)
     }
 
-    #[rustfmt::skip]
     pub async fn download_bundle_list(&self, browse_id: FastBrowseId, itags: Vec<AnyItag>, thumbnail_resolution: Option<ThumbRes>) -> Result<DwnBundleList> {
         Ok(PlaylistBrowse::new(browse_id)
             .browse()
@@ -101,7 +97,6 @@ impl Downloader {
             .await?)
     }
 
-    #[rustfmt::skip]
     pub async fn download_short<I>(&self, short_id: ShortId, itag: I, thumbnail_resolution: Option<ThumbRes>) -> Result<DwnMedia<I::Stream>>
     where
         I: Itag + Copy + Debug,
