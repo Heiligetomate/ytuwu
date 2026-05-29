@@ -57,7 +57,6 @@ where {
                     .get_playability_reason()
                     .unwrap_or("unknown")
                     .to_string();
-                println!("trying to bypass captcha for {}", id.as_str())
             }
         }
         *visitor_data.lock().await = resp
