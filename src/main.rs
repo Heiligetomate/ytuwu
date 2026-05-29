@@ -1,25 +1,50 @@
-use std::{path::Path, sync::Arc, time::SystemTime};
-
-use ytuwu::{
-    Downloader, GetId, HandleProgress, Id, Result,
-    id_types::{ChannelNameId, VideoId},
-    itags::AudioItag,
-    set_progress_handler,
+use std::{
+    collections::HashMap,
+    path::Path,
+    sync::{Arc, Mutex},
+    time::SystemTime,
 };
 
-struct Progress {}
+use uuid::Uuid;
+use ytuwu::{Downloader, HandleProgress, Id, Result, id_types::FastBrowseId, itags::AudioItag, set_progress_handler};
+
+struct Progress {
+    ids: Mutex<HashMap<Uuid, (String, u32, u32)>>,
+}
 
 impl HandleProgress for Progress {
-    fn on_download_start(&self, title: &str, id: uuid::Uuid, total_chunks: u32) {
-        println!("new started: {}\nchunks to do: {}", title, total_chunks);
+    fn on_download_start(&self, title: &str, id: Uuid, total_chunks: u32) {
+        self.ids
+            .lock()
+            .unwrap()
+            .insert(id, (title.to_string(), 0, total_chunks));
+        self.print();
     }
 
-    fn on_chunk_downloaded(&self, id: uuid::Uuid, done: u32) {
-        println!("print new chunk downloaded. {} total", done);
+    fn on_chunk_downloaded(&self, id: Uuid, done: u32) {
+        if let Some(entry) = self.ids.lock().unwrap().get_mut(&id) {
+            entry.1 = done;
+        }
+        self.print();
     }
 
-    fn on_download_complete(&self, id: uuid::Uuid) {
-        println!("downloaded");
+    fn on_download_complete(&self, id: Uuid) {
+        self.ids.lock().unwrap().remove(&id);
+        self.print();
+    }
+}
+
+impl Progress {
+    fn print(&self) {
+        print!("\x1B[2J\x1B[H"); // clear screen
+        let ids = self.ids.lock().unwrap();
+        println!("Downloading {} track(s)\n", ids.len());
+        for (title, done, total) in ids.values() {
+            let percentage = (*done as f32 / *total as f32 * 100.0) as u32;
+            let filled = percentage / 5;
+            let bar = format!("[{}{}]", "█".repeat(filled as usize), "░".repeat((20 - filled) as usize));
+            println!("  {} {}% {}", bar, percentage, title);
+        }
     }
 }
 
@@ -28,20 +53,19 @@ async fn main() -> Result<()> {
     let start_time = SystemTime::now();
 
     //let url = "https://music.youtube.com/@ntomusic";
-    set_progress_handler(Arc::new(Progress {}));
+    let progress_handler = Progress { ids: Mutex::new(HashMap::new()) };
+    set_progress_handler(Arc::new(progress_handler));
 
-    let id = VideoId::new("CDko2ux1bkE")?;
+    let id = FastBrowseId::new("OLAK5uy_n0MSOzMqgubQTbOu5drCcktWiCXQG0LVY")?;
 
     let downloader = Downloader::new();
 
     let downloaded = downloader
-        .download_media(id, AudioItag::OpusMedium, None)
+        .download_playlist(id, AudioItag::OpusMedium, None)
         .await?;
 
-    let path = Path::new("teehee");
-    downloaded.save_media_stream(path)?;
+    downloaded.save_with_dir(&Path::new("teehee"))?;
 
     println!("took: {:?}", start_time.elapsed().unwrap());
-
     Ok(())
 }
