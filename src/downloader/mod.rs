@@ -8,3 +8,7 @@ pub mod metadata;
 pub mod playlist;
 pub mod streams;
 mod util;
+
+pub(self) mod progress;
+pub use progress::HandleProgress;
+pub use progress::set_progress_handler;

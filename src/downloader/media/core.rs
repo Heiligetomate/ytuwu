@@ -1,23 +1,26 @@
-use std::fmt::Debug;
+use std::{fmt::Debug, sync::Arc};
 
 use crate::{
     DwnBundleMedia, DwnMedia,
     downloader::{
         media::extracted_streams::{ExtractedStreams, ExtractedThumbnails, ThumbRes},
+        progress::ProgressChanger,
         streams::{AnyStream, MediaStream, Thumbnail},
         util::*,
     },
     error::Result,
-    itags::AnyItag,
-    itags::Itag,
+    itags::{AnyItag, Itag},
     metadata::MediaMetadata,
 };
 use bytes::Bytes;
+use std::sync::atomic::{AtomicU32, Ordering};
+use uuid::Uuid;
 
 const CHUNK_SIZE: u32 = 1024 * 1024;
 
 #[derive(Debug)]
 pub struct Media {
+    id: Uuid,
     media_streams: ExtractedStreams,
     thumbnail_streams: ExtractedThumbnails,
     pub metadata: MediaMetadata,
@@ -37,7 +40,7 @@ impl DownloadTask {
     async fn download(&self) -> Result<Bytes> {
         let client = reqwest::Client::new();
 
-        println!("downloading chunk {} to {}", self.from, self.to);
+        // println!("downloading chunk {} to {}", self.from, self.to);
 
         let chunk_url = format!("{}&range={}-{}", self.url, self.from, self.to);
         let chunk = client
@@ -52,7 +55,9 @@ impl DownloadTask {
 
 impl Media {
     pub fn new(media_streams: ExtractedStreams, thumbnail_streams: ExtractedThumbnails, metadata: MediaMetadata) -> Self {
+        let id = Uuid::new_v4();
         Self {
+            id,
             media_streams,
             thumbnail_streams,
             metadata,
@@ -73,19 +78,32 @@ impl Media {
         let mut ops = Vec::new();
         let mut tasks = Vec::new();
 
-        for i in 0..total_chunks {
+        ProgressChanger::start_media_download(&self.metadata.title, self.id, total_chunks)?;
+
+        for _ in 0..total_chunks {
             let op = DownloadTask::new(current_position, current_position + CHUNK_SIZE, url);
             ops.push(op);
             current_position += CHUNK_SIZE + 1
         }
 
+        let completed = Arc::new(AtomicU32::new(0));
+
         for op in ops {
-            tasks.push(tokio::spawn(async move { op.download().await }));
+            let completed = Arc::clone(&completed);
+            let id = self.id;
+            tasks.push(tokio::spawn(async move {
+                let result = op.download().await;
+                let done = completed.fetch_add(1, Ordering::Relaxed) + 1;
+                ProgressChanger::update_chunks(id, done)?;
+                result
+            }));
         }
 
         for task in tasks {
             downloaded_stream.push_data(task.await??);
         }
+
+        ProgressChanger::media_download_complete(self.id)?;
 
         Ok(downloaded_stream)
     }

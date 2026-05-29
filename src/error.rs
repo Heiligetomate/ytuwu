@@ -33,12 +33,15 @@ pub enum YtuwuError {
     InvalidIdLength,
     InvalidIdFormat,
 
+    ProgressHandler,
+
     Tokio(String),
 }
 
 impl Display for YtuwuError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
+            Self::ProgressHandler => write!(f, "Error while getting progress handler"),
             Self::Tokio(e) => write!(f, "tokio error: {}", e),
             Self::BrowseDataNotFound(e) => write!(f, "Could not get data from response: {}.", e),
             Self::PlayerDataNotFound(e) => {
