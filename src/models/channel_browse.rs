@@ -1,7 +1,9 @@
+use std::sync::Arc;
+
 use serde::Deserialize;
 
 use crate::{
-    Result,
+    Downloader, Result,
     downloader::ChannelContentBrowse,
     error::YtuwuError,
     id_resolver::{id::Id, types::ChannelPlaylistId},
@@ -94,7 +96,7 @@ struct SubtitleRun {
 }
 
 impl ChannelBrowseResponse {
-    pub fn extract_all_releases(&self) -> Result<ChannelContentBrowse> {
+    pub fn extract_all_releases(&self, downloader: Arc<Downloader>) -> Result<ChannelContentBrowse> {
         let mut albums: Vec<ChannelPlaylistId> = Vec::new();
         let mut eps: Vec<ChannelPlaylistId> = Vec::new();
         let mut singles: Vec<ChannelPlaylistId> = Vec::new();
@@ -152,7 +154,7 @@ impl ChannelBrowseResponse {
             }
         }
 
-        Ok(ChannelContentBrowse { albums, eps, singles })
+        Ok(ChannelContentBrowse { albums, eps, singles, downloader })
     }
 }
 

@@ -1,7 +1,7 @@
 use std::{fmt::Debug, sync::Arc};
 
 use crate::{
-    DwnBundleMedia, DwnMedia,
+    Downloader, DwnBundleMedia, DwnMedia,
     downloader::{
         media::extracted_streams::{ExtractedStreams, ExtractedThumbnails, ThumbRes},
         progress::ProgressChanger,
@@ -20,6 +20,7 @@ const CHUNK_SIZE: u32 = 1024 * 1024;
 
 #[derive(Debug)]
 pub struct Media {
+    downloader: Arc<Downloader>,
     id: Uuid,
     media_streams: ExtractedStreams,
     thumbnail_streams: ExtractedThumbnails,
@@ -54,9 +55,10 @@ impl DownloadTask {
 }
 
 impl Media {
-    pub fn new(media_streams: ExtractedStreams, thumbnail_streams: ExtractedThumbnails, metadata: MediaMetadata) -> Self {
+    pub fn new(media_streams: ExtractedStreams, thumbnail_streams: ExtractedThumbnails, metadata: MediaMetadata, downloader: Arc<Downloader>) -> Self {
         let id = Uuid::new_v4();
         Self {
+            downloader,
             id,
             media_streams,
             thumbnail_streams,
@@ -78,7 +80,9 @@ impl Media {
         let mut ops = Vec::new();
         let mut tasks = Vec::new();
 
-        ProgressChanger::start_media_download(&self.metadata.title, self.id, total_chunks)?;
+        self.downloader
+            .progress_handler
+            .on_download_start(&self.metadata.title, self.id, total_chunks);
 
         for _ in 0..total_chunks {
             let op = DownloadTask::new(current_position, current_position + CHUNK_SIZE, url);
@@ -91,10 +95,13 @@ impl Media {
         for op in ops {
             let completed = Arc::clone(&completed);
             let id = self.id;
+            let cloned = Arc::clone(&self.downloader);
             tasks.push(tokio::spawn(async move {
                 let result = op.download().await;
                 let done = completed.fetch_add(1, Ordering::Relaxed) + 1;
-                ProgressChanger::update_chunks(id, done)?;
+                cloned
+                    .progress_handler
+                    .on_chunk_downloaded(id, done);
                 result
             }));
         }
@@ -103,7 +110,9 @@ impl Media {
             downloaded_stream.push_data(task.await??);
         }
 
-        ProgressChanger::media_download_complete(self.id)?;
+        self.downloader
+            .progress_handler
+            .on_download_complete(self.id);
 
         Ok(downloaded_stream)
     }

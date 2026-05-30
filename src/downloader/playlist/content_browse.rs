@@ -1,9 +1,8 @@
 use std::sync::Arc;
 
 use crate::{
-    Id, Result,
+    Downloader, Id, Result,
     downloader::{
-        core::SharedVd,
         media::{browse::MediaBrowse, core::Media},
         playlist::core::Playlist,
     },
@@ -13,22 +12,27 @@ use crate::{
 pub struct PlaylistContentBrowse {
     title: String,
     media: Vec<MediaBrowse>,
+    downloader: Arc<Downloader>,
 }
 
 impl PlaylistContentBrowse {
-    pub fn new(title: &str, media: Vec<MediaBrowse>) -> Self {
-        Self { title: title.to_owned(), media }
+    pub fn new(title: &str, media: Vec<MediaBrowse>, downloader: Arc<Downloader>) -> Self {
+        Self {
+            title: title.to_owned(),
+            media,
+            downloader,
+        }
     }
 
-    pub async fn browse(mut self, vd: &SharedVd) -> Result<Playlist> {
+    pub async fn browse(mut self) -> Result<Playlist> {
         let mut media_items: Vec<Media> = Vec::new();
         let mut tasks = Vec::new();
 
         for item in self.media.drain(..) {
-            let vd_cloned = Arc::clone(vd);
+            let downloader = Arc::clone(&self.downloader);
             tasks.push(tokio::spawn(async move {
                 let id = item.video_id.as_str().to_string();
-                item.browse(&vd_cloned)
+                item.browse(downloader)
                     .await
                     .map_err(|e| (id, e))
             }));

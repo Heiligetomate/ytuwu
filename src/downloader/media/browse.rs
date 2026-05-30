@@ -1,5 +1,7 @@
+use std::sync::Arc;
+
 use crate::{
-    Result,
+    Downloader, Result,
     downloader::{core::SharedVd, media::core::Media},
     request::core::api_captcha_bypass,
     types::VideoId,
@@ -15,8 +17,8 @@ impl MediaBrowse {
         Self { video_id: id }
     }
 
-    pub async fn browse(self, vd: &SharedVd) -> Result<Media> {
-        let response = api_captcha_bypass(&self.video_id, 2, vd).await?;
-        response.extract()
+    pub async fn browse(self, downloader: Arc<Downloader>) -> Result<Media> {
+        let response = api_captcha_bypass(&self.video_id, 2, &downloader.visitor_data).await?;
+        response.extract(downloader)
     }
 }

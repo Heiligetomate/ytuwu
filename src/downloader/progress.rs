@@ -1,10 +1,13 @@
-use std::sync::{Arc, OnceLock};
+use std::{
+    fmt::Debug,
+    sync::{Arc, OnceLock},
+};
 
 use uuid::Uuid;
 
 use crate::{Result, error::YtuwuError};
 
-pub trait HandleProgress: Send + Sync {
+pub trait HandleProgress: Send + Sync + Debug {
     fn on_download_start(&self, title: &str, id: Uuid, total_chunks: u32);
     fn on_chunk_downloaded(&self, id: Uuid, done: u32);
     fn on_download_complete(&self, id: Uuid);
