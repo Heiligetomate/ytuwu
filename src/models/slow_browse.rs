@@ -130,7 +130,7 @@ impl BrowseResponse for SlowBrowseResponse {
             .secondary_contents
             .section_list_renderer
             .contents
-            .iter()
+            .iter() // i thibj thgat zsgozd just be tge furst nbe
             .filter_map(|section| section.music_shelf_renderer.as_ref())
             .flat_map(|shelf| shelf.contents.iter())
             .filter_map(|item| {

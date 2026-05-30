@@ -45,7 +45,7 @@ impl Host {
 
 impl IdCollection {
     pub fn is_empty(&self) -> bool {
-        return self.video_id.is_none() && self.album_id.is_none() && self.channel_id.is_none() && self.short_id.is_none() && self.channel_name.is_none();
+        return self.video_id.is_none() && self.album_id.is_none() && self.channel_id.is_none() && self.short_id.is_none() && self.channel_name.is_none() && self.playlist_id.is_none();
     }
 
     pub fn from_url<T: Into<String>>(raw_url: T) -> Result<Self> {
@@ -122,12 +122,7 @@ impl IdCollection {
         match first {
             "browse" => {
                 let id = Self::id_from_segments(segments, 1).ok_or(YtuwuError::UrlParsing("no browse id found"))?;
-
-                if id.starts_with("UC") || id.starts_with("MPADUC") {
-                    Ok(Self::with_channel(ChannelId::new(id)?))
-                } else {
-                    Ok(Self::with_browse(AlbumId::new(id)?))
-                }
+                Ok(Self::with_browse(id)?)
             }
 
             "channel" => {
@@ -151,7 +146,7 @@ impl IdCollection {
         for (key, value) in url.query_pairs() {
             match key.as_ref() {
                 "v" => result.video_id = Some(VideoId::new(value.as_ref())?),
-                "list" => result.album_id = Some(AlbumId::new(value.as_ref())?),
+                "list" => Self::change_browses(&mut result, &value)?,
                 _ => {}
             }
         }
@@ -182,12 +177,41 @@ impl IdCollection {
         }
     }
 
+    fn change_browses(&mut self, raw: &str) -> Result<()> {
+        if raw.starts_with("RDCLAK5uy") {
+            self.playlist_id = Some(PlaylistId::new(raw)?)
+        } else if raw.starts_with("OLAK5uy") {
+            self.album_id = Some(AlbumId::new(raw)?)
+        }
+
+        Ok(())
+    }
+
+    fn with_browse(id: &str) -> Result<Self> {
+        if id.starts_with("UC") || id.starts_with("MPADUC") {
+            Ok(Self::with_channel(ChannelId::new(id)?))
+        } else if id.starts_with("RDCLAK5uy") {
+            Ok(Self::with_playlist(PlaylistId::new(id)?))
+        } else if id.starts_with("OLAK5uy") {
+            Ok(Self::with_album(AlbumId::new(id)?))
+        } else {
+            Err(YtuwuError::NoIdFound)
+        }
+    }
+
     fn with_video(id: VideoId) -> Self {
         Self { video_id: Some(id), ..Self::empty() }
     }
 
-    fn with_browse(id: AlbumId) -> Self {
+    fn with_album(id: AlbumId) -> Self {
         Self { album_id: Some(id), ..Self::empty() }
+    }
+
+    fn with_playlist(id: PlaylistId) -> Self {
+        Self {
+            playlist_id: Some(id),
+            ..Self::empty()
+        }
     }
 
     fn with_channel(id: ChannelId) -> Self {

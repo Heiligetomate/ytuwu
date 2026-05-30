@@ -5,5 +5,6 @@ pub mod channel_name_to_id;
 pub mod client;
 mod endpoints;
 pub mod player;
+pub mod playlist;
 mod shared_params;
 pub mod slow_browse;

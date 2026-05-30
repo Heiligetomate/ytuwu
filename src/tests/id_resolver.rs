@@ -1,10 +1,19 @@
 use crate::{
     GetId, Id, IdCollection,
-    types::{AlbumId, ChannelId, VideoId},
+    types::{AlbumId, ChannelId, PlaylistId, VideoId},
 };
 
 #[test]
 fn playlist_urls() {
+    let valid = "RDCLAK5uy_mDr4Gy1V6eV55fj8oQ24KLSUrY9u2QKWA";
+
+    let playlist_id = PlaylistId::new(valid).unwrap();
+
+    assert_eq!(playlist_id.as_str(), "VLRDCLAK5uy_mDr4Gy1V6eV55fj8oQ24KLSUrY9u2QKWA");
+}
+
+#[test]
+fn album_urls() {
     let valid_urls = vec![
         "https://music.youtube.com/playlist?list=OLAK5uy_kmI7lE04T73fi905AhF6ml8E4WShlKfNs",
         "https://music.youtube.com/watch?v=BGyHcS408as&list=OLAK5uy_kmI7lE04T73fi905AhF6ml8E4WShlKfNs",
@@ -15,12 +24,12 @@ fn playlist_urls() {
         "https://m.youtube.com/playlist?list=OLAK5uy_kmI7lE04T73fi905AhF6ml8E4WShlKfNs",
     ];
 
-    let browse_id = AlbumId::new("OLAK5uy_kmI7lE04T73fi905AhF6ml8E4WShlKfNs").unwrap();
+    let album_id = AlbumId::new("OLAK5uy_kmI7lE04T73fi905AhF6ml8E4WShlKfNs").unwrap();
 
-    assert_eq!(browse_id.as_str(), "VLOLAK5uy_kmI7lE04T73fi905AhF6ml8E4WShlKfNs");
+    assert_eq!(album_id.as_str(), "VLOLAK5uy_kmI7lE04T73fi905AhF6ml8E4WShlKfNs");
 
     for url in valid_urls.iter() {
-        assert_eq!(GetId::<AlbumId>::get_id(&IdCollection::from_url(*url).unwrap()).unwrap(), browse_id);
+        assert_eq!(GetId::<AlbumId>::get_id(&IdCollection::from_url(*url).unwrap()).unwrap(), album_id);
     }
 }
 

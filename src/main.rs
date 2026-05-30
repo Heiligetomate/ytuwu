@@ -1,11 +1,12 @@
 use std::{
     collections::HashMap,
+    path::Path,
     sync::{Arc, Mutex},
     time::SystemTime,
 };
 
 use uuid::Uuid;
-use ytuwu::{Downloader, HandleProgress, Id, Result, itags::AudioItag, set_progress_handler, types::ChannelNameId};
+use ytuwu::{Downloader, GetId, HandleProgress, IdCollection, Result, itags::AudioItag, set_progress_handler};
 
 struct Progress {
     ids: Mutex<HashMap<Uuid, (String, u32, u32)>>,
@@ -54,13 +55,17 @@ async fn main() -> Result<()> {
     let progress_handler = Progress { ids: Mutex::new(HashMap::new()) };
     set_progress_handler(Arc::new(progress_handler));
 
-    let id = ChannelNameId::new("ntomusic")?;
+    let url = "https://music.youtube.com/playlist?list=RDCLAK5uy_mDr4Gy1V6eV55fj8oQ24KLSUrY9u2QKWA";
+
+    let ids = IdCollection::from_url(url)?;
 
     let downloader = Downloader::new();
 
-    let _ = downloader
-        .download_channel(id, AudioItag::AacLow)
+    let downloaded = downloader
+        .download_playlist(ids.get_id()?, AudioItag::AacLow)
         .await?;
+
+    downloaded.save_with_dir(Path::new("teehee"))?;
 
     println!("took: {:?}", start_time.elapsed().unwrap());
     Ok(())

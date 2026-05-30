@@ -17,7 +17,7 @@ use crate::{
     },
     itags::{AnyItag, Itag},
     streams::{MediaStream, Thumbnail},
-    types::ShortId,
+    types::{PlaylistId, ShortId},
 };
 
 pub type SharedVd = Arc<Mutex<Option<String>>>;
@@ -73,7 +73,7 @@ impl Downloader {
             .await?)
     }
 
-    pub async fn download_playlist<I>(&self, browse_id: AlbumId, itag: I, thumbnail_resolution: Option<ThumbRes>) -> Result<Dwnlist<I::Stream>>
+    pub async fn download_album<I>(&self, browse_id: AlbumId, itag: I, thumbnail_resolution: Option<ThumbRes>) -> Result<Dwnlist<I::Stream>>
     where
         I: Itag + Copy + Debug + Send + 'static,
         I::Stream: MediaStream + Debug + Send,
@@ -87,7 +87,7 @@ impl Downloader {
             .await?)
     }
 
-    pub async fn download_bundle_list(&self, browse_id: AlbumId, itags: Vec<AnyItag>, thumbnail_resolution: Option<ThumbRes>) -> Result<DwnBundleList> {
+    pub async fn download_bundle_album(&self, browse_id: AlbumId, itags: Vec<AnyItag>, thumbnail_resolution: Option<ThumbRes>) -> Result<DwnBundleList> {
         Ok(PlaylistBrowse::new(browse_id)
             .browse()
             .await?
@@ -120,6 +120,20 @@ impl Downloader {
             .browse()
             .await?
             .download(itag, &self.visitor_data)
+            .await?)
+    }
+
+    pub async fn download_playlist<I>(&self, playlist_id: PlaylistId, itag: I) -> Result<Dwnlist<I::Stream>>
+    where
+        I: Itag + Copy + Debug + Send + 'static,
+        I::Stream: MediaStream + Debug + Send,
+    {
+        Ok(PlaylistBrowse::new(playlist_id)
+            .browse()
+            .await?
+            .browse(&self.visitor_data)
+            .await?
+            .download(itag, None)
             .await?)
     }
 }

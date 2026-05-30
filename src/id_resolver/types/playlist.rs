@@ -6,8 +6,8 @@ use crate::{
         collection::IdCollection,
         id::{GetId, Id},
     },
-    models::slow_browse::SlowBrowseResponse,
-    request::clients::slow_browse::SlowBrowseClient,
+    models::playlist::PlaylistResponse,
+    request::clients::playlist::PlaylistBrowseClient,
 };
 
 use serde::{Deserialize, Serialize};
@@ -18,7 +18,7 @@ pub struct PlaylistId {
 }
 
 impl Id for PlaylistId {
-    type Client = SlowBrowseClient;
+    type Client = PlaylistBrowseClient;
 
     fn new<T: Into<String>>(id: T) -> Result<Self> {
         let raw_id = id.into();
@@ -53,5 +53,5 @@ impl GetId<PlaylistId> for IdCollection {
 }
 
 impl BrowseId for PlaylistId {
-    type BrowseResponse = SlowBrowseResponse;
+    type BrowseResponse = PlaylistResponse;
 }
