@@ -1,4 +1,4 @@
-use crate::{Result, id_resolver::id_types::VideoId};
+use crate::{Result, id_resolver::types::VideoId};
 
 pub trait Response {
     fn get_status(&self) -> Status;

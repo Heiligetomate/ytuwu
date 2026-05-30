@@ -4,9 +4,9 @@ use crate::{
     Result,
     error::YtuwuError,
     id_resolver::{
+        collection::IdCollection,
         id::{GetId, Id, MakeChannelId},
-        id_collection::IdCollection,
-        id_types::channel_id::ChannelId,
+        types::ChannelId,
     },
     request::{clients::channel_name_to_id::ChannelNameClient, core::api_request},
 };

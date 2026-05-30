@@ -2,12 +2,12 @@ use crate::{
     downloader::core::SharedVd,
     error::{Result, YtuwuError},
     id_resolver::id::Id,
-    id_types::VideoId,
     models::{
         player::PlayerResponse,
         response::{Response, Status},
     },
     request::clients::client::ClientWithHeaders,
+    types::VideoId,
 };
 use serde::de::DeserializeOwned;
 

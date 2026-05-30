@@ -4,13 +4,13 @@ use url::Url;
 use crate::{
     Result,
     error::YtuwuError,
-    id_resolver::{id::Id, id_types::ChannelId, id_types::ChannelNameId, id_types::FastBrowseId, id_types::ShortId, id_types::VideoId},
+    id_resolver::{id::Id, types::AlbumId, types::ChannelId, types::ChannelNameId, types::ShortId, types::VideoId},
 };
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct IdCollection {
     pub(super) video_id: Option<VideoId>,
-    pub(super) browse_id: Option<FastBrowseId>,
+    pub(super) browse_id: Option<AlbumId>,
     pub(super) short_id: Option<ShortId>,
     pub(super) channel_id: Option<ChannelId>,
     pub(super) channel_name: Option<ChannelNameId>,
@@ -121,7 +121,7 @@ impl IdCollection {
                 if id.starts_with("UC") || id.starts_with("MPADUC") {
                     Ok(Self::with_channel(ChannelId::new(id)?))
                 } else {
-                    Ok(Self::with_browse(FastBrowseId::new(id)?))
+                    Ok(Self::with_browse(AlbumId::new(id)?))
                 }
             }
 
@@ -146,7 +146,7 @@ impl IdCollection {
         for (key, value) in url.query_pairs() {
             match key.as_ref() {
                 "v" => result.video_id = Some(VideoId::new(value.as_ref())?),
-                "list" => result.browse_id = Some(FastBrowseId::new(value.as_ref())?),
+                "list" => result.browse_id = Some(AlbumId::new(value.as_ref())?),
                 _ => {}
             }
         }
@@ -180,7 +180,7 @@ impl IdCollection {
         Self { video_id: Some(id), ..Self::empty() }
     }
 
-    fn with_browse(id: FastBrowseId) -> Self {
+    fn with_browse(id: AlbumId) -> Self {
         Self { browse_id: Some(id), ..Self::empty() }
     }
 

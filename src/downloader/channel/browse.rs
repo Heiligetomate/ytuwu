@@ -1,4 +1,4 @@
-use crate::{Result, downloader::channel::core::ChannelContentBrowse, id_resolver::id_types::ChannelId, request::core::api_request};
+use crate::{Result, downloader::channel::core::ChannelContentBrowse, id_resolver::types::ChannelId, request::core::api_request};
 
 pub struct ChannelBrowse {
     id: ChannelId,

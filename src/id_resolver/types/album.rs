@@ -1,0 +1,56 @@
+use crate::{
+    Result,
+    error::YtuwuError,
+    id_resolver::{
+        collection::IdCollection,
+        id::{BrowseId, GetId, Id},
+    },
+    models::fast_browse::FastBrowseResponse,
+    request::clients::browse::BrowseClient,
+};
+
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
+pub struct AlbumId {
+    id: String,
+}
+
+impl Id for AlbumId {
+    type Client = BrowseClient;
+
+    fn new<T: Into<String>>(id: T) -> Result<Self> {
+        let raw_id = id.into();
+
+        if raw_id.len() != 41 {
+            return Err(YtuwuError::InvalidIdLength);
+        }
+
+        if !raw_id.starts_with("OLAK5uy") {
+            return Err(YtuwuError::InvalidIdFormat);
+        }
+
+        Ok(Self { id: format!("VL{}", raw_id) })
+    }
+
+    fn get_id(self) -> String {
+        self.id
+    }
+
+    fn as_str(&self) -> &str {
+        &self.id
+    }
+}
+
+impl GetId<AlbumId> for IdCollection {
+    fn get_id(&self) -> Result<AlbumId> {
+        Ok(self
+            .browse_id
+            .clone()
+            .ok_or(YtuwuError::NoIdFound)?)
+    }
+}
+
+impl BrowseId for AlbumId {
+    type BrowseResponse = FastBrowseResponse;
+}

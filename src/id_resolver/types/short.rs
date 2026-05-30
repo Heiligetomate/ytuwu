@@ -2,35 +2,26 @@ use crate::{
     Result,
     error::YtuwuError,
     id_resolver::{
+        collection::IdCollection,
         id::{GetId, Id},
-        id_collection::IdCollection,
     },
     request::clients::player::PlayerClient,
+    types::VideoId,
 };
 
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
-pub struct VideoId {
+pub struct ShortId {
     id: String,
 }
 
-impl Id for VideoId {
+impl Id for ShortId {
     type Client = PlayerClient;
 
     fn new<T: Into<String>>(id: T) -> Result<Self> {
-        let raw_id = id.into();
-        if raw_id.len() != 11 {
-            return Err(YtuwuError::InvalidIdLength);
-        }
-        if !raw_id
-            .chars()
-            .all(|c| c.is_alphanumeric() || c == '-' || c == '_')
-        {
-            return Err(YtuwuError::InvalidIdFormat);
-        }
-
-        Ok(Self { id: raw_id })
+        let video_id = VideoId::new(id)?;
+        Ok(Self { id: video_id.get_id() })
     }
 
     fn get_id(self) -> String {
@@ -42,11 +33,17 @@ impl Id for VideoId {
     }
 }
 
-impl GetId<VideoId> for IdCollection {
-    fn get_id(&self) -> Result<VideoId> {
+impl GetId<ShortId> for IdCollection {
+    fn get_id(&self) -> Result<ShortId> {
         Ok(self
-            .video_id
+            .short_id
             .clone()
             .ok_or(YtuwuError::NoIdFound)?)
+    }
+}
+
+impl ShortId {
+    pub fn transform(self) -> Result<VideoId> {
+        VideoId::new(self.get_id())
     }
 }

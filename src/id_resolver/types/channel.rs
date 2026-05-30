@@ -2,8 +2,8 @@ use crate::{
     Result,
     error::YtuwuError,
     id_resolver::{
+        collection::IdCollection,
         id::{GetId, Id, MakeChannelId},
-        id_collection::IdCollection,
     },
     request::clients::channel::ChannelClient,
 };

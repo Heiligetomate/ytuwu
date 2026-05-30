@@ -5,7 +5,7 @@ use tokio::sync::Mutex;
 use crate::{
     id_resolver::{
         id::Id,
-        id_types::{ChannelId, ChannelPlaylistId, FastBrowseId, VideoId},
+        types::{AlbumId, ChannelId, ChannelPlaylistId, VideoId},
     },
     models::{
         channel_browse::ChannelBrowseResponse,
@@ -19,7 +19,7 @@ use crate::{
 
 #[tokio::test]
 async fn browse_client() {
-    let id = FastBrowseId::new("OLAK5uy_lrCrcAdxFG4aMzMrebs7o9TU384xyF240").unwrap();
+    let id = AlbumId::new("OLAK5uy_lrCrcAdxFG4aMzMrebs7o9TU384xyF240").unwrap();
     let res: FastBrowseResponse = api_request(&id).await.unwrap();
     assert_eq!(res.get_status(), Status::Success);
 }

@@ -4,7 +4,7 @@ use crate::{
     Result,
     downloader::ChannelContentBrowse,
     error::YtuwuError,
-    id_resolver::{id::Id, id_types::ChannelPlaylistId},
+    id_resolver::{id::Id, types::ChannelPlaylistId},
     models::response::{Response, Status},
 };
 

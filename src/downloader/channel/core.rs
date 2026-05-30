@@ -1,17 +1,9 @@
 use std::{fmt::Debug, sync::Arc};
 
-use tokio::io::sink;
-
 use crate::{
     Dwnlist, Result,
-    downloader::{
-        channel::downloaded::DwnChannel,
-        core::SharedVd,
-        media::downloaded::DwnMedia,
-        playlist::{browse::PlaylistBrowse, content_browse},
-        streams::MediaStream,
-    },
-    id_resolver::id_types::ChannelPlaylistId,
+    downloader::{channel::downloaded::DwnChannel, core::SharedVd, media::downloaded::DwnMedia, playlist::browse::PlaylistBrowse, streams::MediaStream},
+    id_resolver::types::ChannelPlaylistId,
     itags::Itag,
 };
 

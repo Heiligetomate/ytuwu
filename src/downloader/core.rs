@@ -13,11 +13,11 @@ use crate::{
     error::Result,
     id_resolver::{
         id::MakeChannelId,
-        id_types::{FastBrowseId, VideoId},
+        types::{AlbumId, VideoId},
     },
-    id_types::ShortId,
     itags::{AnyItag, Itag},
     streams::{MediaStream, Thumbnail},
+    types::ShortId,
 };
 
 pub type SharedVd = Arc<Mutex<Option<String>>>;
@@ -73,7 +73,7 @@ impl Downloader {
             .await?)
     }
 
-    pub async fn download_playlist<I>(&self, browse_id: FastBrowseId, itag: I, thumbnail_resolution: Option<ThumbRes>) -> Result<Dwnlist<I::Stream>>
+    pub async fn download_playlist<I>(&self, browse_id: AlbumId, itag: I, thumbnail_resolution: Option<ThumbRes>) -> Result<Dwnlist<I::Stream>>
     where
         I: Itag + Copy + Debug + Send + 'static,
         I::Stream: MediaStream + Debug + Send,
@@ -87,7 +87,7 @@ impl Downloader {
             .await?)
     }
 
-    pub async fn download_bundle_list(&self, browse_id: FastBrowseId, itags: Vec<AnyItag>, thumbnail_resolution: Option<ThumbRes>) -> Result<DwnBundleList> {
+    pub async fn download_bundle_list(&self, browse_id: AlbumId, itags: Vec<AnyItag>, thumbnail_resolution: Option<ThumbRes>) -> Result<DwnBundleList> {
         Ok(PlaylistBrowse::new(browse_id)
             .browse()
             .await?

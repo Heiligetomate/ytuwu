@@ -1,8 +1,8 @@
 use crate::{
     Result,
     downloader::{core::SharedVd, media::core::Media},
-    id_types::VideoId,
     request::core::api_captcha_bypass,
+    types::VideoId,
 };
 
 #[derive(Debug)]

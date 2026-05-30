@@ -1,6 +1,6 @@
 use crate::{
     GetId, Id, IdCollection,
-    id_types::{ChannelId, FastBrowseId, VideoId},
+    types::{AlbumId, ChannelId, VideoId},
 };
 
 #[test]
@@ -15,12 +15,12 @@ fn playlist_urls() {
         "https://m.youtube.com/playlist?list=OLAK5uy_kmI7lE04T73fi905AhF6ml8E4WShlKfNs",
     ];
 
-    let browse_id = FastBrowseId::new("OLAK5uy_kmI7lE04T73fi905AhF6ml8E4WShlKfNs").unwrap();
+    let browse_id = AlbumId::new("OLAK5uy_kmI7lE04T73fi905AhF6ml8E4WShlKfNs").unwrap();
 
     assert_eq!(browse_id.as_str(), "VLOLAK5uy_kmI7lE04T73fi905AhF6ml8E4WShlKfNs");
 
     for url in valid_urls.iter() {
-        assert_eq!(GetId::<FastBrowseId>::get_id(&IdCollection::from_url(*url).unwrap()).unwrap(), browse_id);
+        assert_eq!(GetId::<AlbumId>::get_id(&IdCollection::from_url(*url).unwrap()).unwrap(), browse_id);
     }
 }
 
