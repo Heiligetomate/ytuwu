@@ -4,7 +4,6 @@ use crate::{
     Downloader, DwnBundleMedia, DwnMedia,
     downloader::{
         media::extracted_streams::{ExtractedStreams, ExtractedThumbnails, ThumbRes},
-        progress::ProgressChanger,
         streams::{AnyStream, MediaStream, Thumbnail},
         util::*,
     },

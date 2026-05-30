@@ -188,7 +188,7 @@ impl BrowseResponse for PlaylistResponse {
                 VideoId::new(raw).ok()
             })
             .collect();
-        println!("{}", ids.len());
+
         Ok(ids)
     }
 

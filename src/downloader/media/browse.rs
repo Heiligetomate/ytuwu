@@ -1,11 +1,6 @@
 use std::sync::Arc;
 
-use crate::{
-    Downloader, Result,
-    downloader::{core::SharedVd, media::core::Media},
-    request::core::api_captcha_bypass,
-    types::VideoId,
-};
+use crate::{Downloader, Result, downloader::media::core::Media, request::core::api_captcha_bypass, types::VideoId};
 
 #[derive(Debug)]
 pub struct MediaBrowse {

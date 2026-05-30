@@ -11,4 +11,3 @@ mod util;
 
 pub(self) mod progress;
 pub use progress::HandleProgress;
-pub use progress::set_progress_handler;

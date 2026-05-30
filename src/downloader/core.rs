@@ -8,6 +8,7 @@ use crate::{
         channel::{browse::ChannelBrowse, downloaded::DwnChannel},
         media::{browse::MediaBrowse, extracted_streams::ThumbRes},
         playlist::browse::PlaylistBrowse,
+        progress::DefaultProgressHandler,
     },
     error::Result,
     id_resolver::{
@@ -34,6 +35,10 @@ impl Downloader {
             visitor_data: Arc::new(Mutex::new(None)),
             progress_handler,
         })
+    }
+
+    pub fn default() -> Arc<Self> {
+        Self::new(Arc::new(DefaultProgressHandler::new()))
     }
 
     pub async fn download_media_thumb(self: Arc<Self>, video_id: VideoId, resolution: ThumbRes) -> Result<Thumbnail> {

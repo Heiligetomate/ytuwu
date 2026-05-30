@@ -2,7 +2,7 @@ use std::{fmt::Debug, sync::Arc};
 
 use crate::{
     Downloader, Dwnlist, Result,
-    downloader::{channel::downloaded::DwnChannel, core::SharedVd, media::downloaded::DwnMedia, playlist::browse::PlaylistBrowse, streams::MediaStream},
+    downloader::{channel::downloaded::DwnChannel, media::downloaded::DwnMedia, playlist::browse::PlaylistBrowse, streams::MediaStream},
     id_resolver::types::ChannelPlaylistId,
     itags::Itag,
 };
@@ -16,7 +16,7 @@ pub struct ChannelContentBrowse {
 }
 
 impl ChannelContentBrowse {
-    async fn download_singles<I>(&self, itag: I, vd: &SharedVd) -> Result<Vec<DwnMedia<I::Stream>>>
+    async fn download_singles<I>(&self, itag: I) -> Result<Vec<DwnMedia<I::Stream>>>
     where
         I: Itag + Copy + Debug + Send + 'static,
         I::Stream: MediaStream + Debug + Send,
@@ -61,9 +61,7 @@ impl ChannelContentBrowse {
         I: Itag + Copy + Debug + Send + 'static,
         I::Stream: MediaStream + Debug + Send,
     {
-        let downloaded_singles: Vec<DwnMedia<I::Stream>> = self
-            .download_singles(itag, &self.downloader.visitor_data)
-            .await?;
+        let downloaded_singles: Vec<DwnMedia<I::Stream>> = self.download_singles(itag).await?;
         let mut downloaded_eps: Vec<Dwnlist<I::Stream>> = Vec::new();
         let mut downloaded_albums: Vec<Dwnlist<I::Stream>> = Vec::new();
 
