@@ -89,7 +89,7 @@ struct Run {
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 struct NavigationEndpoint {
-    watch_endpoint: WatchEndpoint,
+    watch_endpoint: Option<WatchEndpoint>,
 }
 
 #[derive(Deserialize, Debug)]
@@ -157,7 +157,7 @@ impl Response for PlaylistResponse {
 
 impl BrowseResponse for PlaylistResponse {
     fn get_video_ids(&self) -> crate::Result<Vec<crate::types::VideoId>> {
-        let ids = self
+        let ids: Vec<VideoId> = self
             .contents
             .as_ref()
             .ok_or(YtuwuError::BrowseDataNotFound("contents"))?
@@ -182,12 +182,13 @@ impl BrowseResponse for PlaylistResponse {
                     .get(0)
             })
             .filter_map(|r| r.navigation_endpoint.as_ref())
-            .filter_map(|n| {
-                let raw: &str = n.watch_endpoint.video_id.as_ref();
+            .filter_map(|n| n.watch_endpoint.as_ref())
+            .filter_map(|w| {
+                let raw: &str = w.video_id.as_ref();
                 VideoId::new(raw).ok()
             })
             .collect();
-
+        println!("{}", ids.len());
         Ok(ids)
     }
 

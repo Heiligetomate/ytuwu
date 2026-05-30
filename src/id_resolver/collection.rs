@@ -178,7 +178,7 @@ impl IdCollection {
     }
 
     fn change_browses(&mut self, raw: &str) -> Result<()> {
-        if raw.starts_with("RDCLAK5uy") {
+        if raw.starts_with("RDCLAK5uy") || raw.starts_with("PL") {
             self.playlist_id = Some(PlaylistId::new(raw)?)
         } else if raw.starts_with("OLAK5uy") {
             self.album_id = Some(AlbumId::new(raw)?)
@@ -190,7 +190,7 @@ impl IdCollection {
     fn with_browse(id: &str) -> Result<Self> {
         if id.starts_with("UC") || id.starts_with("MPADUC") {
             Ok(Self::with_channel(ChannelId::new(id)?))
-        } else if id.starts_with("RDCLAK5uy") {
+        } else if id.starts_with("RDCLAK5uy") || id.starts_with("PL") {
             Ok(Self::with_playlist(PlaylistId::new(id)?))
         } else if id.starts_with("OLAK5uy") {
             Ok(Self::with_album(AlbumId::new(id)?))

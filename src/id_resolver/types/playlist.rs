@@ -23,13 +23,19 @@ impl Id for PlaylistId {
     fn new<T: Into<String>>(id: T) -> Result<Self> {
         let raw_id = id.into();
 
-        if raw_id.len() != 43 {
-            return Err(YtuwuError::InvalidIdLength);
-        }
-
-        if !raw_id.starts_with("RDCLAK5uy") {
-            return Err(YtuwuError::InvalidIdFormat);
-        }
+        match raw_id.len() {
+            43 => {
+                if !raw_id.starts_with("RDCLAK5uy") {
+                    return Err(YtuwuError::InvalidIdFormat);
+                }
+            }
+            34 => {
+                if !raw_id.starts_with("PL") {
+                    return Err(YtuwuError::InvalidIdFormat);
+                }
+            }
+            _ => return Err(YtuwuError::InvalidIdLength),
+        };
 
         Ok(Self { id: format!("VL{}", raw_id) })
     }

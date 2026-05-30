@@ -36,15 +36,15 @@ impl HandleProgress for Progress {
 
 impl Progress {
     fn print(&self) {
-        print!("\x1B[2J\x1B[H"); // clear screen
-        let ids = self.ids.lock().unwrap();
-        println!("Downloading {} track(s)\n", ids.len());
-        for (title, done, total) in ids.values() {
-            let percentage = (*done as f32 / *total as f32 * 100.0) as u32;
-            let filled = percentage / 5;
-            let bar = format!("[{}{}]", "█".repeat(filled as usize), "░".repeat((20 - filled) as usize));
-            println!("  {} {}% {}", bar, percentage, title);
-        }
+        // print!("\x1B[2J\x1B[H"); // clear screen
+        // let ids = self.ids.lock().unwrap();
+        // println!("Downloading {} track(s)\n", ids.len());
+        // for (title, done, total) in ids.values() {
+        //     let percentage = (*done as f32 / *total as f32 * 100.0) as u32;
+        //     let filled = percentage / 5;
+        //     let bar = format!("[{}{}]", "█".repeat(filled as usize), "░".repeat((20 - filled) as usize));
+        //     println!("  {} {}% {}", bar, percentage, title);
+        // }
     }
 }
 
@@ -55,7 +55,7 @@ async fn main() -> Result<()> {
     let progress_handler = Progress { ids: Mutex::new(HashMap::new()) };
     set_progress_handler(Arc::new(progress_handler));
 
-    let url = "https://music.youtube.com/playlist?list=RDCLAK5uy_mDr4Gy1V6eV55fj8oQ24KLSUrY9u2QKWA";
+    let url = "https://music.youtube.com/playlist?list=PLJJhuE0qsJfQ9KoVDgpJmeieenfH45AgV";
 
     let ids = IdCollection::from_url(url)?;
 
