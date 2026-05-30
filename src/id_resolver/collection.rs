@@ -4,13 +4,18 @@ use url::Url;
 use crate::{
     Result,
     error::YtuwuError,
-    id_resolver::{id::Id, types::AlbumId, types::ChannelId, types::ChannelNameId, types::ShortId, types::VideoId},
+    id_resolver::{
+        id::Id,
+        types::{AlbumId, ChannelId, ChannelNameId, ShortId, VideoId},
+    },
+    types::PlaylistId,
 };
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct IdCollection {
     pub(super) video_id: Option<VideoId>,
-    pub(super) browse_id: Option<AlbumId>,
+    pub(super) album_id: Option<AlbumId>,
+    pub(super) playlist_id: Option<PlaylistId>,
     pub(super) short_id: Option<ShortId>,
     pub(super) channel_id: Option<ChannelId>,
     pub(super) channel_name: Option<ChannelNameId>,
@@ -40,7 +45,7 @@ impl Host {
 
 impl IdCollection {
     pub fn is_empty(&self) -> bool {
-        return self.video_id.is_none() && self.browse_id.is_none() && self.channel_id.is_none() && self.short_id.is_none() && self.channel_name.is_none();
+        return self.video_id.is_none() && self.album_id.is_none() && self.channel_id.is_none() && self.short_id.is_none() && self.channel_name.is_none();
     }
 
     pub fn from_url<T: Into<String>>(raw_url: T) -> Result<Self> {
@@ -146,7 +151,7 @@ impl IdCollection {
         for (key, value) in url.query_pairs() {
             match key.as_ref() {
                 "v" => result.video_id = Some(VideoId::new(value.as_ref())?),
-                "list" => result.browse_id = Some(AlbumId::new(value.as_ref())?),
+                "list" => result.album_id = Some(AlbumId::new(value.as_ref())?),
                 _ => {}
             }
         }
@@ -169,10 +174,11 @@ impl IdCollection {
     fn empty() -> Self {
         Self {
             video_id: None,
-            browse_id: None,
+            album_id: None,
             channel_id: None,
             short_id: None,
             channel_name: None,
+            playlist_id: None,
         }
     }
 
@@ -181,7 +187,7 @@ impl IdCollection {
     }
 
     fn with_browse(id: AlbumId) -> Self {
-        Self { browse_id: Some(id), ..Self::empty() }
+        Self { album_id: Some(id), ..Self::empty() }
     }
 
     fn with_channel(id: ChannelId) -> Self {

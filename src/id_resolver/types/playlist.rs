@@ -5,28 +5,28 @@ use crate::{
         collection::IdCollection,
         id::{BrowseId, GetId, Id},
     },
-    models::fast_browse::FastBrowseResponse,
-    request::clients::browse::BrowseClient,
+    models::slow_browse::SlowBrowseResponse,
+    request::clients::slow_browse::SlowBrowseClient,
 };
 
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
-pub struct AlbumId {
+pub struct PlaylistId {
     id: String,
 }
 
-impl Id for AlbumId {
-    type Client = BrowseClient;
+impl Id for PlaylistId {
+    type Client = SlowBrowseClient;
 
     fn new<T: Into<String>>(id: T) -> Result<Self> {
         let raw_id = id.into();
 
-        if raw_id.len() != 41 {
+        if raw_id.len() != 43 {
             return Err(YtuwuError::InvalidIdLength);
         }
 
-        if !raw_id.starts_with("OLAK5uy") {
+        if !raw_id.starts_with("RDCLAK5uy") {
             return Err(YtuwuError::InvalidIdFormat);
         }
 
@@ -42,15 +42,15 @@ impl Id for AlbumId {
     }
 }
 
-impl GetId<AlbumId> for IdCollection {
-    fn get_id(&self) -> Result<AlbumId> {
+impl GetId<PlaylistId> for IdCollection {
+    fn get_id(&self) -> Result<PlaylistId> {
         Ok(self
-            .album_id
+            .playlist_id
             .clone()
             .ok_or(YtuwuError::NoIdFound)?)
     }
 }
 
-impl BrowseId for AlbumId {
-    type BrowseResponse = FastBrowseResponse;
+impl BrowseId for PlaylistId {
+    type BrowseResponse = SlowBrowseResponse;
 }
