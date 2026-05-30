@@ -2,8 +2,9 @@ use crate::{
     Result,
     error::YtuwuError,
     id_resolver::{
+        browse_id::BrowseId,
         collection::IdCollection,
-        id::{BrowseId, GetId, Id},
+        id::{GetId, Id},
     },
     models::slow_browse::SlowBrowseResponse,
     request::clients::slow_browse::SlowBrowseClient,

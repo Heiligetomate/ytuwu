@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use crate::{
     Result,
     error::YtuwuError,
-    id_resolver::id::{BrowseId, Id},
+    id_resolver::{browse_id::BrowseId, id::Id},
     models::slow_browse::SlowBrowseResponse,
     request::clients::slow_browse::SlowBrowseClient,
 };

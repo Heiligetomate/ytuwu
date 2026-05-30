@@ -5,7 +5,7 @@ use serde::de::DeserializeOwned;
 use crate::{
     Result,
     downloader::{media::browse::MediaBrowse, playlist::content_browse::PlaylistContentBrowse},
-    id_resolver::id::{BrowseId, Id},
+    id_resolver::{browse_id::BrowseId, id::Id},
     models::response::BrowseResponse,
     name_trimmer,
     request::{clients::client::ClientWithHeaders, core::api_request},
