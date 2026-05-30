@@ -13,7 +13,7 @@ pub enum YtuwuError {
     NoThumbnail,
 
     YoutubeAPIReturn,
-    Deserialize,
+    Deserialize(String),
 
     NoLowerItagFound,
     NoMatchingStream,
@@ -53,7 +53,7 @@ impl Display for YtuwuError {
                 write!(f, "The captcha bypass failed after {} tries.", e)
             }
             Self::YoutubeAPIReturn => write!(f, "Youtube API gave an unexpected reply."),
-            Self::Deserialize => write!(f, "Could not deserialize the response."),
+            Self::Deserialize(e) => write!(f, "Could not deserialize the response. {e}"),
             Self::NoLowerItagFound => write!(f, "Could not find any lower itag."),
             Self::NoMatchingStream => write!(f, "No matching stream found for this itag."),
             Self::UrlSizeExtract => write!(f, "Failed to extract the size from the url."),
@@ -85,8 +85,8 @@ impl Error for YtuwuError {
 // }
 
 impl From<serde_json::Error> for YtuwuError {
-    fn from(_: serde_json::Error) -> Self {
-        Self::Deserialize
+    fn from(value: serde_json::Error) -> Self {
+        Self::Deserialize(value.to_string())
     }
 }
 
