@@ -59,7 +59,7 @@ async fn main() -> Result<()> {
 
     let ids = IdCollection::from_url(url)?;
 
-    let downloader = Arc::new(Downloader::new(Arc::new(progress_handler)));
+    let downloader = Downloader::new(Arc::new(progress_handler));
 
     let downloaded = downloader
         .download_playlist(ids.get_id()?, AudioItag::AacLow)

@@ -29,11 +29,11 @@ pub struct Downloader {
 
 impl Downloader {
     #[must_use]
-    pub fn new(progress_handler: Arc<dyn HandleProgress>) -> Self {
-        Self {
+    pub fn new(progress_handler: Arc<dyn HandleProgress>) -> Arc<Self> {
+        Arc::new(Self {
             visitor_data: Arc::new(Mutex::new(None)),
             progress_handler,
-        }
+        })
     }
 
     pub async fn download_media_thumb(self: Arc<Self>, video_id: VideoId, resolution: ThumbRes) -> Result<Thumbnail> {
