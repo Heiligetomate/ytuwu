@@ -4,4 +4,10 @@
 /downloaded
 /samples
 /.obsidian
+*.mp4
+*.mov
+*.png
+*.webm
+*.mp3
+*.json
 /Cargo.lock
