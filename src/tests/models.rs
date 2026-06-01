@@ -41,31 +41,35 @@ async fn browse_resp() {
     assert_eq!(res.get_video_ids().unwrap(), expected_ids);
 }
 
-// #[tokio::test]
-// async fn channel_resp() {
-//     let id = ChannelId::new("MPADUC6Tg7GWjZw48EiZ8m5bRtWg").unwrap();
-//     let res: ChannelBrowseResponse = api_request(&id).await.unwrap();
-//     let extracted = res.extract_all_releases().unwrap();
-//     assert_eq!(res.get_status(), Status::Success);
-//     assert!(extracted.singles.len() >= 40);
-//     assert!(extracted.eps.len() >= 7);
-//     assert!(extracted.albums.len() >= 4);
-// }
+#[tokio::test]
+async fn channel_resp() {
+    let id = ChannelId::new("MPADUC6Tg7GWjZw48EiZ8m5bRtWg").unwrap();
+    let res: ChannelBrowseResponse = api_request(&id).await.unwrap();
+    let extracted = res
+        .extract_all_releases(Downloader::testing())
+        .unwrap();
+    assert_eq!(res.get_status(), Status::Success);
+    assert!(extracted.singles.len() >= 40);
+    assert!(extracted.eps.len() >= 7);
+    assert!(extracted.albums.len() >= 4);
+}
 
-// #[tokio::test]
-// async fn player_resp() {
-//     let id = VideoId::new("lndG8BiZCmM").unwrap();
-//     let res: PlayerResponse = api_captcha_bypass(&id, 2, &Arc::new(Mutex::new(None)))
-//         .await
-//         .unwrap();
-//
-//     assert_eq!(res.get_status(), Status::Success);
-//
-//     let extr_res = res.extract().unwrap();
-//
-//     assert_eq!(extr_res.metadata.title, "Damnation");
-//     assert_eq!(extr_res.metadata.author, "BLIND GUARDIAN - Topic");
-// }
+#[tokio::test]
+async fn player_resp() {
+    let id = VideoId::new("lndG8BiZCmM").unwrap();
+    let res: PlayerResponse = api_captcha_bypass(&id, 2, &Arc::new(Mutex::new(None)))
+        .await
+        .unwrap();
+
+    assert_eq!(res.get_status(), Status::Success);
+
+    let extr_res = res
+        .extract(Downloader::testing())
+        .unwrap();
+
+    assert_eq!(extr_res.metadata.title, "Damnation");
+    assert_eq!(extr_res.metadata.author, "BLIND GUARDIAN - Topic");
+}
 
 #[tokio::test]
 async fn slow_browse_resp() {

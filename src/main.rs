@@ -1,25 +1,19 @@
-use std::{
-    collections::HashMap,
-    path::Path,
-    sync::{Arc, Mutex},
-    time::SystemTime,
-};
+use std::{path::Path, time::SystemTime};
 
-use uuid::Uuid;
-use ytuwu::{Downloader, GetId, HandleProgress, IdCollection, Result, itags::AudioItag};
+use ytuwu::{Downloader, GetId, IdCollection, Result, itags::AudioItag};
 
 #[tokio::main]
 async fn main() -> Result<()> {
     let start_time = SystemTime::now();
 
-    let url = "https://music.youtube.com/playlist?list=OLAK5uy_kmI7lE04T73fi905AhF6ml8E4WShlKfNs";
+    let url = "https://music.youtube.com/playlist?list=OLAK5uy_nmq4-rfcWad4OIuBpBnZxpXjeg8Fx9MvA";
 
     let ids = IdCollection::from_url(url)?;
 
     let downloader = Downloader::default();
 
     let downloaded = downloader
-        .download_album(ids.get_id()?, AudioItag::AacLow, None)
+        .download_album(ids.get_id()?, AudioItag::AacMedium, None)
         .await?;
 
     downloaded.save_with_dir(Path::new("teehee"))?;
