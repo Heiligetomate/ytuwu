@@ -15,7 +15,8 @@ use bytes::Bytes;
 use std::sync::atomic::{AtomicU32, Ordering};
 use uuid::Uuid;
 
-const CHUNK_SIZE: u32 = 1024 * 1024; // should be dynamic
+const CHUNK_SIZE: u32 = 1024 * 1024;
+const MAX_TASKS: usize = 8;
 
 #[derive(Debug)]
 pub struct Media {
@@ -82,7 +83,7 @@ impl Media {
 
         let completed = Arc::new(AtomicU32::new(0));
 
-        let semaphore = Arc::new(tokio::sync::Semaphore::new(48)); // max 8 concurrent chunks
+        let semaphore = Arc::new(tokio::sync::Semaphore::new(MAX_TASKS));
         for _ in 0..total_chunks {
             let op = DownloadTask::new(current_position, current_position + CHUNK_SIZE, url);
             let completed = Arc::clone(&completed);
