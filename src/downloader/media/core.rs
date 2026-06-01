@@ -15,7 +15,7 @@ use bytes::Bytes;
 use std::sync::atomic::{AtomicU32, Ordering};
 use uuid::Uuid;
 
-const CHUNK_SIZE: u32 = 1024 * 1024;
+const CHUNK_SIZE: u32 = 1024 * 1024; // should be dynamic
 
 #[derive(Debug)]
 pub struct Media {
@@ -82,19 +82,16 @@ impl Media {
 
         let completed = Arc::new(AtomicU32::new(0));
 
-        let client = reqwest::Client::new();
-
         let semaphore = Arc::new(tokio::sync::Semaphore::new(48)); // max 8 concurrent chunks
         for _ in 0..total_chunks {
             let op = DownloadTask::new(current_position, current_position + CHUNK_SIZE, url);
             let completed = Arc::clone(&completed);
             let id = self.id;
             let cloned = Arc::clone(&self.downloader);
-            let client = client.clone();
             let permit = Arc::clone(&semaphore);
             tasks.push(tokio::spawn(async move {
                 let _permit = permit.acquire().await.unwrap();
-                let result = op.download(&client).await;
+                let result = op.download(&cloned.client).await;
                 let done = completed.fetch_add(1, Ordering::Relaxed) + 1;
                 cloned
                     .progress_handler
@@ -148,11 +145,7 @@ impl Media {
             thumbnail = Some(dwn_thumb)
         }
 
-        Ok(DwnBundleMedia {
-            metadata: self.metadata,
-            streams,
-            thumbnail,
-        })
+        Ok(DwnBundleMedia { metadata: self.metadata, streams, thumbnail })
     }
 
     pub async fn download<I>(self, itag: I, thumb_res: Option<ThumbRes>) -> Result<DwnMedia<I::Stream>>

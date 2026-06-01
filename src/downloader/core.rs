@@ -1,7 +1,5 @@
 use std::{fmt::Debug, sync::Arc};
 
-use tokio::sync::Mutex;
-
 use crate::{
     DwnBundleList, DwnBundleMedia, DwnMedia, Dwnlist, HandleProgress,
     downloader::{
@@ -19,6 +17,8 @@ use crate::{
     streams::{MediaStream, Thumbnail},
     types::{PlaylistId, ShortId},
 };
+use reqwest::Client;
+use tokio::sync::Mutex;
 
 pub type SharedVd = Arc<Mutex<Option<String>>>;
 
@@ -26,6 +26,7 @@ pub type SharedVd = Arc<Mutex<Option<String>>>;
 pub struct Downloader {
     pub visitor_data: SharedVd,
     pub progress_handler: Arc<dyn HandleProgress + Send + Sync>,
+    pub client: Client,
 }
 
 impl Downloader {
@@ -34,6 +35,7 @@ impl Downloader {
         Arc::new(Self {
             visitor_data: Arc::new(Mutex::new(None)),
             progress_handler,
+            client: Client::new(),
         })
     }
 
