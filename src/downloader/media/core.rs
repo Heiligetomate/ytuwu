@@ -37,9 +37,7 @@ impl DownloadTask {
         Self { from, to, url: url.to_owned() }
     }
 
-    async fn download(&self) -> Result<Bytes> {
-        let client = reqwest::Client::new();
-
+    async fn download(&self, client: &reqwest::Client) -> Result<Bytes> {
         // println!("downloading chunk {} to {}", self.from, self.to);
 
         let chunk_url = format!("{}&range={}-{}", self.url, self.from, self.to);
@@ -76,33 +74,34 @@ impl Media {
 
         let mut downloaded_stream = itag.new_stream();
 
-        let mut ops = Vec::new();
         let mut tasks = Vec::new();
 
         self.downloader
             .progress_handler
             .on_download_start(&self.metadata.title, self.id, total_chunks);
 
-        for _ in 0..total_chunks {
-            let op = DownloadTask::new(current_position, current_position + CHUNK_SIZE, url);
-            ops.push(op);
-            current_position += CHUNK_SIZE + 1
-        }
-
         let completed = Arc::new(AtomicU32::new(0));
 
-        for op in ops {
+        let client = reqwest::Client::new();
+
+        let semaphore = Arc::new(tokio::sync::Semaphore::new(48)); // max 8 concurrent chunks
+        for _ in 0..total_chunks {
+            let op = DownloadTask::new(current_position, current_position + CHUNK_SIZE, url);
             let completed = Arc::clone(&completed);
             let id = self.id;
             let cloned = Arc::clone(&self.downloader);
+            let client = client.clone();
+            let permit = Arc::clone(&semaphore);
             tasks.push(tokio::spawn(async move {
-                let result = op.download().await;
+                let _permit = permit.acquire().await.unwrap();
+                let result = op.download(&client).await;
                 let done = completed.fetch_add(1, Ordering::Relaxed) + 1;
                 cloned
                     .progress_handler
                     .on_chunk_downloaded(id, done);
                 result
             }));
+            current_position += CHUNK_SIZE + 1;
         }
 
         for task in tasks {
