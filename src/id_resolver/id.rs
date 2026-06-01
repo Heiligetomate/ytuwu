@@ -13,5 +13,5 @@ pub trait Id: Sized {
 
 #[allow(async_fn_in_trait)]
 pub trait MakeChannelId: Id {
-    async fn transform(&self) -> Result<ChannelId>;
+    async fn transform(&self, client: &reqwest::Client) -> Result<ChannelId>;
 }

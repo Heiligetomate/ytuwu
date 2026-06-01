@@ -59,7 +59,7 @@ impl GetId<ChannelId> for IdCollection {
 }
 
 impl MakeChannelId for ChannelId {
-    async fn transform(&self) -> Result<ChannelId> {
+    async fn transform(&self, _: &reqwest::Client) -> Result<ChannelId> {
         Ok(self.clone())
     }
 }

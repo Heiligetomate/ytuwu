@@ -21,9 +21,7 @@ pub struct PlayerClient {}
 impl ClientWithHeaders for PlayerClient {
     type Response = PlayerResponse;
 
-    fn build_headers() -> ClientPrebuild {
-        let client = reqwest::Client::new();
-
+    fn build_headers(client: &reqwest::Client) -> ClientPrebuild {
         client
             .post(PLAYER_ENDPOINT)
             .header(CONTENT_TYPE_HEADER.0, CONTENT_TYPE_HEADER.1)

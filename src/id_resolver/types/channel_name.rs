@@ -47,8 +47,8 @@ impl GetId<ChannelNameId> for IdCollection {
 }
 
 impl MakeChannelId for ChannelNameId {
-    async fn transform(&self) -> Result<ChannelId> {
-        let response = api_request(self).await?;
+    async fn transform(&self, client: &reqwest::Client) -> Result<ChannelId> {
+        let response = api_request(self, client).await?;
         response.get_id()
     }
 }

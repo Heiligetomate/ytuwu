@@ -26,7 +26,7 @@ where
         Self { browse_id: id, downloader }
     }
     pub async fn browse(self) -> Result<PlaylistContentBrowse> {
-        let response = api_request(&self.browse_id).await?;
+        let response = api_request(&self.browse_id, &self.downloader.client).await?;
         let mut ids = response.get_video_ids()?;
         let title = response.get_album_title()?.to_owned();
         let trimmed_title = name_trimmer::trim(title, "-");

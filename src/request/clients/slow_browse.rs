@@ -20,9 +20,7 @@ pub struct SlowBrowseClient {}
 impl ClientWithHeaders for SlowBrowseClient {
     type Response = SlowBrowseResponse;
 
-    fn build_headers() -> ClientPrebuild {
-        let client = reqwest::Client::new();
-
+    fn build_headers(client: &reqwest::Client) -> ClientPrebuild {
         client
             .post(BROWSE_ENDPOINT)
             .header(USER_AGENT_HEADER_NAME, USER_AGENT)

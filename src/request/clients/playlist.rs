@@ -8,8 +8,7 @@ use crate::{
     },
 };
 
-const USER_AGENT: &str =
-    "User-Agent: Mozilla/5.0 (Linux; Android 10; Quest 2) AppleWebKit/537.36 (KHTML, like Gecko) OculusBrowser/32.0.0.3.65 SamsungBrowser/4.3 Chrome/137.0.7151.61 Mobile VR Safari/537.36";
+const USER_AGENT: &str = "User-Agent: Mozilla/5.0 (Linux; Android 10; Quest 2) AppleWebKit/537.36 (KHTML, like Gecko) OculusBrowser/32.0.0.3.65 SamsungBrowser/4.3 Chrome/137.0.7151.61 Mobile VR Safari/537.36";
 const X_CLIENT_NAME: &str = "67";
 const X_CLIENT_VERSION: &str = "1.20260428.11.00";
 
@@ -21,9 +20,7 @@ pub struct PlaylistBrowseClient {}
 impl ClientWithHeaders for PlaylistBrowseClient {
     type Response = PlaylistResponse;
 
-    fn build_headers() -> ClientPrebuild {
-        let client = reqwest::Client::new();
-
+    fn build_headers(client: &reqwest::Client) -> ClientPrebuild {
         client
             .post(BROWSE_ENDPOINT)
             .header(USER_AGENT_HEADER_NAME, USER_AGENT)

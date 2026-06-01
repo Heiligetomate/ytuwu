@@ -13,7 +13,7 @@ impl ChannelBrowse {
     }
 
     pub async fn browse(self) -> Result<ChannelContentBrowse> {
-        let resp = api_request(&self.id).await?;
+        let resp = api_request(&self.id, &self.downloader.client).await?;
         resp.extract_all_releases(self.downloader)
     }
 }

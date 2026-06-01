@@ -125,7 +125,9 @@ impl Downloader {
         I::Stream: MediaStream + Debug + Send,
         C: MakeChannelId,
     {
-        let id = channel_id.transform().await?;
+        let id = channel_id
+            .transform(&self.client)
+            .await?;
         Ok(ChannelBrowse::new(id, self)
             .browse()
             .await?

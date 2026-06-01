@@ -13,7 +13,7 @@ impl MediaBrowse {
     }
 
     pub async fn browse(self, downloader: Arc<Downloader>) -> Result<Media> {
-        let response = api_captcha_bypass(&self.video_id, 2, &downloader.visitor_data).await?;
+        let response = api_captcha_bypass(&self.video_id, 2, &downloader.visitor_data, &downloader.client).await?;
         response.extract(downloader)
     }
 }

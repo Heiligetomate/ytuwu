@@ -11,13 +11,13 @@ use crate::{
 };
 use serde::de::DeserializeOwned;
 
-async fn make_request<I>(id: &I, visitor_data: Option<String>) -> Result<<<I as Id>::Client as ClientWithHeaders>::Response>
+async fn make_request<I>(id: &I, visitor_data: Option<String>, client: &reqwest::Client) -> Result<<<I as Id>::Client as ClientWithHeaders>::Response>
 where
     I: Id,
     I::Client: ClientWithHeaders,
     <<I as Id>::Client as ClientWithHeaders>::Response: DeserializeOwned,
 {
-    let headers = I::Client::build_headers();
+    let headers = I::Client::build_headers(client);
     let body = I::Client::build_body(id.as_str(), visitor_data);
     let response: &str = &headers
         .json(&body)
@@ -30,16 +30,16 @@ where
     Ok(result)
 }
 
-pub async fn api_request<I>(id: &I) -> Result<<<I as Id>::Client as ClientWithHeaders>::Response>
+pub async fn api_request<I>(id: &I, client: &reqwest::Client) -> Result<<<I as Id>::Client as ClientWithHeaders>::Response>
 where
     I: Id,
     I::Client: ClientWithHeaders,
     <<I as Id>::Client as ClientWithHeaders>::Response: DeserializeOwned,
 {
-    make_request(id, None).await
+    make_request(id, None, client).await
 }
 
-pub async fn api_captcha_bypass(id: &VideoId, max_tries: u16, visitor_data: &SharedVd) -> Result<PlayerResponse>
+pub async fn api_captcha_bypass(id: &VideoId, max_tries: u16, visitor_data: &SharedVd, client: &reqwest::Client) -> Result<PlayerResponse>
 where {
     let mut tries: u16 = 0;
 
@@ -48,7 +48,7 @@ where {
     while tries < max_tries {
         tries += 1;
         let vd = visitor_data.lock().await.clone();
-        let resp: PlayerResponse = make_request(id, vd).await?;
+        let resp: PlayerResponse = make_request(id, vd, client).await?;
         match resp.get_status() {
             Status::Error => return Err(YtuwuError::YoutubeAPIReturn),
             Status::Success => return Ok(resp),

@@ -20,9 +20,7 @@ pub struct ChannelNameClient {}
 impl ClientWithHeaders for ChannelNameClient {
     type Response = ChannelNameToIdResponse;
 
-    fn build_headers() -> ClientPrebuild {
-        let client = reqwest::Client::new();
-
+    fn build_headers(client: &reqwest::Client) -> ClientPrebuild {
         client
             .post(RESOLVE_CHANNEL_NAME_ENDPOINT)
             .header(USER_AGENT_HEADER_NAME, USER_AGENT)

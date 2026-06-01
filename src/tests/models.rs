@@ -21,7 +21,9 @@ use crate::{
 #[tokio::test]
 async fn browse_resp() {
     let id = AlbumId::new("OLAK5uy_lrCrcAdxFG4aMzMrebs7o9TU384xyF240").unwrap();
-    let res: FastBrowseResponse = api_request(&id).await.unwrap();
+    let res: FastBrowseResponse = api_request(&id, &reqwest::Client::new())
+        .await
+        .unwrap();
 
     let expected_ids = vec![
         VideoId::new("CDko2ux1bkE").unwrap(),
@@ -44,7 +46,9 @@ async fn browse_resp() {
 #[tokio::test]
 async fn channel_resp() {
     let id = ChannelId::new("MPADUC6Tg7GWjZw48EiZ8m5bRtWg").unwrap();
-    let res: ChannelBrowseResponse = api_request(&id).await.unwrap();
+    let res: ChannelBrowseResponse = api_request(&id, &reqwest::Client::new())
+        .await
+        .unwrap();
     let extracted = res
         .extract_all_releases(Downloader::testing())
         .unwrap();
@@ -57,7 +61,7 @@ async fn channel_resp() {
 #[tokio::test]
 async fn player_resp() {
     let id = VideoId::new("lndG8BiZCmM").unwrap();
-    let res: PlayerResponse = api_captcha_bypass(&id, 2, &Arc::new(Mutex::new(None)))
+    let res: PlayerResponse = api_captcha_bypass(&id, 2, &Arc::new(Mutex::new(None)), &reqwest::Client::new())
         .await
         .unwrap();
 
@@ -74,7 +78,9 @@ async fn player_resp() {
 #[tokio::test]
 async fn slow_browse_resp() {
     let id = ChannelPlaylistId::new("MPREb_dQoH7BxK35k").unwrap();
-    let res: SlowBrowseResponse = api_request(&id).await.unwrap();
+    let res: SlowBrowseResponse = api_request(&id, &reqwest::Client::new())
+        .await
+        .unwrap();
 
     let expected_ids = vec![
         VideoId::new("7akaJCRoOYs").unwrap(),
