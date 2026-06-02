@@ -6,6 +6,8 @@ pub trait HandleProgress: Send + Sync + Debug {
     fn on_download_start(&self, title: &str, id: Uuid, total_chunks: u32);
     fn on_chunk_downloaded(&self, id: Uuid, done: u32);
     fn on_download_complete(&self, id: Uuid);
+    fn on_playlist_started(&self, id: Uuid, songs: Vec<&str>);
+    fn on_playlist_downloaded(&self, id: Uuid);
 }
 
 #[derive(Debug)]
@@ -20,6 +22,8 @@ impl HandleProgress for EmptyHandler {
     fn on_download_start(&self, _: &str, _: Uuid, _: u32) {}
     fn on_chunk_downloaded(&self, _: Uuid, _: u32) {}
     fn on_download_complete(&self, _: Uuid) {}
+    fn on_playlist_started(&self, _: Uuid, _: Vec<&str>) {}
+    fn on_playlist_downloaded(&self, _: Uuid) {}
 }
 
 impl HandleProgress for DefaultProgressHandler {
@@ -41,6 +45,14 @@ impl HandleProgress for DefaultProgressHandler {
     fn on_download_complete(&self, id: Uuid) {
         self.ids.lock().unwrap().remove(&id);
         self.print();
+    }
+
+    fn on_playlist_started(&self, id: Uuid, songs: Vec<&str>) {
+        println!("downloading playlist: {:?}", songs);
+    }
+
+    fn on_playlist_downloaded(&self, id: Uuid) {
+        println!("downloaded");
     }
 }
 

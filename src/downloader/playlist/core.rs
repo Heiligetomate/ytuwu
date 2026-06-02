@@ -1,14 +1,15 @@
 use std::{fmt::Debug, sync::Arc};
 
+use uuid::Uuid;
+
 use crate::{
-    DwnBundleList, DwnMedia, Dwnlist,
+    Downloader, DwnBundleList, DwnMedia, Dwnlist,
     downloader::{
         media::{core::Media, extracted_streams::ThumbRes},
         streams::MediaStream,
     },
     error::{Result, YtuwuError},
-    itags::AnyItag,
-    itags::Itag,
+    itags::{AnyItag, Itag},
 };
 
 const MAX_MEDIA_AT_ONCE: usize = 8;
@@ -17,11 +18,27 @@ const MAX_MEDIA_AT_ONCE: usize = 8;
 pub struct Playlist {
     title: String,
     media: Vec<Media>,
+    id: Uuid,
+    downloader: Arc<Downloader>,
 }
 
 impl Playlist {
-    pub fn new(title: &str, media: Vec<Media>) -> Self {
-        Self { title: title.to_owned(), media }
+    pub fn new(title: &str, media: Vec<Media>, downloader: Arc<Downloader>) -> Self {
+        let id = Uuid::new_v4();
+        Self {
+            title: title.to_owned(),
+            media,
+            id,
+            downloader,
+        }
+    }
+
+    fn get_titles(&self) -> Vec<&str> {
+        let mut collected = Vec::new();
+        for media in self.media.iter() {
+            collected.push(media.metadata.title.as_str())
+        }
+        collected
     }
 
     pub async fn download<I>(mut self, itag: I, thumb_res: Option<ThumbRes>) -> Result<Dwnlist<I::Stream>>
@@ -29,6 +46,10 @@ impl Playlist {
         I: Itag + Copy + Debug + Send + 'static,
         I::Stream: MediaStream + Debug + Send,
     {
+        self.downloader
+            .progress_handler
+            .on_playlist_started(self.id, self.get_titles());
+
         let mut downloaded: Vec<DwnMedia<I::Stream>> = Vec::new();
 
         let mut tasks = Vec::new();
@@ -49,6 +70,10 @@ impl Playlist {
         for task in tasks {
             downloaded.push(task.await??);
         }
+
+        self.downloader
+            .progress_handler
+            .on_playlist_downloaded(self.id);
 
         Ok(Dwnlist::new(downloaded, &self.title))
     }

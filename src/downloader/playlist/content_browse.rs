@@ -17,11 +17,7 @@ pub struct PlaylistContentBrowse {
 
 impl PlaylistContentBrowse {
     pub fn new(title: &str, media: Vec<MediaBrowse>, downloader: Arc<Downloader>) -> Self {
-        Self {
-            title: title.to_owned(),
-            media,
-            downloader,
-        }
+        Self { title: title.to_owned(), media, downloader }
     }
 
     pub async fn browse(mut self) -> Result<Playlist> {
@@ -48,6 +44,6 @@ impl PlaylistContentBrowse {
             };
             media_items.push(media);
         }
-        Ok(Playlist::new(&self.title, media_items))
+        Ok(Playlist::new(&self.title, media_items, self.downloader))
     }
 }
