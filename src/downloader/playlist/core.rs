@@ -1,4 +1,4 @@
-use std::fmt::Debug;
+use std::{fmt::Debug, sync::Arc};
 
 use crate::{
     DwnBundleList, DwnMedia, Dwnlist,
@@ -10,6 +10,8 @@ use crate::{
     itags::AnyItag,
     itags::Itag,
 };
+
+const MAX_MEDIA_AT_ONCE: usize = 8;
 
 #[derive(Debug)]
 pub struct Playlist {
@@ -31,9 +33,17 @@ impl Playlist {
 
         let mut tasks = Vec::new();
 
+        let semaphore = Arc::new(tokio::sync::Semaphore::new(MAX_MEDIA_AT_ONCE));
+
         for item in self.media.drain(..) {
-            let thumb_res = thumb_res.clone();
-            tasks.push(tokio::spawn(item.download(itag, thumb_res)));
+            tasks.push(tokio::spawn({
+                let sem = Arc::clone(&semaphore);
+                let thumb_res = thumb_res.clone();
+                async move {
+                    let _permit = sem.acquire().await?;
+                    item.download(itag, thumb_res).await
+                }
+            }));
         }
 
         for task in tasks {
