@@ -91,7 +91,7 @@ impl Media {
             let cloned = Arc::clone(&self.downloader);
             let permit = Arc::clone(&semaphore);
             tasks.push(tokio::spawn(async move {
-                let _permit = permit.acquire().await.unwrap();
+                let _permit = permit.acquire().await?;
                 let result = op.download(&cloned.client).await;
                 let done = completed.fetch_add(1, Ordering::Relaxed) + 1;
                 cloned

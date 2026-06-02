@@ -101,3 +101,9 @@ impl From<tokio::task::JoinError> for YtuwuError {
         Self::Tokio(value.to_string())
     }
 }
+
+impl From<tokio::sync::AcquireError> for YtuwuError {
+    fn from(value: tokio::sync::AcquireError) -> Self {
+        Self::Tokio(value.to_string())
+    }
+}
