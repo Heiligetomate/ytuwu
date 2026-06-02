@@ -102,12 +102,18 @@ struct AlbumTrackItem {
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 struct MusicResponsiveListItemRenderer {
-    playlist_item_data: Option<PlaylistItemData>,
+    navigation_endpoint: Option<NavigationEndpoint>,
 }
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-struct PlaylistItemData {
+struct NavigationEndpoint {
+    watch_endpoint: WatchEndpoint,
+}
+
+#[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+struct WatchEndpoint {
     video_id: String,
 }
 
@@ -134,12 +140,12 @@ impl BrowseResponse for SlowBrowseResponse {
             .filter_map(|section| section.music_shelf_renderer.as_ref())
             .flat_map(|shelf| shelf.contents.iter())
             .filter_map(|item| {
-                let id = item
-                    .music_responsive_list_item_renderer
-                    .playlist_item_data
-                    .as_ref()?
-                    .video_id
-                    .as_str();
+                item.music_responsive_list_item_renderer
+                    .navigation_endpoint
+                    .as_ref()
+            })
+            .filter_map(|n| {
+                let id = n.watch_endpoint.video_id.as_str();
                 VideoId::new(id).ok()
             })
             .collect();
