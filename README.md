@@ -57,3 +57,5 @@ downloaded.save_full(Path::new("my_awesome_path"))?;
 - logging 
 - publish on crates io 
 - documentation
+- playlist ids and album ids should be one thing, not two seperate things (makes the .get_id() thing annoying)
+- channel ids and channel name ids should be one thing, not two seperate things (makes the .get_id() thing annoying)
