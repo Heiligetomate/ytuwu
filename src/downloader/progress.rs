@@ -48,11 +48,11 @@ impl HandleProgress for DefaultProgressHandler {
     }
 
     fn on_playlist_started(&self, id: Uuid, songs: Vec<&str>) {
-        println!("downloading playlist: {:?}", songs);
+        println!("downloading playlist: {:?} \nwith id {}", songs, id);
     }
 
     fn on_playlist_downloaded(&self, id: Uuid) {
-        println!("downloaded");
+        println!("downloaded playlist with id {}", id);
     }
 }
 

@@ -9,10 +9,7 @@ use crate::{
         progress::{DefaultProgressHandler, EmptyHandler},
     },
     error::Result,
-    id_resolver::{
-        id::MakeChannelId,
-        types::{AlbumId, VideoId},
-    },
+    id_resolver::types::{AlbumId, VideoId},
     itags::{AnyItag, Itag},
     streams::{MediaStream, Thumbnail},
     types::{ChannelId, PlaylistId, ShortId},
