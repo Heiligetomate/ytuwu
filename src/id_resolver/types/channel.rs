@@ -6,21 +6,21 @@ use crate::{
         id::{GetId, Id},
     },
     request::{clients::channel::ChannelClient, core::api_request},
-    types::channel_name::ChannelNameId,
+    types::{channel_name::ChannelNameId, channel_raw::ChannelRawId},
 };
 
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct ChannelId {
-    id: Option<String>,
+    id: Option<ChannelRawId>,
     name: Option<ChannelNameId>,
 }
 
 impl ChannelId {
     pub async fn make_valid(self, client: &reqwest::Client) -> Result<Self> {
         let id = if let Some(id) = self.id {
-            id
+            id.get_id()
         } else if let Some(name) = self.name {
             let response = api_request(&name, client).await?;
             response.get_id()?.to_owned()
@@ -28,7 +28,7 @@ impl ChannelId {
             panic!("Channel id did not contain anything. Invalid state");
         };
 
-        Ok(Self { id: Some(id.to_owned()), name: None })
+        Ok(Self { id: Some(ChannelRawId::new(id)?), name: None })
     }
 }
 
@@ -37,36 +37,18 @@ impl Id for ChannelId {
 
     fn new<T: Into<String>>(id: T) -> Result<Self> {
         let raw_id = id.into();
-
-        // we need this so that we can get the correct id (the normal uc id is not really compatible
-        // with the albums singles and eps we want to extract)
-        if raw_id.starts_with("MPADUC") || raw_id.starts_with("UC") {
-            let id_with_prfx = {
-                if raw_id.starts_with("MPADUC") {
-                    raw_id
-                } else if raw_id.starts_with("UC") {
-                    format!("MPAD{}", raw_id)
-                } else {
-                    return Err(YtuwuError::InvalidIdFormat);
-                }
-            };
-
-            if id_with_prfx.len() != 28 {
-                return Err(YtuwuError::InvalidIdLength);
-            }
-
-            Ok(Self { id: Some(id_with_prfx), name: None })
+        if let Ok(id) = ChannelRawId::new(raw_id.as_str()) {
+            return Ok(Self { id: Some(id), name: None });
+        } else if let Ok(name_id) = ChannelNameId::new(raw_id.as_str()) {
+            return Ok(Self { id: None, name: Some(name_id) });
         } else {
-            Ok(Self {
-                id: None,
-                name: Some(ChannelNameId::new(raw_id)?),
-            })
+            return Err(YtuwuError::NoIdFound);
         }
     }
 
     fn get_id(self) -> String {
         let extracted = if let Some(id) = self.id {
-            id
+            id.get_id()
         } else if let Some(name) = self.name {
             name.get_id()
         } else {

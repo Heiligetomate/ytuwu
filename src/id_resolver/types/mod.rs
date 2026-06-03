@@ -2,6 +2,7 @@ mod album;
 mod channel;
 mod channel_name;
 pub(self) mod channel_playlist;
+pub(self) mod channel_raw;
 mod playlist;
 mod short;
 mod video;
