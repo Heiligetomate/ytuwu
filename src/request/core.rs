@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use crate::{
     downloader::core::SharedVd,
     error::{Result, YtuwuError},
@@ -10,6 +12,8 @@ use crate::{
     types::VideoId,
 };
 use serde::de::DeserializeOwned;
+
+const WAIT_FOR_CAPTCHA_MILLIS: Duration = Duration::from_millis(200);
 
 async fn make_request<I>(id: &I, visitor_data: Option<String>, client: &reqwest::Client) -> Result<<<I as Id>::Client as ClientWithHeaders>::Response>
 where
@@ -57,6 +61,7 @@ where {
                     .get_playability_reason()
                     .unwrap_or("unknown")
                     .to_string();
+                tokio::time::sleep(WAIT_FOR_CAPTCHA_MILLIS).await;
             }
         }
         *visitor_data.lock().await = resp

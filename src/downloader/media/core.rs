@@ -146,7 +146,11 @@ impl Media {
             thumbnail = Some(dwn_thumb)
         }
 
-        Ok(DwnBundleMedia { metadata: self.metadata, streams, thumbnail })
+        Ok(DwnBundleMedia {
+            metadata: self.metadata,
+            streams,
+            thumbnail,
+        })
     }
 
     pub async fn download<I>(self, itag: I, thumb_res: Option<ThumbRes>) -> Result<DwnMedia<I::Stream>>

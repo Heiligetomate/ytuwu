@@ -10,19 +10,19 @@ async fn main() -> Result<()> {
 
     let ids = IdCollection::from_url(url)?;
 
-    let id = ChannelNameId::new("@ntomusic")?;
+    // let id = ChannelNameId::new("@ntomusic")?;
 
     let downloader = Downloader::default();
 
-    let _ = downloader
-        .download_channel(id, AudioItag::AacMedium)
-        .await?;
-
-    // let downloaded = downloader
-    //     .download_album(ids.get_id()?, AudioItag::AacMedium, None)
+    // let _ = downloader
+    //     .download_channel(id, AudioItag::AacMedium)
     //     .await?;
 
-    // downloaded.save_with_dir(Path::new("teehee"))?;
+    let downloaded = downloader
+        .download_album(ids.get_id()?, AudioItag::AacMedium, None)
+        .await?;
+
+    downloaded.save_with_dir(Path::new("teehee"))?;
 
     println!("took: {:?}", start_time.elapsed().unwrap());
     Ok(())
