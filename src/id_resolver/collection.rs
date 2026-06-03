@@ -6,7 +6,7 @@ use crate::{
     error::YtuwuError,
     id_resolver::{
         id::Id,
-        types::{AlbumId, ChannelId, ChannelNameId, ShortId, VideoId},
+        types::{AlbumId, ChannelId, ShortId, VideoId},
     },
     types::PlaylistId,
 };
@@ -18,7 +18,6 @@ pub struct IdCollection {
     pub(super) playlist_id: Option<PlaylistId>,
     pub(super) short_id: Option<ShortId>,
     pub(super) channel_id: Option<ChannelId>,
-    pub(super) channel_name: Option<ChannelNameId>,
 }
 
 enum Host {
@@ -45,7 +44,7 @@ impl Host {
 
 impl IdCollection {
     pub fn is_empty(&self) -> bool {
-        return self.video_id.is_none() && self.album_id.is_none() && self.channel_id.is_none() && self.short_id.is_none() && self.channel_name.is_none() && self.playlist_id.is_none();
+        return self.video_id.is_none() && self.album_id.is_none() && self.channel_id.is_none() && self.short_id.is_none() && self.playlist_id.is_none();
     }
 
     pub fn from_url<T: Into<String>>(raw_url: T) -> Result<Self> {
@@ -132,7 +131,7 @@ impl IdCollection {
 
             s if s.starts_with('@') => {
                 let id = Self::id_from_segments(segments, 0).ok_or(YtuwuError::UrlParsing("no channel id name found"))?;
-                Ok(Self::with_channel_name(ChannelNameId::new(id)?))
+                Ok(Self::with_channel(ChannelId::new(id)?))
             }
 
             "watch" | "playlist" | "" => Self::from_query_params(url),
@@ -172,7 +171,6 @@ impl IdCollection {
             album_id: None,
             channel_id: None,
             short_id: None,
-            channel_name: None,
             playlist_id: None,
         }
     }
@@ -223,12 +221,5 @@ impl IdCollection {
 
     fn with_short(id: ShortId) -> Self {
         Self { short_id: Some(id), ..Self::empty() }
-    }
-
-    fn with_channel_name(id: ChannelNameId) -> Self {
-        Self {
-            channel_name: Some(id),
-            ..Self::empty()
-        }
     }
 }

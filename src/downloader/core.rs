@@ -15,7 +15,7 @@ use crate::{
     },
     itags::{AnyItag, Itag},
     streams::{MediaStream, Thumbnail},
-    types::{PlaylistId, ShortId},
+    types::{ChannelId, PlaylistId, ShortId},
 };
 use reqwest::Client;
 use tokio::sync::Mutex;
@@ -119,16 +119,13 @@ impl Downloader {
             .await?)
     }
 
-    pub async fn download_channel<I, C>(self: Arc<Self>, channel_id: C, itag: I) -> Result<DwnChannel<I::Stream>>
+    pub async fn download_channel<I>(self: Arc<Self>, channel_id: ChannelId, itag: I) -> Result<DwnChannel<I::Stream>>
     where
         I: Itag + Copy + Debug + Send + 'static,
         I::Stream: MediaStream + Debug + Send,
-        C: MakeChannelId,
     {
-        let id = channel_id
-            .transform(&self.client)
-            .await?;
-        Ok(ChannelBrowse::new(id, self)
+        Ok(ChannelBrowse::new(channel_id, self)
+            .await?
             .browse()
             .await?
             .download(itag)

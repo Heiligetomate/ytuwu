@@ -26,7 +26,7 @@ struct BrowseEndpoint {
 }
 
 impl ChannelNameToIdResponse {
-    pub fn get_id(&self) -> Result<ChannelId> {
+    pub fn get_id(&self) -> Result<&str> {
         let id: &str = &self
             .endpoint
             .as_ref()
@@ -37,7 +37,7 @@ impl ChannelNameToIdResponse {
             .browse_id
             .as_ref()
             .ok_or(YtuwuError::ChannelDataNotFound("channel id"))?;
-        ChannelId::new(id)
+        Ok(id)
     }
 }
 

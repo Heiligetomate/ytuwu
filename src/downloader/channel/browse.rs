@@ -8,8 +8,11 @@ pub struct ChannelBrowse {
 }
 
 impl ChannelBrowse {
-    pub fn new(channel_id: ChannelId, downloader: Arc<Downloader>) -> Self {
-        Self { id: channel_id, downloader }
+    pub async fn new(channel_id: ChannelId, downloader: Arc<Downloader>) -> Result<Self> {
+        let channel_id = channel_id
+            .make_valid(&downloader.client)
+            .await?;
+        Ok(Self { id: channel_id, downloader })
     }
 
     pub async fn browse(self) -> Result<ChannelContentBrowse> {
