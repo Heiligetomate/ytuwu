@@ -1,91 +1,59 @@
 # ytuwu
 
-A youtube downloader written in rust
+A rust lib for using the internal youtube api to downlaod media/playlists/channels
 
-example usage for downloading video, audio and thumbnail and printing basic metadata like the author: 
+Example usages: 
+
+download the highest audio stream of a video/song, ignore the thumbnail and save the result: 
 ```rs 
-let media_url = "https://music.youtube.com/watch?v=lndG8BiZCmM";
-let id_collection = IdCollection::from_url(media_url)?;
+let ids = IdCollection::from_url("my_awesome_url")?;
 
-let downloader = Downloader::new();
-let media = downloader
-    .download_dual_media_stream(
-        id_collection.get_id()?, 
-        ShortVideoItag::highest(), 
-        AudioItag::highest(), 
-        ThumbnailResolution::Low
-        )
-    .await?;
-let path = Path::new("teehee");
-println!("title: {}", media.metadata.title);
-media.save(&path)?;
+let downloader = Downloader::default();
 
+let downloaded = downloader.download_media(ids.get_id()?, AudioItag::Highest, None).await?;
+
+downloaded.save_media_stream(Path::new("my_awesome_path"))?;
 ```
 
 
-download a short: 
+download the highest audio and video stream and the hightest thumbnail of a video/song and save the result in an own folder:
 ```rs 
-let short_url = "https://youtube.com/shorts/any_short";
-let id_collection = IdCollection::from_url(short_url)?;
+let ids = IdCollection::from_url("my_awesome_url")?;
 
-let downloader = Downloader::new();
-let media = downloader
-    .download_short(
-        id_collection.get_id()?, 
-        ShortVideoItag::highest(), 
-        AudioItag::highest(), 
-        ThumbnailResolution::Low
-        )
+let downlader = Downloader::default();
+
+let downloaded = downloader
+    .download_media_bundle(
+        ids.get_id()?, 
+        vec![
+            AnyItag::Audio(AudioItag::Highest), 
+            AnyItag::LongVideo(VideoItag::Highest)
+        ], 
+        None
+    )
     .await?;
-let path = Path::new("teehee");
-media.save(&path)?;
 
-```
-
-download a playlist: 
-```rs 
-let playlist_url = "https://music.youtube.com/playlist?list=OLAK5uy_nVY7Ekmu-3gJilFDUz8xrjkzmVmVnQSMQ";
-let id_collection = IdCollection::from_url(playlist_url)?;
-
-let downloader = Downloader::new();
-let media = downloader
-    .download_full_playlist(
-        id_collection.get_id()?, 
-        AudioItag::highest(), 
-        ThumbnailResolution::Low
-        )
-    .await?;
-let path = Path::new("teehee");
-println!("title: {}", media.metadata.title);
-media.save(&path)?;
-```
-
-download a channel: 
-```rs
-let channel_url = "https://music.youtube.com/browse/MPADUC6Tg7GWjZw48EiZ8m5bRtWg";
-
-let id_collection = IdCollection::from_url(channel_url)?;
-
-let downloader = Downloader::new();
-let downloaded_channel = downloader.download_channel(id_collection.get_id()?, AudioItag::AacLow).await?;
-let path = Path::new("teehee");
-downloaded_channel.save(path)?;
-
+downloaded.save_full(Path::new("my_awesome_path"))?;
 ```
 
 ## features: 
-- bypass the "captcha"
-- download audio and video streams (in chunks)
-- download thumbnails
-- download full playlists
-- download short
-- most of the metadata
-- download full channels 
+
+- download channels/artists 
+- download playlists/albums 
+- download videos/songs
+- get the most important metadata 
+- bypass the captcha
+- trait that can be implemented to track the progress (for cli tools) (just for media rn)
 
 ## todos: 
-- better file save handling 
-- rate limiter
-- more metadata
+- better rate limit handler
+- more metadata (maybe)
 - save chunks when crashing while downloading and continue the download afterwards
-- cache 
+- cache (^ should be included there)
 - continuation
+- better api would be good i think
+- better chunk size (maybe adjust it while running for different internet speed)
+- maybe some more features like searching (not sure if i want that here tho)
+- logging 
+- publish on crates io 
+- documentation
