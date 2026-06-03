@@ -95,3 +95,6 @@ impl GetId<ChannelId> for IdCollection {
             .ok_or(YtuwuError::NoIdFound)?)
     }
 }
+
+// TODO: this is wrong right now. it needs to be 2 different ids (the name has a different client).
+// Doesnt work rn 3:
