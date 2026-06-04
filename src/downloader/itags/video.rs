@@ -7,6 +7,8 @@ use crate::{
     streams::LongVideoStream,
 };
 
+// TODO: There should be 2k itags etc
+
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone, Copy)]
 pub enum VideoItag {
     Highest,
