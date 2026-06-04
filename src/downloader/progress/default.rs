@@ -4,6 +4,10 @@ use uuid::Uuid;
 
 use crate::downloader::progress::handler::HandleProgress;
 
+const BAR_LENGTH: u32 = 20;
+const COMPLETED: &'static str = "█";
+const NOT_COMPLETED: &'static str = "░";
+
 #[derive(Debug)]
 pub struct DefaultProgressHandler {
     ids: Mutex<HashMap<Uuid, (String, u32, u32)>>,
@@ -45,14 +49,15 @@ impl DefaultProgressHandler {
     }
 
     fn print(&self) {
-        print!("\x1B[2J\x1B[H"); // clear screen
+        print!("\x1B[2J\x1B[H");
         let ids = self.ids.lock().unwrap();
         println!("Downloading {} track(s)\n", ids.len());
         for (title, done, total) in ids.values() {
-            let percentage = (*done as f32 / *total as f32 * 100.0) as u32;
-            let filled = percentage / 5;
-            let bar = format!("[{}{}]", "█".repeat(filled as usize), "░".repeat((20 - filled) as usize));
-            println!("  {} {}% {}", bar, percentage, title);
+            let percentage = if *total == 0 { 0u32 } else { ((*done as f32 / *total as f32) * 100.0).round() as u32 };
+            let filled = (percentage * BAR_LENGTH / 100) as usize;
+            let empty = (BAR_LENGTH as usize).saturating_sub(filled);
+            let bar = format!("[{}{}]", COMPLETED.repeat(filled), NOT_COMPLETED.repeat(empty));
+            println!("{} {}% {}", bar, percentage, title);
         }
     }
 }
