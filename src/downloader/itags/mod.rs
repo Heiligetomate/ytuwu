@@ -3,6 +3,8 @@ mod audio;
 mod core;
 mod muxed;
 mod short;
+#[cfg(test)]
+mod test;
 mod video;
 
 pub use any::AnyItag;
