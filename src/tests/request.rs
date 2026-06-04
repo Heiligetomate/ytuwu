@@ -38,7 +38,7 @@ async fn channel_client() {
 #[tokio::test]
 async fn player_client() {
     let id = VideoId::new("lndG8BiZCmM").unwrap();
-    let res: PlayerResponse = api_captcha_bypass(&id, 2, &Arc::new(Mutex::new(None)), &reqwest::Client::new())
+    let res: PlayerResponse = api_captcha_bypass(&id, 5, &Arc::new(Mutex::new(None)), &reqwest::Client::new())
         .await
         .unwrap();
     assert_eq!(res.get_status(), Status::Success);
