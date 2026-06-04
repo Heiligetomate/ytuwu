@@ -3,6 +3,7 @@ pub mod browse;
 pub mod channel;
 pub mod channel_name_to_id;
 pub mod client;
+pub mod dummy;
 mod endpoints;
 pub mod player;
 pub mod playlist;
