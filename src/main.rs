@@ -13,10 +13,10 @@ async fn main() -> Result<()> {
     let downloader = Downloader::default();
 
     let downloaded = downloader
-        .download_media(ids.get_id()?, AudioItag::OpusMedium, None)
+        .download_album(ids.get_id()?, AudioItag::OpusMedium, None)
         .await?;
 
-    downloaded.save_media_stream(Path::new("teehee"))?;
+    downloaded.save(Path::new("teehee"))?;
 
     println!("took: {:?}", start_time.elapsed().unwrap());
     Ok(())

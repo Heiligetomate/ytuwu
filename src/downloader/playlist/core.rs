@@ -33,7 +33,7 @@ impl Playlist {
         }
     }
 
-    fn get_titles(&self) -> Vec<&str> {
+    pub fn get_titles(&self) -> Vec<&str> {
         let mut collected = Vec::new();
         for media in self.media.iter() {
             collected.push(media.metadata.title.as_str())

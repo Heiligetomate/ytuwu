@@ -204,7 +204,10 @@ impl IdCollection {
     }
 
     fn with_channel(id: ChannelId) -> Self {
-        Self { channel_id: Some(id), ..Self::empty() }
+        Self {
+            channel_id: Some(id),
+            ..Self::empty()
+        }
     }
 
     fn with_short(id: ShortId) -> Self {

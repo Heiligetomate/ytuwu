@@ -10,14 +10,18 @@ use crate::{
 
 #[derive(Debug)]
 pub struct PlaylistContentBrowse {
-    title: String,
-    media: Vec<MediaBrowse>,
-    downloader: Arc<Downloader>,
+    pub(super) title: String,
+    pub(super) media: Vec<MediaBrowse>,
+    pub(super) downloader: Arc<Downloader>,
 }
 
 impl PlaylistContentBrowse {
     pub fn new(title: &str, media: Vec<MediaBrowse>, downloader: Arc<Downloader>) -> Self {
-        Self { title: title.to_owned(), media, downloader }
+        Self {
+            title: title.to_owned(),
+            media,
+            downloader,
+        }
     }
 
     pub async fn browse(mut self) -> Result<Playlist> {

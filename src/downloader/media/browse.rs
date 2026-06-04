@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use crate::{Downloader, Result, downloader::media::core::Media, request::core::api_captcha_bypass, types::VideoId};
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct MediaBrowse {
     pub video_id: VideoId,
 }
