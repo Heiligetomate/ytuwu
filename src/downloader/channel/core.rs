@@ -16,7 +16,7 @@ pub struct ChannelContentBrowse {
 }
 
 impl ChannelContentBrowse {
-    async fn download_singles<I>(&self, itag: I) -> Result<Vec<DwnMedia<I::Stream>>>
+    pub async fn download_singles<I>(&self, itag: I) -> Result<Vec<DwnMedia<I::Stream>>>
     where
         I: Itag + Copy + Debug + Send + 'static,
         I::Stream: MediaStream + Debug + Send,

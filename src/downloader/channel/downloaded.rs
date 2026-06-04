@@ -64,7 +64,7 @@ impl<M: MediaStream + Debug> DwnChannel<M> {
     }
 }
 
-fn create_paths(path: &Path) -> Result<(PathBuf, PathBuf, PathBuf)> {
+pub(super) fn create_paths(path: &Path) -> Result<(PathBuf, PathBuf, PathBuf)> {
     let mut singles_path = PathBuf::from(&path);
     let mut eps_path = PathBuf::from(&path);
     let mut albums_path = PathBuf::from(&path);
