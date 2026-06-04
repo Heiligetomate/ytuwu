@@ -1,14 +1,4 @@
-use crate::{
-    Result,
-    error::YtuwuError,
-    id_resolver::{
-        browse_id::BrowseId,
-        collection::IdCollection,
-        id::{GetId, Id},
-    },
-    models::fast_browse::FastBrowseResponse,
-    request::clients::browse::BrowseClient,
-};
+use crate::{Result, error::YtuwuError, id_resolver::id::Id, request::clients::browse::BrowseClient};
 
 use serde::{Deserialize, Serialize};
 
@@ -41,17 +31,4 @@ impl Id for AlbumId {
     fn as_str(&self) -> &str {
         &self.id
     }
-}
-
-impl GetId<AlbumId> for IdCollection {
-    fn get_id(&self) -> Result<AlbumId> {
-        Ok(self
-            .album_id
-            .clone()
-            .ok_or(YtuwuError::NoIdFound)?)
-    }
-}
-
-impl BrowseId for AlbumId {
-    type BrowseResponse = FastBrowseResponse;
 }

@@ -1,14 +1,4 @@
-use crate::{
-    Result,
-    error::YtuwuError,
-    id_resolver::{
-        browse_id::BrowseId,
-        collection::IdCollection,
-        id::{GetId, Id},
-    },
-    models::playlist::PlaylistResponse,
-    request::clients::playlist::PlaylistBrowseClient,
-};
+use crate::{Result, error::YtuwuError, id_resolver::id::Id, request::clients::playlist::PlaylistBrowseClient};
 
 use serde::{Deserialize, Serialize};
 
@@ -47,17 +37,4 @@ impl Id for PlaylistId {
     fn as_str(&self) -> &str {
         &self.id
     }
-}
-
-impl GetId<PlaylistId> for IdCollection {
-    fn get_id(&self) -> Result<PlaylistId> {
-        Ok(self
-            .playlist_id
-            .clone()
-            .ok_or(YtuwuError::NoIdFound)?)
-    }
-}
-
-impl BrowseId for PlaylistId {
-    type BrowseResponse = PlaylistResponse;
 }

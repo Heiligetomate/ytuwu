@@ -1,12 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::{
-    Result,
-    error::YtuwuError,
-    id_resolver::{browse_id::BrowseId, id::Id},
-    models::slow_browse::SlowBrowseResponse,
-    request::clients::slow_browse::SlowBrowseClient,
-};
+use crate::{Result, error::YtuwuError, id_resolver::id::Id, request::clients::slow_browse::SlowBrowseClient};
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct ChannelPlaylistId {
@@ -37,8 +31,4 @@ impl Id for ChannelPlaylistId {
 
         Ok(Self { id: raw_id })
     }
-}
-
-impl BrowseId for ChannelPlaylistId {
-    type BrowseResponse = SlowBrowseResponse;
 }
