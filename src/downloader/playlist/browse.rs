@@ -43,7 +43,7 @@ impl PlaylistBrowse {
             }
         };
 
-        let trimmed_title = name_trimmer::trim(title, "-");
+        let trimmed_title = name_trimmer::default_trim(&title);
 
         let media: Vec<MediaBrowse> = ids
             .drain(..)

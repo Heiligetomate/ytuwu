@@ -1,7 +1,12 @@
 const DEFAULT_REPLACE_CHARS: [char; 8] = ['(', ')', '[', ']', '{', '}', '/', '\''];
 const ERASE_DUPLICATES: [char; 2] = ['-', '_'];
 
-pub fn trim(mut input: String, space: &str) -> String {
+pub fn default_trim(input: &str) -> String {
+    trim(input, "-")
+}
+
+pub fn trim(input: &str, space: &str) -> String {
+    let mut input = input.to_owned();
     input = input.replace(" ", space);
     for chr in &DEFAULT_REPLACE_CHARS {
         input = input.replace(*chr, "");

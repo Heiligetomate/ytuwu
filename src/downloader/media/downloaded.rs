@@ -7,6 +7,7 @@ use crate::{
     downloader::streams::{AnyStream, MediaStream, Thumbnail},
     error::YtuwuError,
     metadata::MediaMetadata,
+    name_trimmer::default_trim,
 };
 
 #[derive(Debug)]
@@ -40,12 +41,12 @@ impl<M: MediaStream + Debug> DwnMedia<M> {
 
     pub fn save_media_stream(&self, path: &Path) -> Result<()> {
         self.stream
-            .save(path, &self.metadata.title)
+            .save(path, default_trim(&self.metadata.title).as_str())
     }
 
     pub fn save_thumbnail(&self, path: &Path) -> Result<()> {
         self.get_thumbnail()?
-            .save(path, &self.metadata.title)?;
+            .save(path, default_trim(&self.metadata.title).as_str())?;
         Ok(())
     }
 
@@ -73,7 +74,7 @@ impl DwnBundleMedia {
 
     pub fn save_thumbnail(&self, path: &Path) -> Result<()> {
         self.get_thumbnail()?
-            .save(path, &self.metadata.title)
+            .save(path, default_trim(&self.metadata.title).as_str())
     }
 
     pub fn save_media_streams(&self, path: &Path) -> Result<()> {
@@ -85,7 +86,8 @@ impl DwnBundleMedia {
                 .as_str()
                 .to_owned();
             let count = seen.entry(mime_type).or_insert(0);
-            let name = if *count == 0 { self.metadata.title.clone() } else { format!("{}-{}", self.metadata.title, count) };
+            let title = default_trim(&self.metadata.title);
+            let name = if *count == 0 { title } else { format!("{}-{}", title, count) };
             *count += 1;
             dyn_stream.save(path, &name)?;
         }
