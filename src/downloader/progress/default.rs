@@ -1,29 +1,12 @@
-use std::{collections::HashMap, fmt::Debug, sync::Mutex};
+use std::{collections::HashMap, sync::Mutex};
 
 use uuid::Uuid;
 
-pub trait HandleProgress: Send + Sync + Debug {
-    fn on_download_start(&self, title: &str, id: Uuid, total_chunks: u32);
-    fn on_chunk_downloaded(&self, id: Uuid, done: u32);
-    fn on_download_complete(&self, id: Uuid);
-    fn on_playlist_started(&self, id: Uuid, songs: Vec<&str>);
-    fn on_playlist_downloaded(&self, id: Uuid);
-}
+use crate::downloader::progress::handler::HandleProgress;
 
 #[derive(Debug)]
 pub struct DefaultProgressHandler {
     ids: Mutex<HashMap<Uuid, (String, u32, u32)>>,
-}
-
-#[derive(Debug)]
-pub struct EmptyHandler {}
-
-impl HandleProgress for EmptyHandler {
-    fn on_download_start(&self, _: &str, _: Uuid, _: u32) {}
-    fn on_chunk_downloaded(&self, _: Uuid, _: u32) {}
-    fn on_download_complete(&self, _: Uuid) {}
-    fn on_playlist_started(&self, _: Uuid, _: Vec<&str>) {}
-    fn on_playlist_downloaded(&self, _: Uuid) {}
 }
 
 impl HandleProgress for DefaultProgressHandler {

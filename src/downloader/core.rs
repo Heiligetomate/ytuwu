@@ -1,7 +1,7 @@
 use std::{fmt::Debug, sync::Arc};
 
 use crate::{
-    DwnBundleList, DwnBundleMedia, DwnMedia, Dwnlist, HandleProgress,
+    DwnBundleList, DwnBundleMedia, DwnMedia, Dwnlist,
     downloader::{
         channel::{browse::ChannelBrowse, downloaded::DwnChannel},
         media::{browse::MediaBrowse, extracted_streams::ThumbRes},
@@ -11,6 +11,7 @@ use crate::{
     error::Result,
     id_resolver::types::{BrowseId, VideoId},
     itags::{AnyItag, Itag},
+    progress::HandleProgress,
     streams::{MediaStream, Thumbnail},
     types::{ChannelId, ShortId},
 };

@@ -9,5 +9,4 @@ pub mod playlist;
 pub mod streams;
 mod util;
 
-pub(self) mod progress;
-pub use progress::HandleProgress;
+pub mod progress;
