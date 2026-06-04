@@ -23,8 +23,6 @@ A rust lib for using the internal youtube api to downlaod media/playlists/channe
 - logging 
 - publish on crates io 
 - documentation
-- playlist ids and album ids should be one thing, not two seperate things (makes the .get_id() thing annoying)
-- channel ids and channel name ids should be one thing, not two seperate things (makes the .get_id() thing annoying)
 
 ## Example usages: 
 
