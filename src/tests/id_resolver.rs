@@ -1,7 +1,6 @@
 use crate::{
     GetId, Id, IdCollection,
-    id_resolver::browse_id::BrowseId,
-    types::{AlbumId, ChannelId, PlaylistId, VideoId},
+    types::{AlbumId, BrowseId, ChannelId, PlaylistId, VideoId},
 };
 
 #[test]

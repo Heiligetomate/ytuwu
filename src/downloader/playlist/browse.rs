@@ -3,10 +3,10 @@ use std::{fmt::Debug, sync::Arc};
 use crate::{
     Downloader, Result,
     downloader::{media::browse::MediaBrowse, playlist::content_browse::PlaylistContentBrowse},
-    id_resolver::browse_id::BrowseId,
     models::response::BrowseResponse,
     name_trimmer,
     request::core::api_request,
+    types::BrowseId,
 };
 
 #[derive(Debug)]

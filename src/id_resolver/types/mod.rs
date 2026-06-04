@@ -1,4 +1,5 @@
 mod album;
+mod browse;
 mod channel;
 mod channel_name;
 pub(self) mod channel_playlist;
@@ -8,6 +9,7 @@ mod short;
 mod video;
 
 pub use album::AlbumId;
+pub use browse::BrowseId;
 pub use channel::ChannelId;
 pub use channel_playlist::ChannelPlaylistId;
 pub use playlist::PlaylistId;

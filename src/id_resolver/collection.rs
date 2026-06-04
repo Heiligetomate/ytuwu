@@ -5,9 +5,8 @@ use crate::{
     Result,
     error::YtuwuError,
     id_resolver::{
-        browse_id::BrowseId,
         id::Id,
-        types::{AlbumId, ChannelId, ShortId, VideoId},
+        types::{AlbumId, BrowseId, ChannelId, ShortId, VideoId},
     },
     types::PlaylistId,
 };

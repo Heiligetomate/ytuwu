@@ -3,7 +3,7 @@ use std::{fmt::Debug, sync::Arc};
 use crate::{
     Downloader, Dwnlist, Result,
     downloader::{channel::downloaded::DwnChannel, media::downloaded::DwnMedia, playlist::browse::PlaylistBrowse, streams::MediaStream},
-    id_resolver::{browse_id::BrowseId, types::ChannelPlaylistId},
+    id_resolver::types::{BrowseId, ChannelPlaylistId},
     itags::Itag,
 };
 

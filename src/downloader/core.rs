@@ -9,7 +9,7 @@ use crate::{
         progress::{DefaultProgressHandler, EmptyHandler},
     },
     error::Result,
-    id_resolver::{browse_id::BrowseId, types::VideoId},
+    id_resolver::types::{BrowseId, VideoId},
     itags::{AnyItag, Itag},
     streams::{MediaStream, Thumbnail},
     types::{ChannelId, ShortId},
