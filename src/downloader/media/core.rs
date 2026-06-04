@@ -3,9 +3,11 @@ use std::{fmt::Debug, sync::Arc};
 use crate::{
     Downloader, DwnBundleMedia, DwnMedia,
     downloader::{
-        media::extracted_streams::{ExtractedStreams, ExtractedThumbnails, ThumbRes},
+        media::{
+            extracted_streams::{ExtractedStreams, ExtractedThumbnails, ThumbRes},
+            util::extract_size,
+        },
         streams::{AnyStream, MediaStream, Thumbnail},
-        util::*,
     },
     error::Result,
     itags::{AnyItag, Itag},
