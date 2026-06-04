@@ -1,10 +1,13 @@
+use serde::{Deserialize, Serialize};
+
 use crate::{
-    Id,
+    GetId, Id, IdCollection, Result,
     error::YtuwuError,
     request::clients::dummy::DummyClient,
     types::{AlbumId, ChannelPlaylistId, PlaylistId},
 };
 
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub enum BrowseId {
     PlaylistId(PlaylistId),
     ChannelBrowseId(ChannelPlaylistId),
@@ -28,7 +31,11 @@ impl Id for BrowseId {
     }
 
     fn get_id(self) -> String {
-        self.get_id().to_owned()
+        match self {
+            Self::PlaylistId(id) => id.get_id(),
+            Self::AlbumId(id) => id.get_id(),
+            Self::ChannelBrowseId(id) => id.get_id(),
+        }
     }
 
     fn as_str(&self) -> &str {
@@ -37,5 +44,14 @@ impl Id for BrowseId {
             Self::AlbumId(id) => id.as_str(),
             Self::ChannelBrowseId(id) => id.as_str(),
         }
+    }
+}
+
+impl GetId<BrowseId> for IdCollection {
+    fn get_id(&self) -> Result<BrowseId> {
+        Ok(self
+            .browse_id
+            .clone()
+            .ok_or(YtuwuError::NoIdFound)?)
     }
 }

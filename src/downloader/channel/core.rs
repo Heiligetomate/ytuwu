@@ -3,7 +3,7 @@ use std::{fmt::Debug, sync::Arc};
 use crate::{
     Downloader, Dwnlist, Result,
     downloader::{channel::downloaded::DwnChannel, media::downloaded::DwnMedia, playlist::browse::PlaylistBrowse, streams::MediaStream},
-    id_resolver::types::ChannelPlaylistId,
+    id_resolver::{browse_id::BrowseId, types::ChannelPlaylistId},
     itags::Itag,
 };
 
@@ -28,7 +28,7 @@ impl ChannelContentBrowse {
 
         for single in self.singles.iter() {
             let downloader = Arc::clone(&self.downloader);
-            browse_tasks.push(tokio::spawn(PlaylistBrowse::new(single.clone(), downloader).browse()));
+            browse_tasks.push(tokio::spawn(PlaylistBrowse::new(BrowseId::ChannelBrowseId(single.clone()), downloader).browse()));
         }
 
         let mut browse_results = Vec::new();
@@ -70,7 +70,7 @@ impl ChannelContentBrowse {
 
         for ep in self.eps.drain(..) {
             let downloader = Arc::clone(&self.downloader);
-            let ep = PlaylistBrowse::new(ep, downloader)
+            let ep = PlaylistBrowse::new(BrowseId::ChannelBrowseId(ep), downloader)
                 .browse()
                 .await?
                 .browse()
@@ -81,7 +81,7 @@ impl ChannelContentBrowse {
 
         for album in self.albums.drain(..) {
             let downloader = Arc::clone(&self.downloader);
-            let album = PlaylistBrowse::new(album, downloader)
+            let album = PlaylistBrowse::new(BrowseId::ChannelBrowseId(album), downloader)
                 .browse()
                 .await?
                 .browse()

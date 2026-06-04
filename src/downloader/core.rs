@@ -9,10 +9,10 @@ use crate::{
         progress::{DefaultProgressHandler, EmptyHandler},
     },
     error::Result,
-    id_resolver::types::{AlbumId, VideoId},
+    id_resolver::{browse_id::BrowseId, types::VideoId},
     itags::{AnyItag, Itag},
     streams::{MediaStream, Thumbnail},
-    types::{ChannelId, PlaylistId, ShortId},
+    types::{ChannelId, ShortId},
 };
 use reqwest::Client;
 use tokio::sync::Mutex;
@@ -80,7 +80,7 @@ impl Downloader {
             .await?)
     }
 
-    pub async fn download_album<I>(self: Arc<Self>, browse_id: AlbumId, itag: I, thumbnail_resolution: Option<ThumbRes>) -> Result<Dwnlist<I::Stream>>
+    pub async fn download_album<I>(self: Arc<Self>, browse_id: BrowseId, itag: I, thumbnail_resolution: Option<ThumbRes>) -> Result<Dwnlist<I::Stream>>
     where
         I: Itag + Copy + Debug + Send + 'static,
         I::Stream: MediaStream + Debug + Send,
@@ -94,7 +94,7 @@ impl Downloader {
             .await?)
     }
 
-    pub async fn download_bundle_album(self: Arc<Self>, browse_id: AlbumId, itags: Vec<AnyItag>, thumbnail_resolution: Option<ThumbRes>) -> Result<DwnBundleList> {
+    pub async fn download_bundle_album(self: Arc<Self>, browse_id: BrowseId, itags: Vec<AnyItag>, thumbnail_resolution: Option<ThumbRes>) -> Result<DwnBundleList> {
         Ok(PlaylistBrowse::new(browse_id, self)
             .browse()
             .await?
@@ -129,17 +129,17 @@ impl Downloader {
             .await?)
     }
 
-    pub async fn download_playlist<I>(self: Arc<Self>, playlist_id: PlaylistId, itag: I) -> Result<Dwnlist<I::Stream>>
-    where
-        I: Itag + Copy + Debug + Send + 'static,
-        I::Stream: MediaStream + Debug + Send,
-    {
-        Ok(PlaylistBrowse::new(playlist_id, self)
-            .browse()
-            .await?
-            .browse()
-            .await?
-            .download(itag, None)
-            .await?)
-    }
+    // pub async fn download_playlist<I>(self: Arc<Self>, playlist_id: PlaylistId, itag: I) -> Result<Dwnlist<I::Stream>>
+    // where
+    //     I: Itag + Copy + Debug + Send + 'static,
+    //     I::Stream: MediaStream + Debug + Send,
+    // {
+    //     Ok(PlaylistBrowse::new(playlist_id, self)
+    //         .browse()
+    //         .await?
+    //         .browse()
+    //         .await?
+    //         .download(itag, None)
+    //         .await?)
+    // }
 }

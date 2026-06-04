@@ -1,5 +1,6 @@
 use crate::{
     GetId, Id, IdCollection,
+    id_resolver::browse_id::BrowseId,
     types::{AlbumId, ChannelId, PlaylistId, VideoId},
 };
 
@@ -24,12 +25,12 @@ fn album_urls() {
         "https://m.youtube.com/playlist?list=OLAK5uy_kmI7lE04T73fi905AhF6ml8E4WShlKfNs",
     ];
 
-    let album_id = AlbumId::new("OLAK5uy_kmI7lE04T73fi905AhF6ml8E4WShlKfNs").unwrap();
+    let album_id = BrowseId::AlbumId(AlbumId::new("OLAK5uy_kmI7lE04T73fi905AhF6ml8E4WShlKfNs").unwrap());
 
     assert_eq!(album_id.as_str(), "VLOLAK5uy_kmI7lE04T73fi905AhF6ml8E4WShlKfNs");
 
     for url in valid_urls.iter() {
-        assert_eq!(GetId::<AlbumId>::get_id(&IdCollection::from_url(*url).unwrap()).unwrap(), album_id);
+        assert_eq!(GetId::<BrowseId>::get_id(&IdCollection::from_url(*url).unwrap()).unwrap(), album_id);
     }
 }
 

@@ -1,35 +1,50 @@
 use std::{fmt::Debug, sync::Arc};
 
-use serde::de::DeserializeOwned;
-
 use crate::{
     Downloader, Result,
     downloader::{media::browse::MediaBrowse, playlist::content_browse::PlaylistContentBrowse},
-    id_resolver::{browse_id::BrowseId, id::Id},
+    id_resolver::browse_id::BrowseId,
     models::response::BrowseResponse,
     name_trimmer,
-    request::{clients::client::ClientWithHeaders, core::api_request},
+    request::core::api_request,
 };
 
 #[derive(Debug)]
-pub struct PlaylistBrowse<B: BrowseId> {
-    browse_id: B,
+pub struct PlaylistBrowse {
+    browse_id: BrowseId,
     downloader: Arc<Downloader>,
 }
 
-impl<B: BrowseId> PlaylistBrowse<B>
-where
-    <<B as Id>::Client as ClientWithHeaders>::Response: DeserializeOwned + Debug,
-    <<B as Id>::Client as ClientWithHeaders>::Response: BrowseResponse,
-{
-    pub fn new(id: B, downloader: Arc<Downloader>) -> Self {
+impl PlaylistBrowse {
+    pub fn new(id: BrowseId, downloader: Arc<Downloader>) -> Self {
         Self { browse_id: id, downloader }
     }
+
     pub async fn browse(self) -> Result<PlaylistContentBrowse> {
-        let response = api_request(&self.browse_id, &self.downloader.client).await?;
-        let mut ids = response.get_video_ids()?;
-        let title = response.get_album_title()?.to_owned();
+        let (mut ids, title) = match self.browse_id {
+            BrowseId::AlbumId(id) => {
+                let response = api_request(&id, &self.downloader.client).await?;
+                let ids = response.get_video_ids()?;
+                let title = response.get_album_title()?.to_owned();
+                (ids, title)
+            }
+            BrowseId::PlaylistId(id) => {
+                let response = api_request(&id, &self.downloader.client).await?;
+                let ids = response.get_video_ids()?;
+                let title = response.get_album_title()?.to_owned();
+                (ids, title)
+            }
+
+            BrowseId::ChannelBrowseId(id) => {
+                let response = api_request(&id, &self.downloader.client).await?;
+                let ids = response.get_video_ids()?;
+                let title = response.get_album_title()?.to_owned();
+                (ids, title)
+            }
+        };
+
         let trimmed_title = name_trimmer::trim(title, "-");
+
         let media: Vec<MediaBrowse> = ids
             .drain(..)
             .map(|id| MediaBrowse::new(id))

@@ -5,6 +5,7 @@ use crate::{
     Result,
     error::YtuwuError,
     id_resolver::{
+        browse_id::BrowseId,
         id::Id,
         types::{AlbumId, ChannelId, ShortId, VideoId},
     },
@@ -14,10 +15,9 @@ use crate::{
 #[derive(Debug, Serialize, Deserialize)]
 pub struct IdCollection {
     pub(super) video_id: Option<VideoId>,
-    pub(super) album_id: Option<AlbumId>,
-    pub(super) playlist_id: Option<PlaylistId>,
     pub(super) short_id: Option<ShortId>,
     pub(super) channel_id: Option<ChannelId>,
+    pub(super) browse_id: Option<BrowseId>,
 }
 
 enum Host {
@@ -44,7 +44,7 @@ impl Host {
 
 impl IdCollection {
     pub fn is_empty(&self) -> bool {
-        return self.video_id.is_none() && self.album_id.is_none() && self.channel_id.is_none() && self.short_id.is_none() && self.playlist_id.is_none();
+        return self.video_id.is_none() && self.browse_id.is_none() && self.channel_id.is_none() && self.short_id.is_none();
     }
 
     pub fn from_url<T: Into<String>>(raw_url: T) -> Result<Self> {
@@ -121,7 +121,7 @@ impl IdCollection {
         match first {
             "browse" => {
                 let id = Self::id_from_segments(segments, 1).ok_or(YtuwuError::UrlParsing("no browse id found"))?;
-                Ok(Self::with_browse(id)?)
+                Ok(Self::handle_browse(id)?)
             }
 
             "channel" => {
@@ -168,30 +168,29 @@ impl IdCollection {
     fn empty() -> Self {
         Self {
             video_id: None,
-            album_id: None,
             channel_id: None,
+            browse_id: None,
             short_id: None,
-            playlist_id: None,
         }
     }
 
     fn change_browses(&mut self, raw: &str) -> Result<()> {
         if raw.starts_with("RDCLAK5uy") || raw.starts_with("PL") {
-            self.playlist_id = Some(PlaylistId::new(raw)?)
+            self.browse_id = Some(BrowseId::PlaylistId(PlaylistId::new(raw)?))
         } else if raw.starts_with("OLAK5uy") {
-            self.album_id = Some(AlbumId::new(raw)?)
+            self.browse_id = Some(BrowseId::AlbumId(AlbumId::new(raw)?))
         }
 
         Ok(())
     }
 
-    fn with_browse(id: &str) -> Result<Self> {
+    fn handle_browse(id: &str) -> Result<Self> {
         if id.starts_with("UC") || id.starts_with("MPADUC") {
             Ok(Self::with_channel(ChannelId::new(id)?))
         } else if id.starts_with("RDCLAK5uy") || id.starts_with("PL") {
-            Ok(Self::with_playlist(PlaylistId::new(id)?))
+            Ok(Self::with_browse(BrowseId::PlaylistId(PlaylistId::new(id)?)))
         } else if id.starts_with("OLAK5uy") {
-            Ok(Self::with_album(AlbumId::new(id)?))
+            Ok(Self::with_browse(BrowseId::AlbumId(AlbumId::new(id)?)))
         } else {
             Err(YtuwuError::NoIdFound)
         }
@@ -201,22 +200,12 @@ impl IdCollection {
         Self { video_id: Some(id), ..Self::empty() }
     }
 
-    fn with_album(id: AlbumId) -> Self {
-        Self { album_id: Some(id), ..Self::empty() }
-    }
-
-    fn with_playlist(id: PlaylistId) -> Self {
-        Self {
-            playlist_id: Some(id),
-            ..Self::empty()
-        }
+    fn with_browse(id: BrowseId) -> Self {
+        Self { browse_id: Some(id), ..Self::empty() }
     }
 
     fn with_channel(id: ChannelId) -> Self {
-        Self {
-            channel_id: Some(id),
-            ..Self::empty()
-        }
+        Self { channel_id: Some(id), ..Self::empty() }
     }
 
     fn with_short(id: ShortId) -> Self {
