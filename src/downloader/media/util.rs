@@ -1,6 +1,6 @@
 use crate::error::{Result, YtuwuError};
 
-pub fn extract_size(url: &str) -> Result<u32> {
+pub(super) fn extract_size(url: &str) -> Result<u32> {
     let size: u32 = url
         .split("clen=")
         .nth(1)

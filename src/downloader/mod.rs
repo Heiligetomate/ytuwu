@@ -7,6 +7,5 @@ pub mod media;
 pub mod metadata;
 pub mod playlist;
 pub mod streams;
-mod util;
 
 pub mod progress;

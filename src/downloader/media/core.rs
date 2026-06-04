@@ -24,8 +24,8 @@ const MAX_TASKS: usize = 8;
 pub struct Media {
     downloader: Arc<Downloader>,
     id: Uuid,
-    media_streams: ExtractedStreams,
-    thumbnail_streams: ExtractedThumbnails,
+    pub(super) media_streams: ExtractedStreams,
+    pub(super) thumbnail_streams: ExtractedThumbnails,
     pub metadata: MediaMetadata,
 }
 
