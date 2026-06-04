@@ -53,7 +53,7 @@ impl DefaultProgressHandler {
         let ids = self.ids.lock().unwrap();
         println!("Downloading {} track(s)\n", ids.len());
         for (title, done, total) in ids.values() {
-            let percentage = if *total == 0 { 0u32 } else { ((*done as f32 / *total as f32) * 100.0).round() as u32 };
+            let percentage = if *total == 0 { 0 } else { ((*done as f32 / *total as f32) * 100.0).round() as u32 };
             let filled = (percentage * BAR_LENGTH / 100) as usize;
             let empty = (BAR_LENGTH as usize).saturating_sub(filled);
             let bar = format!("[{}{}]", COMPLETED.repeat(filled), NOT_COMPLETED.repeat(empty));
