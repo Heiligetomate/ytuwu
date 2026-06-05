@@ -4,8 +4,9 @@ mod core;
 mod long_video;
 mod muxed;
 mod short_video;
+#[cfg(test)]
+mod test;
 mod thumbnail;
-
 pub(self) mod util;
 
 pub use any::AnyStream;
