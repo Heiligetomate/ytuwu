@@ -2,8 +2,12 @@
 
 A rust lib for using the internal youtube api to downlaod media/playlists/channels
 
-## features: 
+## warning: 
+**This library uses YouTube's internal API and violates YouTube's Terms of Service. I take no responsibility if you get banned or run into trouble as a result of using this library.**
 
+However, I've never heard of anyone actually getting in trouble for using the internal YouTube API in violation of the Terms of Service.
+
+## features: 
 - download channels/artists 
 - download playlists/albums 
 - download videos/songs
