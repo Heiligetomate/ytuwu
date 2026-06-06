@@ -29,6 +29,10 @@ impl<M: MediaStream + Debug> DwnMedia<M> {
         Self { metadata, stream, thumbnail }
     }
 
+    fn to_any(self) -> AnyStream {
+        self.stream.to_any()
+    }
+
     pub fn bytes(&self) -> &BytesMut {
         self.stream.get_data()
     }
@@ -64,6 +68,34 @@ impl<M: MediaStream + Debug> DwnMedia<M> {
 impl DwnBundleMedia {
     pub fn new(streams: Vec<AnyStream>, metadata: MediaMetadata, thumbnail: Option<Thumbnail>) -> Self {
         Self { thumbnail, streams, metadata }
+    }
+
+    pub fn from_dwn_media<M1, M2>(media_one: DwnMedia<M1>, media_two: DwnMedia<M2>) -> Self
+    where
+        M1: MediaStream + Debug,
+        M2: MediaStream + Debug,
+    {
+        let DwnMedia {
+            thumbnail: thumb_one,
+            stream: stream_one,
+            ..
+        } = media_one;
+
+        let DwnMedia {
+            thumbnail: thumb_two,
+            stream: stream_two,
+            metadata,
+        } = media_two;
+
+        let thumbnail = thumb_one.or(thumb_two);
+        let stream_one = stream_one.to_any();
+        let stream_two = stream_two.to_any();
+
+        Self {
+            streams: vec![stream_one, stream_two],
+            thumbnail,
+            metadata,
+        }
     }
 
     pub fn get_thumbnail(&self) -> Result<&Thumbnail> {
