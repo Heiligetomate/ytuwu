@@ -1,8 +1,13 @@
 use std::{fmt::Debug, sync::Arc};
 
 use crate::{
-    Downloader, DwnBundelChannel, Dwnlist, Result,
-    downloader::{channel::downloaded::DwnChannel, media::downloaded::DwnMedia, playlist::browse::PlaylistBrowse, streams::MediaStream},
+    Downloader, DwnBundelChannel, DwnBundleList, DwnBundleMedia, Dwnlist, Result,
+    downloader::{
+        channel::downloaded::DwnChannel,
+        media::{core::Media, downloaded::DwnMedia},
+        playlist::browse::PlaylistBrowse,
+        streams::MediaStream,
+    },
     id_resolver::types::{BrowseId, ChannelPlaylistId},
     itags::{AnyItag, Itag},
 };
@@ -56,6 +61,49 @@ impl ChannelContentBrowse {
         Ok(downloaded)
     }
 
+    pub async fn download_bundle_singles(&self, itags: &[AnyItag]) -> Result<Vec<DwnBundleMedia>> {
+        let mut browse_tasks = Vec::new();
+        let mut content_browse_tasks = Vec::new();
+        let mut download_tasks = Vec::new();
+        let mut downloaded = Vec::new();
+
+        for single in self.singles.iter() {
+            let downloader = Arc::clone(&self.downloader);
+            browse_tasks.push(tokio::spawn(PlaylistBrowse::new(BrowseId::ChannelBrowseId(single.clone()), downloader).browse()));
+        }
+
+        let mut browse_results = Vec::new();
+        for task in browse_tasks {
+            browse_results.push(task.await??);
+        }
+
+        for result in browse_results {
+            content_browse_tasks.push(tokio::spawn(async move { result.browse().await }));
+        }
+
+        let mut content_browse_results = Vec::new();
+        for task in content_browse_tasks {
+            content_browse_results.push(task.await??.get_first()?);
+        }
+
+        let itags: Arc<[AnyItag]> = itags.into();
+
+        for media in content_browse_results {
+            let itags = Arc::clone(&itags);
+            download_tasks.push(tokio::spawn(async move {
+                media
+                    .download_bundle(&itags, None)
+                    .await
+            }));
+        }
+
+        for task in download_tasks {
+            downloaded.push(task.await??);
+        }
+
+        Ok(downloaded)
+    }
+
     pub async fn download_eps<I>(&self, itag: I) -> Result<Vec<Dwnlist<I::Stream>>>
     where
         I: Itag + Copy + Debug + Send + 'static,
@@ -73,6 +121,62 @@ impl ChannelContentBrowse {
                 .await?
                 .download(itag, None);
             ep_tasks.push(tokio::spawn(ep));
+        }
+
+        for task in ep_tasks {
+            downloaded_eps.push(task.await??);
+        }
+
+        Ok(downloaded_eps)
+    }
+
+    pub async fn download_bundle_eps(&self, itags: &[AnyItag]) -> Result<Vec<DwnBundleList>> {
+        let mut ep_tasks = Vec::new();
+        let mut downloaded_eps = Vec::new();
+
+        let itags: Arc<[AnyItag]> = itags.into();
+
+        for ep in self.eps.iter() {
+            let itags = Arc::clone(&itags);
+            let downloader = Arc::clone(&self.downloader);
+            let ep = ep.clone();
+            ep_tasks.push(tokio::spawn(async move {
+                PlaylistBrowse::new(BrowseId::ChannelBrowseId(ep), downloader)
+                    .browse()
+                    .await?
+                    .browse()
+                    .await?
+                    .download_bundle(&itags, None)
+                    .await
+            }));
+        }
+
+        for task in ep_tasks {
+            downloaded_eps.push(task.await??);
+        }
+
+        Ok(downloaded_eps)
+    }
+
+    pub async fn download_bundle_albums(&self, itags: &[AnyItag]) -> Result<Vec<DwnBundleList>> {
+        let mut ep_tasks = Vec::new();
+        let mut downloaded_eps = Vec::new();
+
+        let itags: Arc<[AnyItag]> = itags.into();
+
+        for ep in self.albums.iter() {
+            let itags = Arc::clone(&itags);
+            let downloader = Arc::clone(&self.downloader);
+            let ep = ep.clone();
+            ep_tasks.push(tokio::spawn(async move {
+                PlaylistBrowse::new(BrowseId::ChannelBrowseId(ep), downloader)
+                    .browse()
+                    .await?
+                    .browse()
+                    .await?
+                    .download_bundle(&itags, None)
+                    .await
+            }));
         }
 
         for task in ep_tasks {
@@ -120,7 +224,17 @@ impl ChannelContentBrowse {
         })
     }
 
-    // pub async fn download_bundle(self, itags: Vec<AnyItag>) -> Result<DwnBundelChannel> {
-    //
-    // }
+    pub async fn download_bundle(self, itags: &[AnyItag]) -> Result<DwnBundelChannel> {
+        Ok(DwnBundelChannel {
+            albums: self
+                .download_bundle_albums(itags)
+                .await?,
+            eps: self.download_bundle_eps(itags).await?,
+            singles: self
+                .download_bundle_singles(itags)
+                .await?,
+        })
+    }
 }
+
+// TODO: redundant code

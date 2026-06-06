@@ -1,7 +1,7 @@
 use std::{fmt::Debug, sync::Arc};
 
 use crate::{
-    DwnBundleList, DwnBundleMedia, DwnMedia, Dwnlist,
+    DwnBundelChannel, DwnBundleList, DwnBundleMedia, DwnMedia, Dwnlist,
     downloader::{
         channel::{browse::ChannelBrowse, downloaded::DwnChannel},
         media::{browse::MediaBrowse, extracted_streams::ThumbRes},
@@ -127,6 +127,15 @@ impl Downloader {
             .browse()
             .await?
             .download(itag)
+            .await?)
+    }
+
+    pub async fn download_channel_bundle(self: Arc<Self>, channel_id: ChannelId, itags: &[AnyItag]) -> Result<DwnBundelChannel> {
+        Ok(ChannelBrowse::new(channel_id, self)
+            .await?
+            .browse()
+            .await?
+            .download_bundle(itags)
             .await?)
     }
 }
