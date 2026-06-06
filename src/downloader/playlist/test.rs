@@ -1,11 +1,8 @@
-use std::{fs::read_dir, path::PathBuf, sync::Arc};
+use std::sync::Arc;
 
 use crate::{
     Downloader, Id, ThumbRes,
-    downloader::{
-        media::{browse::MediaBrowse, core::Media},
-        playlist::browse::PlaylistBrowse,
-    },
+    downloader::{media::browse::MediaBrowse, playlist::browse::PlaylistBrowse},
     itags::{AnyItag, AudioItag, VideoItag},
     types::{AlbumId, BrowseId, VideoId},
 };
@@ -187,7 +184,7 @@ async fn test_download_playlist_streams() {
         .browse()
         .await
         .unwrap()
-        .download_streams(vec![AnyItag::Audio(AudioItag::AacLow), AnyItag::LongVideo(VideoItag::MP4144p)], Some(ThumbRes::Low))
+        .download_streams(&[AnyItag::Audio(AudioItag::AacLow), AnyItag::LongVideo(VideoItag::MP4144p)], Some(ThumbRes::Low))
         .await
         .unwrap();
 

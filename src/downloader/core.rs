@@ -73,11 +73,11 @@ impl Downloader {
             .await?)
     }
 
-    pub async fn download_media_bundle(self: Arc<Self>, video_id: VideoId, itags: Vec<AnyItag>, thumbnail_resolution: Option<ThumbRes>) -> Result<DwnBundleMedia> {
+    pub async fn download_media_bundle(self: Arc<Self>, video_id: VideoId, itags: &[AnyItag], thumbnail_resolution: Option<ThumbRes>) -> Result<DwnBundleMedia> {
         Ok(MediaBrowse::new(video_id)
             .browse(self)
             .await?
-            .download_streams(itags, thumbnail_resolution)
+            .download_bundle(itags, thumbnail_resolution)
             .await?)
     }
 
@@ -95,7 +95,7 @@ impl Downloader {
             .await?)
     }
 
-    pub async fn download_bundle_album(self: Arc<Self>, browse_id: BrowseId, itags: Vec<AnyItag>, thumbnail_resolution: Option<ThumbRes>) -> Result<DwnBundleList> {
+    pub async fn download_bundle_album(self: Arc<Self>, browse_id: BrowseId, itags: &[AnyItag], thumbnail_resolution: Option<ThumbRes>) -> Result<DwnBundleList> {
         Ok(PlaylistBrowse::new(browse_id, self)
             .browse()
             .await?

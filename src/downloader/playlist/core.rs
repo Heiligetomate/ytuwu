@@ -78,15 +78,20 @@ impl Playlist {
         Ok(Dwnlist::new(downloaded, &self.title))
     }
 
-    pub async fn download_streams(mut self, itags: Vec<AnyItag>, thumb_res: Option<ThumbRes>) -> Result<DwnBundleList> {
+    pub async fn download_streams(mut self, itags: &[AnyItag], thumb_res: Option<ThumbRes>) -> Result<DwnBundleList> {
         let mut downloaded = Vec::new();
 
         let mut tasks = Vec::new();
 
+        let itags: Arc<[AnyItag]> = itags.into();
+
         for item in self.media.drain(..) {
             let thumb_res = thumb_res.clone();
-            let itags = itags.clone();
-            tasks.push(tokio::spawn(item.download_bundle(itags, thumb_res)));
+            let itags = Arc::clone(&itags);
+            tasks.push(tokio::spawn(async move {
+                item.download_bundle(&itags, thumb_res)
+                    .await
+            }));
         }
 
         for task in tasks {
