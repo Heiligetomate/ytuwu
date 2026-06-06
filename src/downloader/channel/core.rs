@@ -2,12 +2,7 @@ use std::{fmt::Debug, sync::Arc};
 
 use crate::{
     Downloader, DwnBundelChannel, DwnBundleList, DwnBundleMedia, Dwnlist, Result,
-    downloader::{
-        channel::downloaded::DwnChannel,
-        media::{core::Media, downloaded::DwnMedia},
-        playlist::browse::PlaylistBrowse,
-        streams::MediaStream,
-    },
+    downloader::{channel::downloaded::DwnChannel, media::downloaded::DwnMedia, playlist::browse::PlaylistBrowse, streams::MediaStream},
     id_resolver::types::{BrowseId, ChannelPlaylistId},
     itags::{AnyItag, Itag},
 };
