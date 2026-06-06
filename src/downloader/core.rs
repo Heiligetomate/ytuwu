@@ -129,18 +129,4 @@ impl Downloader {
             .download(itag)
             .await?)
     }
-
-    // pub async fn download_playlist<I>(self: Arc<Self>, playlist_id: PlaylistId, itag: I) -> Result<Dwnlist<I::Stream>>
-    // where
-    //     I: Itag + Copy + Debug + Send + 'static,
-    //     I::Stream: MediaStream + Debug + Send,
-    // {
-    //     Ok(PlaylistBrowse::new(playlist_id, self)
-    //         .browse()
-    //         .await?
-    //         .browse()
-    //         .await?
-    //         .download(itag, None)
-    //         .await?)
-    // }
 }
