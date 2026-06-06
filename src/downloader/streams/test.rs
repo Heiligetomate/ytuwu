@@ -3,7 +3,7 @@ use std::fs;
 use bytes::Bytes;
 
 use crate::{
-    downloader::streams::{AudioStream, LongVideoStream, MediaStream, MuxedStream, ShortVideoStream},
+    downloader::streams::{AudioStream, MediaStream, MuxedStream, ShortStream, VideoStream},
     itags::*,
     streams::Thumbnail,
 };
@@ -35,7 +35,7 @@ fn test_save_long_video_stream() {
     let path = dir.path();
     let bytes = Bytes::from("meow");
     let expected_path = path.join("long_video_stream.webm");
-    let mut stream = LongVideoStream::new(VideoItag::WebM1080p);
+    let mut stream = VideoStream::new(VideoItag::WebM1080p);
     stream.push_data(bytes);
     stream
         .save(path, "long_video_stream")
@@ -55,7 +55,7 @@ fn test_save_short_video_stream() {
     let path = dir.path();
     let bytes = Bytes::from("meow");
     let expected_path = path.join("short_video_stream.mp4");
-    let mut stream = ShortVideoStream::new(ShortItag::High);
+    let mut stream = ShortStream::new(ShortItag::High);
     stream.push_data(bytes);
     stream
         .save(path, "short_video_stream")

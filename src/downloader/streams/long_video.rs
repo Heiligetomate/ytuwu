@@ -13,12 +13,12 @@ use crate::{
 };
 
 #[derive(Debug, PartialEq, Eq)]
-pub struct LongVideoStream {
+pub struct VideoStream {
     data: BytesMut,
     mime_type: MimeType,
 }
 
-impl MediaStream for LongVideoStream {
+impl MediaStream for VideoStream {
     fn get_data(&self) -> &BytesMut {
         &self.data
     }
@@ -37,13 +37,13 @@ impl MediaStream for LongVideoStream {
     }
 }
 
-impl From<LongVideoStream> for AnyStream {
-    fn from(s: LongVideoStream) -> Self {
-        AnyStream::LongVideo(s)
+impl From<VideoStream> for AnyStream {
+    fn from(s: VideoStream) -> Self {
+        AnyStream::Video(s)
     }
 }
 
-impl LongVideoStream {
+impl VideoStream {
     pub fn new(itag: VideoItag) -> Self {
         Self {
             data: BytesMut::new(),

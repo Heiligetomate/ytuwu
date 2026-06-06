@@ -9,7 +9,7 @@ use crate::{
     Downloader, DwnBundleMedia, DwnMedia, Id, ThumbRes,
     downloader::{
         media::{browse::MediaBrowse, util::extract_size},
-        streams::{AudioStream, LongVideoStream, MediaStream},
+        streams::{AudioStream, MediaStream, VideoStream},
     },
     itags::*,
     metadata::MediaMetadata,
@@ -201,10 +201,10 @@ fn test_save_bundle_media_full() {
     let mut stream_one = AudioStream::new(AudioItag::OpusLow);
     stream_one.push_data(Bytes::from("meow1"));
 
-    let mut stream_two = LongVideoStream::new(VideoItag::Webm144p);
+    let mut stream_two = VideoStream::new(VideoItag::Webm144p);
     stream_two.push_data(Bytes::from("meow2"));
 
-    let streams = vec![AnyStream::Audio(stream_one), AnyStream::LongVideo(stream_two)];
+    let streams = vec![AnyStream::Audio(stream_one), AnyStream::Video(stream_two)];
     let media = DwnBundleMedia::new(streams, metadata, Some(thumbnail));
 
     let tempdir = tempfile::tempdir().unwrap();
@@ -249,10 +249,10 @@ fn test_save_bundle_media_streams() {
     let mut stream_one = AudioStream::new(AudioItag::OpusLow);
     stream_one.push_data(Bytes::from("meow1"));
 
-    let mut stream_two = LongVideoStream::new(VideoItag::Webm144p);
+    let mut stream_two = VideoStream::new(VideoItag::Webm144p);
     stream_two.push_data(Bytes::from("meow2"));
 
-    let streams = vec![AnyStream::Audio(stream_one), AnyStream::LongVideo(stream_two)];
+    let streams = vec![AnyStream::Audio(stream_one), AnyStream::Video(stream_two)];
     let media = DwnBundleMedia::new(streams, metadata, None);
 
     let tempdir = tempfile::tempdir().unwrap();
@@ -288,13 +288,13 @@ fn test_merge_two_dwn_media() {
     let stream_one = AudioStream::new(AudioItag::AacLow);
     let media_one = DwnMedia::new(stream_one, metadata.clone(), None);
 
-    let stream_two = LongVideoStream::new(VideoItag::MP4240p);
+    let stream_two = VideoStream::new(VideoItag::MP4240p);
     let media_two = DwnMedia::new(stream_two, metadata.clone(), None);
 
     let merged = DwnBundleMedia::from_dwn_medias(vec![media_one.to_any(), media_two.to_any()]).unwrap();
 
     assert_eq!(*merged.streams.get(0).unwrap(), AnyStream::Audio(AudioStream::new(AudioItag::AacLow)));
-    assert_eq!(*merged.streams.get(1).unwrap(), AnyStream::LongVideo(LongVideoStream::new(VideoItag::MP4240p)));
+    assert_eq!(*merged.streams.get(1).unwrap(), AnyStream::Video(VideoStream::new(VideoItag::MP4240p)));
     assert_eq!(merged.thumbnail, None);
     assert_eq!(merged.metadata, metadata);
 }

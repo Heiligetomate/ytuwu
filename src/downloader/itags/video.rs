@@ -4,7 +4,7 @@ use crate::{
     Result,
     downloader::{itags::core::Itag, mime_types::MimeType},
     error::YtuwuError,
-    streams::LongVideoStream,
+    streams::VideoStream,
 };
 
 // TODO: There should be 2k itags etc
@@ -42,7 +42,7 @@ const LONG_VIDEO_ORDER: [VideoItag; 12] = [
 ];
 
 impl Itag for VideoItag {
-    type Stream = LongVideoStream;
+    type Stream = VideoStream;
 
     fn is_highest(&self) -> bool {
         *self == Self::Highest
@@ -104,6 +104,6 @@ impl Itag for VideoItag {
     }
 
     fn new_stream(self) -> Self::Stream {
-        LongVideoStream::new(self)
+        VideoStream::new(self)
     }
 }

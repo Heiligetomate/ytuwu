@@ -136,8 +136,8 @@ impl Media {
         for itag in itags {
             let stream = match itag {
                 AnyItag::Audio(i) => AnyStream::Audio(self.download_stream(*i).await?),
-                AnyItag::LongVideo(i) => AnyStream::LongVideo(self.download_stream(*i).await?),
-                AnyItag::ShortVideo(i) => AnyStream::ShortVideo(self.download_stream(*i).await?),
+                AnyItag::LongVideo(i) => AnyStream::Video(self.download_stream(*i).await?),
+                AnyItag::ShortVideo(i) => AnyStream::Short(self.download_stream(*i).await?),
                 AnyItag::Muxed(i) => AnyStream::Muxed(self.download_stream(*i).await?),
             };
             streams.push(stream);

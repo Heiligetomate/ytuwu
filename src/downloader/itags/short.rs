@@ -4,7 +4,7 @@ use crate::{
     Result,
     downloader::{itags::core::Itag, mime_types::MimeType},
     error::YtuwuError,
-    streams::ShortVideoStream,
+    streams::ShortStream,
 };
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone, Copy)]
@@ -17,7 +17,7 @@ pub enum ShortItag {
 const SHORT_LONG_VIDEO_ORDER: [ShortItag; 2] = [ShortItag::High, ShortItag::Low];
 
 impl Itag for ShortItag {
-    type Stream = ShortVideoStream;
+    type Stream = ShortStream;
 
     fn highest() -> Self {
         Self::High
@@ -58,6 +58,6 @@ impl Itag for ShortItag {
     }
 
     fn new_stream(self) -> Self::Stream {
-        ShortVideoStream::new(self)
+        ShortStream::new(self)
     }
 }
