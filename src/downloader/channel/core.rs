@@ -56,21 +56,17 @@ impl ChannelContentBrowse {
         Ok(downloaded)
     }
 
-    pub async fn download<I>(mut self, itag: I) -> Result<DwnChannel<I::Stream>>
+    pub async fn download_eps<I>(&self, itag: I) -> Result<Vec<Dwnlist<I::Stream>>>
     where
         I: Itag + Copy + Debug + Send + 'static,
         I::Stream: MediaStream + Debug + Send,
     {
-        let downloaded_singles: Vec<DwnMedia<I::Stream>> = self.download_singles(itag).await?;
-        let mut downloaded_eps: Vec<Dwnlist<I::Stream>> = Vec::new();
-        let mut downloaded_albums: Vec<Dwnlist<I::Stream>> = Vec::new();
-
         let mut ep_tasks = Vec::new();
-        let mut album_tasks = Vec::new();
+        let mut downloaded_eps: Vec<Dwnlist<I::Stream>> = Vec::new();
 
-        for ep in self.eps.drain(..) {
+        for ep in self.eps.iter() {
             let downloader = Arc::clone(&self.downloader);
-            let ep = PlaylistBrowse::new(BrowseId::ChannelBrowseId(ep), downloader)
+            let ep = PlaylistBrowse::new(BrowseId::ChannelBrowseId(ep.clone()), downloader)
                 .browse()
                 .await?
                 .browse()
@@ -79,9 +75,24 @@ impl ChannelContentBrowse {
             ep_tasks.push(tokio::spawn(ep));
         }
 
-        for album in self.albums.drain(..) {
+        for task in ep_tasks {
+            downloaded_eps.push(task.await??);
+        }
+
+        Ok(downloaded_eps)
+    }
+
+    pub async fn download_albums<I>(&self, itag: I) -> Result<Vec<Dwnlist<I::Stream>>>
+    where
+        I: Itag + Copy + Debug + Send + 'static,
+        I::Stream: MediaStream + Debug + Send,
+    {
+        let mut album_tasks = Vec::new();
+        let mut downloaded_albums: Vec<Dwnlist<I::Stream>> = Vec::new();
+
+        for album in self.albums.iter() {
             let downloader = Arc::clone(&self.downloader);
-            let album = PlaylistBrowse::new(BrowseId::ChannelBrowseId(album), downloader)
+            let album = PlaylistBrowse::new(BrowseId::ChannelBrowseId(album.clone()), downloader)
                 .browse()
                 .await?
                 .browse()
@@ -90,18 +101,22 @@ impl ChannelContentBrowse {
             album_tasks.push(tokio::spawn(album));
         }
 
-        for task in ep_tasks {
-            downloaded_eps.push(task.await??);
-        }
-
         for task in album_tasks {
             downloaded_albums.push(task.await??);
         }
 
+        Ok(downloaded_albums)
+    }
+
+    pub async fn download<I>(self, itag: I) -> Result<DwnChannel<I::Stream>>
+    where
+        I: Itag + Copy + Debug + Send + 'static,
+        I::Stream: MediaStream + Debug + Send,
+    {
         Ok(DwnChannel {
-            albums: downloaded_albums,
-            eps: downloaded_eps,
-            singles: downloaded_singles,
+            albums: self.download_albums(itag).await?,
+            eps: self.download_eps(itag).await?,
+            singles: self.download_singles(itag).await?,
         })
     }
 }
