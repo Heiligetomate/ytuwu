@@ -129,7 +129,7 @@ impl Media {
         Ok(Thumbnail::new(thumbnail))
     }
 
-    pub async fn download_streams(self, itags: Vec<AnyItag>, thumb_res: Option<ThumbRes>) -> Result<DwnBundleMedia> {
+    pub async fn download_bundle(self, itags: Vec<AnyItag>, thumb_res: Option<ThumbRes>) -> Result<DwnBundleMedia> {
         let mut thumbnail = None;
         let mut streams = vec![];
 

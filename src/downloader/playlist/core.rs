@@ -86,7 +86,7 @@ impl Playlist {
         for item in self.media.drain(..) {
             let thumb_res = thumb_res.clone();
             let itags = itags.clone();
-            tasks.push(tokio::spawn(item.download_streams(itags, thumb_res)));
+            tasks.push(tokio::spawn(item.download_bundle(itags, thumb_res)));
         }
 
         for task in tasks {

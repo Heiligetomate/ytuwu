@@ -62,7 +62,7 @@ async fn test_download_media_streams() {
         .browse(downloader)
         .await
         .unwrap()
-        .download_streams(vec![AnyItag::Audio(AudioItag::OpusLow), AnyItag::LongVideo(VideoItag::MP4144p)], Some(ThumbRes::Low))
+        .download_bundle(vec![AnyItag::Audio(AudioItag::OpusLow), AnyItag::LongVideo(VideoItag::MP4144p)], Some(ThumbRes::Low))
         .await
         .unwrap();
 
