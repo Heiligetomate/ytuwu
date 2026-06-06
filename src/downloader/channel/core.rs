@@ -219,7 +219,7 @@ impl ChannelContentBrowse {
         })
     }
 
-    pub async fn download_bundle(self, itags: &[AnyItag]) -> Result<DwnBundelChannel> {
+    pub async fn download_bundle(&self, itags: &[AnyItag]) -> Result<DwnBundelChannel> {
         Ok(DwnBundelChannel {
             albums: self
                 .download_bundle_albums(itags)
