@@ -12,7 +12,7 @@ use crate::{
     streams::AnyStream,
 };
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct AudioStream {
     data: BytesMut,
     mime_type: MimeType,

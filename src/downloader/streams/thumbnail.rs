@@ -7,7 +7,7 @@ use crate::{
 };
 use bytes::{BufMut, Bytes, BytesMut};
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct Thumbnail {
     data: BytesMut,
 }

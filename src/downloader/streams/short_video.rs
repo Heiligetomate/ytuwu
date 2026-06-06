@@ -15,7 +15,7 @@ use crate::{
     streams::AnyStream,
 };
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct ShortVideoStream {
     data: BytesMut,
     mime_type: MimeType,

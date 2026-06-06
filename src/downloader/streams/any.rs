@@ -3,7 +3,7 @@ use crate::{
     streams::Thumbnail,
 };
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum AnyStream {
     Audio(AudioStream),
     LongVideo(LongVideoStream),
