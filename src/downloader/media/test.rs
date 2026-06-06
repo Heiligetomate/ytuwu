@@ -282,6 +282,24 @@ fn test_save_bundle_media_streams() {
 }
 
 #[test]
+fn test_merge_two_dwn_media() {
+    let metadata = MediaMetadata::new("meow", "kitty");
+
+    let stream_one = AudioStream::new(AudioItag::AacLow);
+    let media_one = DwnMedia::new(stream_one, metadata.clone(), None);
+
+    let stream_two = LongVideoStream::new(VideoItag::MP4240p);
+    let media_two = DwnMedia::new(stream_two, metadata.clone(), None);
+
+    let merged = DwnBundleMedia::from_dwn_media(media_one, media_two);
+
+    assert_eq!(*merged.streams.get(0).unwrap(), AnyStream::Audio(AudioStream::new(AudioItag::AacLow)));
+    assert_eq!(*merged.streams.get(1).unwrap(), AnyStream::LongVideo(LongVideoStream::new(VideoItag::MP4240p)));
+    assert_eq!(merged.thumbnail, None);
+    assert_eq!(merged.metadata, metadata);
+}
+
+#[test]
 fn test_extracts_size_from_url() {
     let url = "https://example.com/videoplayback?expire=123&clen=4096&mime=video%2Fmp4";
     assert_eq!(extract_size(url).unwrap(), 4096);

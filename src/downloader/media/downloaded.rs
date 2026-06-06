@@ -29,10 +29,6 @@ impl<M: MediaStream + Debug> DwnMedia<M> {
         Self { metadata, stream, thumbnail }
     }
 
-    fn to_any(self) -> AnyStream {
-        self.stream.to_any()
-    }
-
     pub fn bytes(&self) -> &BytesMut {
         self.stream.get_data()
     }
