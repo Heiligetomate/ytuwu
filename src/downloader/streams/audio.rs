@@ -9,6 +9,7 @@ use crate::{
         streams::{core::MediaStream, util::save_media_stream},
     },
     itags::{AudioItag, Itag},
+    streams::AnyStream,
 };
 
 #[derive(Debug)]
@@ -18,6 +19,10 @@ pub struct AudioStream {
 }
 
 impl MediaStream for AudioStream {
+    fn to_any(self) -> AnyStream {
+        AnyStream::Audio(self)
+    }
+
     fn get_data(&self) -> &BytesMut {
         &self.data
     }

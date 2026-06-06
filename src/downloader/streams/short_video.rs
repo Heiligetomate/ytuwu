@@ -12,6 +12,7 @@ use crate::{
         },
     },
     itags::{Itag, ShortItag},
+    streams::AnyStream,
 };
 
 #[derive(Debug)]
@@ -23,6 +24,10 @@ pub struct ShortVideoStream {
 impl VideoStream for ShortVideoStream {}
 
 impl MediaStream for ShortVideoStream {
+    fn to_any(self) -> AnyStream {
+        AnyStream::ShortVideo(self)
+    }
+
     fn get_data(&self) -> &BytesMut {
         &self.data
     }

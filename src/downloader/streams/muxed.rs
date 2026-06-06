@@ -9,6 +9,7 @@ use crate::{
         streams::{core::MediaStream, util::save_media_stream},
     },
     itags::{Itag, MuxedItag},
+    streams::AnyStream,
 };
 
 #[derive(Debug)]
@@ -18,6 +19,10 @@ pub struct MuxedStream {
 }
 
 impl MediaStream for MuxedStream {
+    fn to_any(self) -> AnyStream {
+        AnyStream::Muxed(self)
+    }
+
     fn get_data(&self) -> &BytesMut {
         &self.data
     }

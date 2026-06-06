@@ -1,4 +1,7 @@
-use crate::downloader::streams::{audio::AudioStream, core::MediaStream, long_video::LongVideoStream, muxed::MuxedStream, short_video::ShortVideoStream};
+use crate::{
+    downloader::streams::{audio::AudioStream, core::MediaStream, long_video::LongVideoStream, muxed::MuxedStream, short_video::ShortVideoStream},
+    streams::Thumbnail,
+};
 
 #[derive(Debug)]
 pub enum AnyStream {
@@ -6,6 +9,7 @@ pub enum AnyStream {
     LongVideo(LongVideoStream),
     ShortVideo(ShortVideoStream),
     Muxed(MuxedStream),
+    Thumbnail(Thumbnail),
 }
 
 impl AnyStream {
@@ -15,6 +19,7 @@ impl AnyStream {
             Self::LongVideo(s) => Box::new(s),
             Self::ShortVideo(s) => Box::new(s),
             Self::Muxed(s) => Box::new(s),
+            Self::Thumbnail(s) => Box::new(s),
         }
     }
 }

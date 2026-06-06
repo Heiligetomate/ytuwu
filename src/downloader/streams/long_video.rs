@@ -12,6 +12,7 @@ use crate::{
         },
     },
     itags::{Itag, VideoItag},
+    streams::AnyStream,
 };
 
 #[derive(Debug)]
@@ -23,6 +24,10 @@ pub struct LongVideoStream {
 impl VideoStream for LongVideoStream {}
 
 impl MediaStream for LongVideoStream {
+    fn to_any(self) -> AnyStream {
+        AnyStream::LongVideo(self)
+    }
+
     fn get_data(&self) -> &BytesMut {
         &self.data
     }

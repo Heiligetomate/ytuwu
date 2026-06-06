@@ -3,7 +3,7 @@ use std::path::Path;
 use crate::{
     downloader::mime_types::MimeType,
     error::Result,
-    streams::{MediaStream, util::save_media_stream},
+    streams::{AnyStream, MediaStream, util::save_media_stream},
 };
 use bytes::{BufMut, Bytes, BytesMut};
 
@@ -13,6 +13,10 @@ pub struct Thumbnail {
 }
 
 impl MediaStream for Thumbnail {
+    fn to_any(self) -> AnyStream {
+        AnyStream::Thumbnail(self)
+    }
+
     fn get_mime_type(&self) -> MimeType {
         MimeType::Png
     }
