@@ -29,6 +29,17 @@ impl<M: MediaStream + Debug> DwnMedia<M> {
         Self { metadata, stream, thumbnail }
     }
 
+    pub fn to_any(self) -> DwnMedia<AnyStream>
+    where
+        M: Into<AnyStream>,
+    {
+        DwnMedia {
+            metadata: self.metadata,
+            stream: self.stream.into(),
+            thumbnail: self.thumbnail,
+        }
+    }
+
     pub fn bytes(&self) -> &BytesMut {
         self.stream.get_data()
     }
@@ -66,32 +77,23 @@ impl DwnBundleMedia {
         Self { thumbnail, streams, metadata }
     }
 
-    pub fn from_dwn_media<M1, M2>(media_one: DwnMedia<M1>, media_two: DwnMedia<M2>) -> Self
-    where
-        M1: MediaStream + Debug,
-        M2: MediaStream + Debug,
-    {
-        let DwnMedia {
-            thumbnail: thumb_one,
-            stream: stream_one,
-            ..
-        } = media_one;
+    pub fn from_dwn_medias(medias: Vec<DwnMedia<AnyStream>>) -> Result<Self> {
+        let mut iter = medias.into_iter();
+        let first = iter
+            .next()
+            .ok_or(YtuwuError::EmptyMediaBundle)?;
+        let metadata = first.metadata;
+        let mut thumbnail = first.thumbnail;
+        let mut streams = vec![first.stream.into()];
 
-        let DwnMedia {
-            thumbnail: thumb_two,
-            stream: stream_two,
-            metadata,
-        } = media_two;
-
-        let thumbnail = thumb_one.or(thumb_two);
-        let stream_one = stream_one.to_any();
-        let stream_two = stream_two.to_any();
-
-        Self {
-            streams: vec![stream_one, stream_two],
-            thumbnail,
-            metadata,
+        for media in iter {
+            if thumbnail.is_none() {
+                thumbnail = media.thumbnail;
+            }
+            streams.push(media.stream.into());
         }
+
+        Ok(Self { streams, thumbnail, metadata })
     }
 
     pub fn get_thumbnail(&self) -> Result<&Thumbnail> {

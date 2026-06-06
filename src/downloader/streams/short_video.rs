@@ -24,10 +24,6 @@ pub struct ShortVideoStream {
 impl VideoStream for ShortVideoStream {}
 
 impl MediaStream for ShortVideoStream {
-    fn to_any(self) -> AnyStream {
-        AnyStream::ShortVideo(self)
-    }
-
     fn get_data(&self) -> &BytesMut {
         &self.data
     }
@@ -43,6 +39,12 @@ impl MediaStream for ShortVideoStream {
 
     fn get_mime_type(&self) -> MimeType {
         self.mime_type
+    }
+}
+
+impl From<ShortVideoStream> for AnyStream {
+    fn from(value: ShortVideoStream) -> Self {
+        AnyStream::ShortVideo(value)
     }
 }
 

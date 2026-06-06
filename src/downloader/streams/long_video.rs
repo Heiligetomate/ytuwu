@@ -24,10 +24,6 @@ pub struct LongVideoStream {
 impl VideoStream for LongVideoStream {}
 
 impl MediaStream for LongVideoStream {
-    fn to_any(self) -> AnyStream {
-        AnyStream::LongVideo(self)
-    }
-
     fn get_data(&self) -> &BytesMut {
         &self.data
     }
@@ -43,6 +39,12 @@ impl MediaStream for LongVideoStream {
 
     fn get_mime_type(&self) -> MimeType {
         self.mime_type
+    }
+}
+
+impl From<LongVideoStream> for AnyStream {
+    fn from(s: LongVideoStream) -> Self {
+        AnyStream::LongVideo(s)
     }
 }
 

@@ -291,7 +291,7 @@ fn test_merge_two_dwn_media() {
     let stream_two = LongVideoStream::new(VideoItag::MP4240p);
     let media_two = DwnMedia::new(stream_two, metadata.clone(), None);
 
-    let merged = DwnBundleMedia::from_dwn_media(media_one, media_two);
+    let merged = DwnBundleMedia::from_dwn_medias(vec![media_one.to_any(), media_two.to_any()]).unwrap();
 
     assert_eq!(*merged.streams.get(0).unwrap(), AnyStream::Audio(AudioStream::new(AudioItag::AacLow)));
     assert_eq!(*merged.streams.get(1).unwrap(), AnyStream::LongVideo(LongVideoStream::new(VideoItag::MP4240p)));

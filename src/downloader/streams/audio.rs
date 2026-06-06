@@ -19,10 +19,6 @@ pub struct AudioStream {
 }
 
 impl MediaStream for AudioStream {
-    fn to_any(self) -> AnyStream {
-        AnyStream::Audio(self)
-    }
-
     fn get_data(&self) -> &BytesMut {
         &self.data
     }
@@ -38,6 +34,12 @@ impl MediaStream for AudioStream {
 
     fn get_mime_type(&self) -> MimeType {
         self.mime_type
+    }
+}
+
+impl From<AudioStream> for AnyStream {
+    fn from(s: AudioStream) -> Self {
+        AnyStream::Audio(s)
     }
 }
 

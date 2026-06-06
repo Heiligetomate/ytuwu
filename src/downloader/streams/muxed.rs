@@ -19,10 +19,6 @@ pub struct MuxedStream {
 }
 
 impl MediaStream for MuxedStream {
-    fn to_any(self) -> AnyStream {
-        AnyStream::Muxed(self)
-    }
-
     fn get_data(&self) -> &BytesMut {
         &self.data
     }
@@ -38,6 +34,12 @@ impl MediaStream for MuxedStream {
 
     fn get_mime_type(&self) -> MimeType {
         self.mime_type
+    }
+}
+
+impl From<MuxedStream> for AnyStream {
+    fn from(value: MuxedStream) -> Self {
+        AnyStream::Muxed(value)
     }
 }
 

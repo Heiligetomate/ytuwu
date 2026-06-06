@@ -21,7 +21,7 @@ pub enum YtuwuError {
     NoMatchingThumbnail,
 
     UrlSizeExtract,
-
+    EmptyMediaBundle,
     CreateFile,
     CreateDir,
     WriteToFile,
@@ -41,6 +41,7 @@ pub enum YtuwuError {
 impl Display for YtuwuError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
+            Self::EmptyMediaBundle => write!(f, "media bundle was empty"),
             Self::ProgressHandler => write!(f, "Error while getting progress handler"),
             Self::Tokio(e) => write!(f, "tokio error: {}", e),
             Self::BrowseDataNotFound(e) => write!(f, "Could not get data from response: {}.", e),
