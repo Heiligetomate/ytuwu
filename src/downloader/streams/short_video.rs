@@ -6,10 +6,7 @@ use crate::{
     Result,
     downloader::{
         mime_types::MimeType,
-        streams::{
-            core::{MediaStream, VideoStream},
-            util::save_media_stream,
-        },
+        streams::{core::MediaStream, util::save_media_stream},
     },
     itags::{Itag, ShortItag},
     streams::AnyStream,
@@ -20,8 +17,6 @@ pub struct ShortVideoStream {
     data: BytesMut,
     mime_type: MimeType,
 }
-
-impl VideoStream for ShortVideoStream {}
 
 impl MediaStream for ShortVideoStream {
     fn get_data(&self) -> &BytesMut {

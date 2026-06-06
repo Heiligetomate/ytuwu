@@ -10,5 +10,3 @@ pub trait MediaStream {
     fn get_data(&self) -> &BytesMut;
     fn push_data(&mut self, data: Bytes);
 }
-
-pub trait VideoStream: MediaStream {}

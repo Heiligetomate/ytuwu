@@ -11,7 +11,7 @@ pub(self) mod util;
 
 pub use any::AnyStream;
 pub use audio::AudioStream;
-pub use core::{MediaStream, VideoStream};
+pub use core::MediaStream;
 pub use long_video::LongVideoStream;
 pub use muxed::MuxedStream;
 pub use short_video::ShortVideoStream;
