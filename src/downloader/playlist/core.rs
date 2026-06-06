@@ -78,7 +78,7 @@ impl Playlist {
         Ok(Dwnlist::new(downloaded, &self.title))
     }
 
-    pub async fn download_streams(mut self, itags: &[AnyItag], thumb_res: Option<ThumbRes>) -> Result<DwnBundleList> {
+    pub async fn download_bundle(mut self, itags: &[AnyItag], thumb_res: Option<ThumbRes>) -> Result<DwnBundleList> {
         let mut downloaded = Vec::new();
 
         let mut tasks = Vec::new();

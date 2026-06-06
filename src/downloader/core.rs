@@ -101,7 +101,7 @@ impl Downloader {
             .await?
             .browse()
             .await?
-            .download_streams(itags, thumbnail_resolution)
+            .download_bundle(itags, thumbnail_resolution)
             .await?)
     }
 

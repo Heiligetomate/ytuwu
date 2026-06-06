@@ -184,7 +184,7 @@ async fn test_download_playlist_streams() {
         .browse()
         .await
         .unwrap()
-        .download_streams(&[AnyItag::Audio(AudioItag::AacLow), AnyItag::LongVideo(VideoItag::MP4144p)], Some(ThumbRes::Low))
+        .download_bundle(&[AnyItag::Audio(AudioItag::AacLow), AnyItag::LongVideo(VideoItag::MP4144p)], Some(ThumbRes::Low))
         .await
         .unwrap();
 
