@@ -7,12 +7,12 @@ use crate::{
         channel::{browse::ChannelBrowse, downloaded::DwnChannel},
         media::{browse::MediaBrowse, extracted_streams::ThumbRes},
         playlist::browse::PlaylistBrowse,
-        progress::{CleanChannelHandler, EmptyHandler},
+        progress::EmptyHandler,
     },
     error::Result,
     id_resolver::types::{BrowseId, VideoId},
     itags::{AnyItag, Itag},
-    progress::HandleProgress,
+    progress::{DefaultProgressHandler, HandleProgress},
     streams::{MediaStream, Thumbnail},
     types::{ChannelId, ShortId},
 };
@@ -43,7 +43,7 @@ impl Downloader {
     }
 
     pub fn default() -> Arc<Self> {
-        Self::new(Arc::new(CleanChannelHandler::new()))
+        Self::new(Arc::new(DefaultProgressHandler::new()))
     }
 
     pub fn testing() -> Arc<Self> {
