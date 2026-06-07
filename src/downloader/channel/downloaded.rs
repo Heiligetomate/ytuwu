@@ -4,6 +4,8 @@ use std::{
     path::{Path, PathBuf},
 };
 
+use uuid::Uuid;
+
 use crate::{
     DwnBundleList, DwnBundleMedia, Dwnlist, Result,
     downloader::{media::downloaded::DwnMedia, streams::MediaStream},
@@ -61,6 +63,14 @@ impl<M: MediaStream + Debug> DwnChannel<M> {
         }
 
         Ok(())
+    }
+
+    // TODO: get the channel name
+    pub fn save_with_dir(&self, path: &Path) -> Result<()> {
+        let mut full_path = PathBuf::from(path);
+        full_path.push(Uuid::new_v4().to_string());
+
+        self.save(&full_path)
     }
 }
 
