@@ -1,6 +1,6 @@
 use std::{path::Path, time::SystemTime};
 
-use ytuwu::{Downloader, GetId, IdCollection, Result, itags::AudioItag};
+use ytuwu::{Downloader, Result};
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -14,12 +14,12 @@ async fn main() -> Result<()> {
 
     let downloaded = downloader
         .from_url(url)?
-        .as_list()?
-        .audio()
+        .as_media()?
+        .dual()
         .download()
         .await?;
 
-    downloaded.save_with_dir(Path::new("teehee"))?;
+    downloaded.save_media_streams(Path::new("teehee"))?;
 
     println!("download took {:?}", start_time.elapsed().unwrap());
 

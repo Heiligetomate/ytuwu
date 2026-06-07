@@ -3,7 +3,7 @@ use crate::downloader::itags::{audio::AudioItag, muxed::MuxedItag, short::ShortI
 #[derive(Debug, Clone, Copy)]
 pub enum AnyItag {
     Audio(AudioItag),
-    LongVideo(VideoItag),
-    ShortVideo(ShortItag),
+    Video(VideoItag),
+    Short(ShortItag),
     Muxed(MuxedItag),
 }
