@@ -84,13 +84,13 @@ impl DwnBundleMedia {
             .ok_or(YtuwuError::EmptyMediaBundle)?;
         let metadata = first.metadata;
         let mut thumbnail = first.thumbnail;
-        let mut streams = vec![first.stream.into()];
+        let mut streams = vec![first.stream];
 
         for media in iter {
             if thumbnail.is_none() {
                 thumbnail = media.thumbnail;
             }
-            streams.push(media.stream.into());
+            streams.push(media.stream);
         }
 
         Ok(Self { streams, thumbnail, metadata })
