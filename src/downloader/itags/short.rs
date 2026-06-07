@@ -14,7 +14,7 @@ pub enum ShortItag {
     High, // 780
 }
 
-const SHORT_LONG_VIDEO_ORDER: [ShortItag; 2] = [ShortItag::High, ShortItag::Low];
+const SHORT_LONG_VIDEO_ORDER: [ShortItag; 3] = [ShortItag::Highest, ShortItag::High, ShortItag::Low];
 
 impl Itag for ShortItag {
     type Stream = ShortStream;

@@ -5,6 +5,7 @@ use crate::{
     downloader::{itags::core::Itag, mime_types::MimeType},
     error::YtuwuError,
     streams::VideoStream,
+    types::VideoId,
 };
 
 // TODO: There should be 2k itags etc
@@ -26,7 +27,8 @@ pub enum VideoItag {
     Webm144p,  // 278
 }
 
-const LONG_VIDEO_ORDER: [VideoItag; 12] = [
+const LONG_VIDEO_ORDER: [VideoItag; 13] = [
+    VideoItag::Highest,
     VideoItag::WebM1080p,
     VideoItag::MP41080p,
     VideoItag::WebM720p,

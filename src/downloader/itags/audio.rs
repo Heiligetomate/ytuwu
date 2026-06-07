@@ -16,7 +16,7 @@ pub enum AudioItag {
     OpusMedium, // 251
 }
 
-const AUDIO_ORDER: [AudioItag; 4] = [AudioItag::OpusMedium, AudioItag::AacMedium, AudioItag::OpusLow, AudioItag::AacLow];
+const AUDIO_ORDER: [AudioItag; 5] = [AudioItag::Highest, AudioItag::OpusMedium, AudioItag::AacMedium, AudioItag::OpusLow, AudioItag::AacLow];
 
 impl Itag for AudioItag {
     type Stream = AudioStream;

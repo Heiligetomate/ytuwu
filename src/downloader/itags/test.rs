@@ -37,6 +37,13 @@ fn test_video_itag_next_best() {
             .unwrap(),
         VideoItag::MP41080p
     );
+    assert_eq!(VideoItag::Highest.next_best().unwrap(), VideoItag::WebM1080p);
+    assert_eq!(
+        VideoItag::WebM1080p
+            .next_best()
+            .unwrap(),
+        VideoItag::MP41080p
+    );
     assert_eq!(VideoItag::MP41080p.next_best().unwrap(), VideoItag::WebM720p);
     assert_eq!(VideoItag::WebM720p.next_best().unwrap(), VideoItag::MP4720p);
     assert_eq!(VideoItag::MP4720p.next_best().unwrap(), VideoItag::Webm480p);
@@ -52,6 +59,7 @@ fn test_video_itag_next_best() {
 
 #[test]
 fn test_audio_itag_next_best() {
+    assert_eq!(AudioItag::Highest.next_best().unwrap(), AudioItag::OpusMedium);
     assert_eq!(
         AudioItag::OpusMedium
             .next_best()
