@@ -1,9 +1,9 @@
 use std::{fmt::Debug, sync::Arc};
 
 use crate::{
-    Downloader, DwnChannel, GetId, Result,
+    Downloader, DwnBundelChannel, DwnChannel, GetId, Result,
     downloader::{builders::empty::EmptyBuilder, channel::browse::ChannelBrowse},
-    itags::{AudioItag, Itag, VideoItag},
+    itags::{AnyItag, AudioItag, Itag, VideoItag},
     types::ChannelId,
 };
 
@@ -17,6 +17,13 @@ pub struct ChannelBuilder<I: Itag> {
     id: ChannelId,
     itag: I,
     // thumbnail: Option<ThumbRes>,
+}
+
+pub struct MultipleChannelBuilder {
+    downloader: Arc<Downloader>,
+    id: ChannelId,
+    // thumbnail: Option<ThumbRes>,
+    itags: &'static [AnyItag],
 }
 
 impl EmptyChannelBuilder {
@@ -35,6 +42,15 @@ impl EmptyChannelBuilder {
             downloader,
             id,
             // thumbnail: None,
+        }
+    }
+
+    pub fn dual(self) -> MultipleChannelBuilder {
+        let EmptyChannelBuilder { downloader, id } = self;
+        MultipleChannelBuilder {
+            downloader,
+            id,
+            itags: &[AnyItag::Audio(AudioItag::Highest), AnyItag::Video(VideoItag::Highest)],
         }
     }
 
@@ -65,6 +81,18 @@ where
             .browse()
             .await?
             .download(self.itag)
+            .await?;
+        Ok(downloaded)
+    }
+}
+
+impl MultipleChannelBuilder {
+    pub async fn download(self) -> Result<DwnBundelChannel> {
+        let downloaded = ChannelBrowse::new(self.id, self.downloader)
+            .await?
+            .browse()
+            .await?
+            .download_bundle(self.itags)
             .await?;
         Ok(downloaded)
     }
