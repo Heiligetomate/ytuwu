@@ -14,12 +14,12 @@ async fn main() -> Result<()> {
 
     let downloaded = downloader
         .from_url(url)?
-        .as_media()?
+        .as_list()?
         .dual()
         .download()
         .await?;
 
-    downloaded.save_media_streams(Path::new("teehee"))?;
+    downloaded.save(Path::new("teehee"))?;
 
     println!("download took {:?}", start_time.elapsed().unwrap());
 
