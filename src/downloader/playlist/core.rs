@@ -104,7 +104,7 @@ impl Playlist {
     pub fn get_first(mut self) -> Result<Media> {
         self.media
             .drain(..)
-            .nth(0)
+            .next()
             .ok_or(YtuwuError::SongInPlaylistNotFound)
     }
 }

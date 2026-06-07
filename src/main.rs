@@ -1,4 +1,4 @@
-use std::{path::Path, time::SystemTime};
+use std::{path::Path, sync::Arc, time::SystemTime};
 
 use ytuwu::{Downloader, Result};
 
@@ -12,14 +12,14 @@ async fn main() -> Result<()> {
 
     let start_time = SystemTime::now();
 
-    let downloaded = downloader
+    let dwn = downloader
         .from_url(url)?
         .as_list()?
-        .dual()
+        .audio()
         .download()
         .await?;
 
-    downloaded.save(Path::new("teehee"))?;
+    dwn.save_with_dir(Path::new("teehee"))?;
 
     println!("download took {:?}", start_time.elapsed().unwrap());
 
