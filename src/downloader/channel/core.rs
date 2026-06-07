@@ -1,5 +1,7 @@
 use std::{fmt::Debug, sync::Arc};
 
+use uuid::Uuid;
+
 use crate::{
     Downloader, DwnBundelChannel, DwnBundleList, DwnBundleMedia, Dwnlist, Result,
     downloader::{channel::downloaded::DwnChannel, media::downloaded::DwnMedia, playlist::browse::PlaylistBrowse, streams::MediaStream},
@@ -13,6 +15,7 @@ pub struct ChannelContentBrowse {
     pub albums: Vec<ChannelPlaylistId>,
     pub eps: Vec<ChannelPlaylistId>,
     pub singles: Vec<ChannelPlaylistId>,
+    pub id: Uuid,
 }
 
 impl ChannelContentBrowse {
@@ -212,6 +215,9 @@ impl ChannelContentBrowse {
         I: Itag + Copy + Debug + Send + 'static,
         I::Stream: MediaStream + Debug + Send,
     {
+        self.downloader
+            .progress_handler
+            .on_channel_started(self.id, self.singles.len() as u16, self.eps.len() as u16, self.albums.len() as u16);
         Ok(DwnChannel {
             albums: self.download_albums(itag).await?,
             eps: self.download_eps(itag).await?,

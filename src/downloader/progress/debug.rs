@@ -11,4 +11,6 @@ impl HandleProgress for EmptyHandler {
     fn on_download_complete(&self, _: Uuid) {}
     fn on_playlist_started(&self, _: Uuid, _: Vec<&str>) {}
     fn on_playlist_downloaded(&self, _: Uuid) {}
+    fn on_channel_started(&self, _: Uuid, _: u16, _: u16, _: u16) {}
+    fn on_channel_downloaded(&self, _: Uuid) {}
 }

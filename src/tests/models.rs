@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
 use tokio::sync::Mutex;
+use uuid::Uuid;
 
 use crate::{
     Downloader,
@@ -50,7 +51,7 @@ async fn channel_resp() {
         .await
         .unwrap();
     let extracted = res
-        .extract_all_releases(Downloader::testing())
+        .extract_all_releases(Downloader::testing(), Uuid::new_v4())
         .unwrap();
     assert_eq!(res.get_status(), Status::Success);
     assert!(extracted.singles.len() >= 40);

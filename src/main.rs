@@ -1,4 +1,4 @@
-use std::{path::Path, sync::Arc, time::SystemTime};
+use std::{path::Path, time::SystemTime};
 
 use ytuwu::{Downloader, Result};
 
@@ -6,7 +6,7 @@ use ytuwu::{Downloader, Result};
 async fn main() -> Result<()> {
     // let start_time = SystemTime::now();
 
-    let url = "https://music.youtube.com/watch?v=d1mkqz422lg&list=OLAK5uy_mrUmnJrX4QzJd6GeOuqcqT8EUMH1C0eTU";
+    let url = "https://music.youtube.com/@theknife";
 
     let downloader = Downloader::default();
 
@@ -14,7 +14,7 @@ async fn main() -> Result<()> {
 
     let dwn = downloader
         .from_url(url)?
-        .as_list()?
+        .as_channel()?
         .audio()
         .download()
         .await?;
