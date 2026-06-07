@@ -1,3 +1,4 @@
+pub mod builders;
 pub mod channel;
 pub mod mime_types;
 pub(crate) use channel::core::ChannelContentBrowse;

@@ -13,7 +13,7 @@ use crate::{
 };
 use serde::de::DeserializeOwned;
 
-const WAIT_FOR_CAPTCHA_MILLIS: Duration = Duration::from_millis(500);
+const WAIT_FOR_CAPTCHA_MILLIS: Duration = Duration::from_millis(400);
 
 async fn make_request<I>(id: &I, visitor_data: Option<String>, client: &reqwest::Client) -> Result<<<I as Id>::Client as ClientWithHeaders>::Response>
 where

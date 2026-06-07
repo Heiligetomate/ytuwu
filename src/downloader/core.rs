@@ -1,8 +1,9 @@
 use std::{fmt::Debug, sync::Arc};
 
 use crate::{
-    DwnBundelChannel, DwnBundleList, DwnBundleMedia, DwnMedia, Dwnlist,
+    DwnBundelChannel, DwnBundleList, DwnBundleMedia, DwnMedia, Dwnlist, IdCollection,
     downloader::{
+        builders::empty::EmptyBuilder,
         channel::{browse::ChannelBrowse, downloaded::DwnChannel},
         media::{browse::MediaBrowse, extracted_streams::ThumbRes},
         playlist::browse::PlaylistBrowse,
@@ -35,6 +36,10 @@ impl Downloader {
             progress_handler,
             client: Client::new(),
         })
+    }
+
+    pub fn from_url(self: &Arc<Self>, url: &str) -> Result<EmptyBuilder> {
+        Ok(EmptyBuilder::new(Arc::clone(&self), IdCollection::from_url(url)?))
     }
 
     pub fn default() -> Arc<Self> {
