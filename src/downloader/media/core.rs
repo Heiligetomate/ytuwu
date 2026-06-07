@@ -119,8 +119,9 @@ impl Media {
         let url = self
             .thumbnail_streams
             .get_thumbnail_url_by_res(&resolution)?;
-        let client = reqwest::Client::new();
-        let thumbnail = client
+        let thumbnail = self
+            .downloader
+            .client
             .get(url)
             .send()
             .await?
