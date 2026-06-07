@@ -29,6 +29,7 @@ However, I've never heard of anyone actually getting in trouble for using the in
 - documentation
 - some things are just on youtube and not on youtube music
 - some singles have multiple songs in them for some stupid reason
+- better error handling (crashes when there are is no thumbnail for example)
 
 ## Example usages: 
 
