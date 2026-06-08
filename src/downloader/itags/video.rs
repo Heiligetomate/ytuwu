@@ -12,30 +12,35 @@ use crate::{
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone, Copy)]
 pub enum VideoItag {
     Highest,
-    MP41080p,    // 137
-    WebM1080p,   // 248
-    MP41080p50,  // 299
-    Webm1080p50, // 303
 
-    MP4720p,    // 136
-    WebM720p,   // 247
-    MP4720p50,  // 298
-    Webm720p50, // 302
-
-    MP4480p,  // 135
-    Webm480p, // 244
-    MP4360p,  // 134
-    WebM360p, // 243
-    MP4240p,  // 133
-    WebM240p, // 242
-    MP4144p,  // 160
-    Webm144p, // 278
+    Webm2160p60HDR, // 337
+    Webm2160p60,    // 315
+    Webm1440p60HDR, // 336
+    Webm1440p60,    // 308
+    MP41080p,       // 137
+    WebM1080p,      // 248
+    MP41080p50,     // 299
+    Webm1080p50,    // 303
+    MP4720p,        // 136
+    WebM720p,       // 247
+    MP4720p50,      // 298
+    Webm720p50,     // 302
+    MP4480p,        // 135
+    Webm480p,       // 244
+    MP4360p,        // 134
+    WebM360p,       // 243
+    MP4240p,        // 133
+    WebM240p,       // 242
+    MP4144p,        // 160
+    Webm144p,       // 278
 }
 
-// 302 298 303 299
-
-const LONG_VIDEO_ORDER: [VideoItag; 17] = [
+const LONG_VIDEO_ORDER: [VideoItag; 21] = [
     VideoItag::Highest,
+    VideoItag::Webm2160p60HDR,
+    VideoItag::Webm2160p60,
+    VideoItag::Webm1440p60HDR,
+    VideoItag::Webm1440p60,
     VideoItag::WebM1080p,
     VideoItag::MP41080p,
     VideoItag::Webm1080p50,
@@ -62,7 +67,7 @@ impl Itag for VideoItag {
     }
 
     fn highest() -> Self {
-        Self::WebM1080p
+        Self::Webm2160p60HDR
     }
 
     fn next_best(self) -> Result<Self>
@@ -83,6 +88,10 @@ impl Itag for VideoItag {
     fn to_int(&self) -> u16 {
         match &self {
             Self::Highest => Self::highest().to_int(),
+            Self::Webm2160p60HDR => 337,
+            Self::Webm2160p60 => 315,
+            Self::Webm1440p60HDR => 336,
+            Self::Webm1440p60 => 308,
             Self::WebM1080p => 248,
             Self::MP41080p => 137,
             Self::MP41080p50 => 299,
@@ -105,6 +114,10 @@ impl Itag for VideoItag {
     fn get_mime_type(&self) -> MimeType {
         match &self {
             Self::Highest => Self::highest().get_mime_type(),
+            Self::Webm2160p60HDR => MimeType::Webm,
+            Self::Webm2160p60 => MimeType::Webm,
+            Self::Webm1440p60HDR => MimeType::Webm,
+            Self::Webm1440p60 => MimeType::Webm,
             Self::WebM1080p => MimeType::Webm,
             Self::MP41080p => MimeType::MP4,
             Self::MP41080p50 => MimeType::MP4,

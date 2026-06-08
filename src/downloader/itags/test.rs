@@ -8,7 +8,7 @@ fn test_highest_itags() {
     assert_eq!(AudioItag::highest(), AudioItag::OpusMedium);
     assert_eq!(MuxedItag::highest(), MuxedItag::MuxedMP4);
     assert_eq!(ShortItag::highest(), ShortItag::High);
-    assert_eq!(VideoItag::highest(), VideoItag::WebM1080p);
+    assert_eq!(VideoItag::highest(), VideoItag::Webm2160p60HDR);
 }
 
 #[test]
@@ -31,7 +31,31 @@ fn test_itag_mime_types() {
 
 #[test]
 fn test_video_itag_next_best() {
-    assert_eq!(VideoItag::Highest.next_best().unwrap(), VideoItag::WebM1080p);
+    assert_eq!(VideoItag::Highest.next_best().unwrap(), VideoItag::Webm2160p60HDR);
+    assert_eq!(
+        VideoItag::Webm2160p60HDR
+            .next_best()
+            .unwrap(),
+        VideoItag::Webm2160p60
+    );
+    assert_eq!(
+        VideoItag::Webm2160p60
+            .next_best()
+            .unwrap(),
+        VideoItag::Webm1440p60HDR
+    );
+    assert_eq!(
+        VideoItag::Webm1440p60HDR
+            .next_best()
+            .unwrap(),
+        VideoItag::Webm1440p60
+    );
+    assert_eq!(
+        VideoItag::Webm1440p60
+            .next_best()
+            .unwrap(),
+        VideoItag::WebM1080p
+    );
     assert_eq!(
         VideoItag::WebM1080p
             .next_best()
