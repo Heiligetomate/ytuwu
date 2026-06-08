@@ -4,10 +4,7 @@ use uuid::Uuid;
 
 use crate::{
     Downloader, DwnBundleList, DwnMedia, Dwnlist,
-    downloader::{
-        media::{core::Media, extracted_streams::ThumbRes},
-        streams::MediaStream,
-    },
+    downloader::media::{core::Media, extracted_streams::ThumbRes},
     error::{Result, YtuwuError},
     itags::{AnyItag, Itag},
 };
@@ -44,7 +41,6 @@ impl Playlist {
     pub async fn download<I>(mut self, itag: I, thumb_res: Option<ThumbRes>) -> Result<Dwnlist<I::Stream>>
     where
         I: Itag + Copy + Debug + Send + 'static,
-        I::Stream: MediaStream + Debug + Send,
     {
         self.downloader
             .progress_handler

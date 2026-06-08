@@ -4,7 +4,7 @@ use uuid::Uuid;
 
 use crate::{
     Downloader, DwnBundelChannel, DwnBundleList, DwnBundleMedia, Dwnlist, Result,
-    downloader::{channel::downloaded::DwnChannel, media::downloaded::DwnMedia, playlist::browse::PlaylistBrowse, streams::MediaStream},
+    downloader::{channel::downloaded::DwnChannel, media::downloaded::DwnMedia, playlist::browse::PlaylistBrowse},
     id_resolver::types::{BrowseId, ChannelPlaylistId},
     itags::{AnyItag, Itag},
     metadata::ChannelMetadata,
@@ -24,7 +24,6 @@ impl ChannelContentBrowse {
     pub async fn download_singles<I>(&self, itag: I) -> Result<Vec<DwnMedia<I::Stream>>>
     where
         I: Itag + Copy + Debug + Send + 'static,
-        I::Stream: MediaStream + Debug + Send,
     {
         let mut browse_tasks = Vec::new();
         let mut content_browse_tasks = Vec::new();
@@ -107,7 +106,6 @@ impl ChannelContentBrowse {
     pub async fn download_eps<I>(&self, itag: I) -> Result<Vec<Dwnlist<I::Stream>>>
     where
         I: Itag + Copy + Debug + Send + 'static,
-        I::Stream: MediaStream + Debug + Send,
     {
         let mut ep_tasks = Vec::new();
         let mut downloaded_eps: Vec<Dwnlist<I::Stream>> = Vec::new();
@@ -189,7 +187,6 @@ impl ChannelContentBrowse {
     pub async fn download_albums<I>(&self, itag: I) -> Result<Vec<Dwnlist<I::Stream>>>
     where
         I: Itag + Copy + Debug + Send + 'static,
-        I::Stream: MediaStream + Debug + Send,
     {
         let mut album_tasks = Vec::new();
         let mut downloaded_albums: Vec<Dwnlist<I::Stream>> = Vec::new();
@@ -215,7 +212,6 @@ impl ChannelContentBrowse {
     pub async fn download<I>(self, itag: I) -> Result<DwnChannel<I::Stream>>
     where
         I: Itag + Copy + Debug + Send + 'static,
-        I::Stream: MediaStream + Debug + Send,
     {
         self.downloader
             .progress_handler

@@ -66,7 +66,6 @@ impl EmptyChannelBuilder {
 impl<I> ChannelBuilder<I>
 where
     I: Itag + Copy + Debug + Send + 'static,
-    I::Stream: Debug + Send,
 {
     // pub fn thumbnail(self) -> Self {
     //     Self {

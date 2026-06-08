@@ -48,7 +48,7 @@ impl Downloader {
     pub async fn work<I>(self: &Arc<Self>, itag: I) -> Result<()>
     where
         I: Itag + Copy + Debug + Send + 'static,
-        I::Stream: MediaStream + Debug + Send + Into<AnyStream> + 'static,
+        I::Stream: MediaStream + Into<AnyStream> + 'static,
     {
         let handler = std::mem::take(&mut *self.task_handler.lock().await);
         let results = handler
@@ -94,7 +94,6 @@ impl Downloader {
     pub async fn download_media<I>(self: Arc<Self>, video_id: VideoId, itag: I, thumbnail_resolution: Option<ThumbRes>) -> Result<DwnMedia<I::Stream>>
     where
         I: Itag + Copy + Debug,
-        I::Stream: Debug,
     {
         Ok(MediaBrowse::new(video_id, Uuid::new_v4())
             .browse(self)
@@ -114,7 +113,6 @@ impl Downloader {
     pub async fn download_album<I>(self: Arc<Self>, browse_id: BrowseId, itag: I, thumbnail_resolution: Option<ThumbRes>) -> Result<Dwnlist<I::Stream>>
     where
         I: Itag + Copy + Debug + Send + 'static,
-        I::Stream: MediaStream + Debug + Send,
     {
         Ok(PlaylistBrowse::new(browse_id, self)
             .browse()
@@ -138,7 +136,6 @@ impl Downloader {
     pub async fn download_short<I>(self: Arc<Self>, short_id: ShortId, itag: I, thumbnail_resolution: Option<ThumbRes>) -> Result<DwnMedia<I::Stream>>
     where
         I: Itag + Copy + Debug,
-        I::Stream: Debug,
     {
         let video_id = short_id.transform()?;
 
@@ -150,7 +147,6 @@ impl Downloader {
     pub async fn download_channel<I>(self: Arc<Self>, channel_id: ChannelId, itag: I) -> Result<DwnChannel<I::Stream>>
     where
         I: Itag + Copy + Debug + Send + 'static,
-        I::Stream: MediaStream + Debug + Send,
     {
         Ok(ChannelBrowse::new(channel_id, self)
             .await?

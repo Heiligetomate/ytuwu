@@ -3,7 +3,7 @@ use std::{fmt::Debug, sync::Arc};
 use tokio::sync::Semaphore;
 use uuid::Uuid;
 
-use crate::{Downloader, DwnMedia, Result, downloader::media::browse::MediaBrowse, itags::Itag, streams::MediaStream, types::VideoId};
+use crate::{Downloader, DwnMedia, Result, downloader::media::browse::MediaBrowse, itags::Itag, types::VideoId};
 
 const MAX_TASKS: usize = 4;
 
@@ -19,7 +19,6 @@ impl DownloadTask {
     async fn run<I>(self, downloader: Arc<Downloader>, itag: I) -> Result<DwnMedia<I::Stream>>
     where
         I: Itag + Copy + Debug,
-        I::Stream: MediaStream + Debug,
     {
         let media = MediaBrowse::new(self.video_id, self.id)
             .browse(downloader)
@@ -47,19 +46,14 @@ impl Default for TaskHandler {
 
 impl TaskHandler {
     pub fn push(&mut self, video_id: VideoId, playlist_id: Option<Uuid>, channel_id: Option<Uuid>, id: Uuid) {
-        let task = DownloadTask {
-            video_id,
-            playlist_id,
-            channel_id,
-            id,
-        };
+        let task = DownloadTask { video_id, playlist_id, channel_id, id };
         self.tasks.push(task);
     }
 
     pub async fn work<I>(self, downloader: Arc<Downloader>, itag: I) -> Vec<DwnMedia<I::Stream>>
     where
         I: Itag + Copy + Debug + Send + 'static,
-        I::Stream: MediaStream + Debug + Send + 'static,
+        I::Stream: 'static,
     {
         let mut handles = Vec::new();
         for task in self.tasks {

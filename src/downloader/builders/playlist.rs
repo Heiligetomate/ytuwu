@@ -1,7 +1,7 @@
 use std::{fmt::Debug, sync::Arc};
 
 use crate::{
-    Downloader, DwnBundleList, Dwnlist, GetId, Result, ThumbRes,
+    Downloader, DwnBundleList, GetId, Result, ThumbRes,
     downloader::{builders::empty::EmptyBuilder, playlist::browse::PlaylistBrowse},
     itags::{AnyItag, AudioItag, Itag, VideoItag},
     streams::AnyStream,
@@ -44,10 +44,7 @@ impl EmptyListBuilder {
     }
 
     pub fn thumbnail(self) -> Self {
-        Self {
-            thumbnail: Some(ThumbRes::VeryHigh),
-            ..self
-        }
+        Self { thumbnail: Some(ThumbRes::VeryHigh), ..self }
     }
 
     pub fn audio(self) -> ListBuilder<AudioItag> {
@@ -72,13 +69,10 @@ impl EmptyListBuilder {
 impl<I> ListBuilder<I>
 where
     I: Itag + Copy + Debug + Send + 'static,
-    I::Stream: Debug + Send + Into<AnyStream>,
+    I::Stream: Into<AnyStream>,
 {
     pub fn thumbnail(self) -> Self {
-        Self {
-            thumbnail: Some(ThumbRes::VeryHigh),
-            ..self
-        }
+        Self { thumbnail: Some(ThumbRes::VeryHigh), ..self }
     }
 
     pub async fn download(self) -> Result<()> {
@@ -96,10 +90,7 @@ where
 
 impl MultipleListBuilder {
     pub fn thumbnail(self) -> Self {
-        Self {
-            thumbnail: Some(ThumbRes::VeryHigh),
-            ..self
-        }
+        Self { thumbnail: Some(ThumbRes::VeryHigh), ..self }
     }
 
     pub async fn download(self) -> Result<DwnBundleList> {

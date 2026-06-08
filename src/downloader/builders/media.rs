@@ -54,10 +54,7 @@ impl EmptyMediaBuilder {
     }
 
     pub fn thumbnail(self) -> Self {
-        Self {
-            thumbnail: Some(ThumbRes::VeryHigh),
-            ..self
-        }
+        Self { thumbnail: Some(ThumbRes::VeryHigh), ..self }
     }
 
     pub fn dual(self) -> MultipleMediaBuilder {
@@ -74,14 +71,10 @@ impl EmptyMediaBuilder {
 impl<I> MediaBuilder<I>
 where
     I: Itag + Copy + Debug + Send + 'static,
-    I::Stream: Debug + Send,
     AnyStream: From<I::Stream>,
 {
     pub fn thumbnail(self) -> Self {
-        Self {
-            thumbnail: Some(ThumbRes::VeryHigh),
-            ..self
-        }
+        Self { thumbnail: Some(ThumbRes::VeryHigh), ..self }
     }
 
     pub async fn download(self) -> Result<DwnMedia<AnyStream>> {
@@ -107,10 +100,7 @@ where
 
 impl MultipleMediaBuilder {
     pub fn thumbnail(self) -> Self {
-        Self {
-            thumbnail: Some(ThumbRes::VeryHigh),
-            ..self
-        }
+        Self { thumbnail: Some(ThumbRes::VeryHigh), ..self }
     }
 
     pub async fn download(self) -> Result<DwnBundleMedia> {
