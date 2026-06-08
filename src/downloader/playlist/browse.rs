@@ -1,5 +1,7 @@
 use std::{fmt::Debug, sync::Arc};
 
+use uuid::Uuid;
+
 use crate::{
     Downloader, Result,
     downloader::{media::browse::MediaBrowse, playlist::content_browse::PlaylistContentBrowse},
@@ -47,7 +49,7 @@ impl PlaylistBrowse {
 
         let media: Vec<MediaBrowse> = ids
             .drain(..)
-            .map(|id| MediaBrowse::new(id))
+            .map(|id| MediaBrowse::new(id, Uuid::new_v4()))
             .collect();
         Ok(PlaylistContentBrowse::new(&trimmed_title, media, self.downloader))
     }

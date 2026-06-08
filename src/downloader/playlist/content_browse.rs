@@ -1,5 +1,7 @@
 use std::sync::Arc;
 
+use uuid::Uuid;
+
 use crate::{
     Downloader, Id, Result,
     downloader::{
@@ -10,6 +12,7 @@ use crate::{
 
 #[derive(Debug)]
 pub struct PlaylistContentBrowse {
+    pub(super) id: Uuid,
     pub(super) title: String,
     pub(super) media: Vec<MediaBrowse>,
     pub(super) downloader: Arc<Downloader>,
@@ -18,10 +21,24 @@ pub struct PlaylistContentBrowse {
 impl PlaylistContentBrowse {
     pub fn new(title: &str, media: Vec<MediaBrowse>, downloader: Arc<Downloader>) -> Self {
         Self {
+            id: Uuid::new_v4(),
             title: title.to_owned(),
             media,
             downloader,
         }
+    }
+
+    pub async fn add_tasks(mut self) -> Result<()> {
+        for media in self.media.drain(..) {
+            let id = media.video_id;
+            self.downloader
+                .task_handler
+                .lock()
+                .await
+                .push(id, Some(self.id), None, Uuid::new_v4());
+        }
+
+        Ok(())
     }
 
     pub async fn browse(mut self) -> Result<Playlist> {

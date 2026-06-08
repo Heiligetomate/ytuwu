@@ -71,7 +71,7 @@ async fn player_resp() {
     assert_eq!(res.get_status(), Status::Success);
 
     let extr_res = res
-        .extract(Downloader::testing())
+        .extract(Downloader::testing(), Uuid::new_v4())
         .unwrap();
 
     assert_eq!(extr_res.metadata.title, "Damnation");

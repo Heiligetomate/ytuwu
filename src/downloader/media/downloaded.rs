@@ -1,6 +1,7 @@
 use std::{collections::HashMap, fmt::Debug, path::Path};
 
 use bytes::BytesMut;
+use uuid::Uuid;
 
 use crate::{
     Result,
@@ -15,6 +16,7 @@ pub struct DwnMedia<M: MediaStream + Debug> {
     pub metadata: MediaMetadata,
     pub stream: M,
     pub thumbnail: Option<Thumbnail>,
+    pub id: Uuid,
 }
 
 #[derive(Debug)]
@@ -22,11 +24,12 @@ pub struct DwnBundleMedia {
     pub metadata: MediaMetadata,
     pub streams: Vec<AnyStream>,
     pub thumbnail: Option<Thumbnail>,
+    pub id: Uuid,
 }
 
 impl<M: MediaStream + Debug> DwnMedia<M> {
-    pub fn new(stream: M, metadata: MediaMetadata, thumbnail: Option<Thumbnail>) -> Self {
-        Self { metadata, stream, thumbnail }
+    pub fn new(stream: M, metadata: MediaMetadata, thumbnail: Option<Thumbnail>, id: Uuid) -> Self {
+        Self { metadata, stream, thumbnail, id }
     }
 
     pub fn to_any(self) -> DwnMedia<AnyStream>
@@ -37,6 +40,7 @@ impl<M: MediaStream + Debug> DwnMedia<M> {
             metadata: self.metadata,
             stream: self.stream.into(),
             thumbnail: self.thumbnail,
+            id: self.id,
         }
     }
 
@@ -73,8 +77,8 @@ impl<M: MediaStream + Debug> DwnMedia<M> {
 }
 
 impl DwnBundleMedia {
-    pub fn new(streams: Vec<AnyStream>, metadata: MediaMetadata, thumbnail: Option<Thumbnail>) -> Self {
-        Self { thumbnail, streams, metadata }
+    pub fn new(streams: Vec<AnyStream>, metadata: MediaMetadata, thumbnail: Option<Thumbnail>, id: Uuid) -> Self {
+        Self { thumbnail, streams, metadata, id }
     }
 
     pub fn from_dwn_medias(medias: Vec<DwnMedia<AnyStream>>) -> Result<Self> {
@@ -93,7 +97,12 @@ impl DwnBundleMedia {
             streams.push(media.stream);
         }
 
-        Ok(Self { streams, thumbnail, metadata })
+        Ok(Self {
+            streams,
+            thumbnail,
+            metadata,
+            id: first.id, // TODO: not good
+        })
     }
 
     pub fn get_thumbnail(&self) -> Result<&Thumbnail> {

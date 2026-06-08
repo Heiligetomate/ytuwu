@@ -55,8 +55,7 @@ impl DownloadTask {
 }
 
 impl Media {
-    pub fn new(media_streams: ExtractedStreams, thumbnail_streams: ExtractedThumbnails, metadata: MediaMetadata, downloader: Arc<Downloader>) -> Self {
-        let id = Uuid::new_v4();
+    pub fn new(media_streams: ExtractedStreams, thumbnail_streams: ExtractedThumbnails, metadata: MediaMetadata, downloader: Arc<Downloader>, id: Uuid) -> Self {
         Self {
             downloader,
             id,
@@ -153,6 +152,7 @@ impl Media {
             metadata: self.metadata,
             streams,
             thumbnail,
+            id: self.id,
         })
     }
 
@@ -170,7 +170,7 @@ impl Media {
 
         let media = self.download_stream(itag).await?;
 
-        let downloaded_media = DwnMedia::new(media, self.metadata.clone(), thumbnail);
+        let downloaded_media = DwnMedia::new(media, self.metadata.clone(), thumbnail, self.id);
 
         Ok(downloaded_media)
     }

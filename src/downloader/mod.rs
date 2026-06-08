@@ -1,6 +1,8 @@
 pub mod builders;
 pub mod channel;
 pub mod mime_types;
+pub mod store;
+pub mod task_handler;
 pub(crate) use channel::core::ChannelContentBrowse;
 pub mod core;
 pub mod itags;

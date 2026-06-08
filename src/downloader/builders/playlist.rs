@@ -4,6 +4,7 @@ use crate::{
     Downloader, DwnBundleList, Dwnlist, GetId, Result, ThumbRes,
     downloader::{builders::empty::EmptyBuilder, playlist::browse::PlaylistBrowse},
     itags::{AnyItag, AudioItag, Itag, VideoItag},
+    streams::AnyStream,
     types::BrowseId,
 };
 
@@ -71,7 +72,7 @@ impl EmptyListBuilder {
 impl<I> ListBuilder<I>
 where
     I: Itag + Copy + Debug + Send + 'static,
-    I::Stream: Debug + Send,
+    I::Stream: Debug + Send + Into<AnyStream>,
 {
     pub fn thumbnail(self) -> Self {
         Self {
@@ -80,15 +81,16 @@ where
         }
     }
 
-    pub async fn download(self) -> Result<Dwnlist<I::Stream>> {
-        let downloaded = PlaylistBrowse::new(self.id, self.downloader)
+    pub async fn download(self) -> Result<()> {
+        let downloader = self.downloader;
+        PlaylistBrowse::new(self.id, Arc::clone(&downloader))
             .browse()
             .await?
-            .browse()
-            .await?
-            .download(self.itag, self.thumbnail)
+            .add_tasks()
             .await?;
-        Ok(downloaded)
+        downloader.work(self.itag).await?;
+
+        Ok(())
     }
 }
 

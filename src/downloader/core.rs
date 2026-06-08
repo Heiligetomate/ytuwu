@@ -8,16 +8,19 @@ use crate::{
         media::{browse::MediaBrowse, extracted_streams::ThumbRes},
         playlist::browse::PlaylistBrowse,
         progress::EmptyHandler,
+        store::DownloadedStore,
+        task_handler::TaskHandler,
     },
     error::Result,
     id_resolver::types::{BrowseId, VideoId},
     itags::{AnyItag, Itag},
     progress::{DefaultProgressHandler, HandleProgress},
-    streams::{MediaStream, Thumbnail},
+    streams::{AnyStream, MediaStream, Thumbnail},
     types::{ChannelId, ShortId},
 };
 use reqwest::Client;
 use tokio::sync::Mutex;
+use uuid::Uuid;
 
 pub type SharedVd = Arc<Mutex<Option<String>>>;
 
@@ -26,6 +29,8 @@ pub struct Downloader {
     pub visitor_data: SharedVd,
     pub progress_handler: Arc<dyn HandleProgress + Send + Sync>,
     pub client: Client,
+    pub task_handler: Mutex<TaskHandler>,
+    pub downloaded: Mutex<DownloadedStore>,
 }
 
 impl Downloader {
@@ -35,7 +40,27 @@ impl Downloader {
             visitor_data: Arc::new(Mutex::new(None)),
             progress_handler,
             client: Client::new(),
+            task_handler: Mutex::new(TaskHandler::default()),
+            downloaded: Mutex::new(DownloadedStore::default()),
         })
+    }
+
+    pub async fn work<I>(self: &Arc<Self>, itag: I) -> Result<()>
+    where
+        I: Itag + Copy + Debug + Send + 'static,
+        I::Stream: MediaStream + Debug + Send + Into<AnyStream> + 'static,
+    {
+        let handler = std::mem::take(&mut *self.task_handler.lock().await);
+        let results = handler
+            .work(Arc::clone(&self), itag)
+            .await;
+
+        self.downloaded
+            .lock()
+            .await
+            .push_vec(results);
+
+        Ok(())
     }
 
     pub fn from_url(self: &Arc<Self>, url: &str) -> Result<EmptyBuilder> {
@@ -51,7 +76,7 @@ impl Downloader {
     }
 
     pub async fn download_media_thumb(self: Arc<Self>, video_id: VideoId, resolution: ThumbRes) -> Result<Thumbnail> {
-        Ok(MediaBrowse::new(video_id)
+        Ok(MediaBrowse::new(video_id, Uuid::new_v4())
             .browse(self)
             .await?
             .download_thumbnail(resolution)
@@ -59,7 +84,7 @@ impl Downloader {
     }
 
     pub async fn download_media_stream<I: Itag + Copy>(self: Arc<Self>, video_id: VideoId, itag: I) -> Result<I::Stream> {
-        Ok(MediaBrowse::new(video_id)
+        Ok(MediaBrowse::new(video_id, Uuid::new_v4())
             .browse(self)
             .await?
             .download_stream(itag)
@@ -71,7 +96,7 @@ impl Downloader {
         I: Itag + Copy + Debug,
         I::Stream: Debug,
     {
-        Ok(MediaBrowse::new(video_id)
+        Ok(MediaBrowse::new(video_id, Uuid::new_v4())
             .browse(self)
             .await?
             .download(itag, thumbnail_resolution)
@@ -79,7 +104,7 @@ impl Downloader {
     }
 
     pub async fn download_media_bundle(self: Arc<Self>, video_id: VideoId, itags: &[AnyItag], thumbnail_resolution: Option<ThumbRes>) -> Result<DwnBundleMedia> {
-        Ok(MediaBrowse::new(video_id)
+        Ok(MediaBrowse::new(video_id, Uuid::new_v4())
             .browse(self)
             .await?
             .download_bundle(itags, thumbnail_resolution)

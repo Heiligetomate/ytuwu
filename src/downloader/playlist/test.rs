@@ -1,5 +1,7 @@
 use std::sync::Arc;
 
+use uuid::Uuid;
+
 use crate::{
     Downloader, Id, ThumbRes,
     downloader::{media::browse::MediaBrowse, playlist::browse::PlaylistBrowse},
@@ -44,18 +46,18 @@ async fn test_playlist_content_browse() {
     assert_eq!(
         browsed.media,
         vec![
-            MediaBrowse::new(VideoId::new("535-Bxyf_OY").unwrap()),
-            MediaBrowse::new(VideoId::new("5gM58GXt6mw").unwrap()),
-            MediaBrowse::new(VideoId::new("gB25L_TZ2JI").unwrap()),
-            MediaBrowse::new(VideoId::new("lwZ5kD2XyQ4").unwrap()),
-            MediaBrowse::new(VideoId::new("iE-gWOoQwCA").unwrap()),
-            MediaBrowse::new(VideoId::new("wRG9RUhk04c").unwrap()),
-            MediaBrowse::new(VideoId::new("0TlhLb4MnbQ").unwrap()),
-            MediaBrowse::new(VideoId::new("F0Tq8RAIXpA").unwrap()),
-            MediaBrowse::new(VideoId::new("06wKiEOItfM").unwrap()),
-            MediaBrowse::new(VideoId::new("O9g7RUOYbGM").unwrap()),
-            MediaBrowse::new(VideoId::new("A_fXr89fAfk").unwrap()),
-            MediaBrowse::new(VideoId::new("78efw-z8tc0").unwrap()),
+            MediaBrowse::new(VideoId::new("535-Bxyf_OY").unwrap(), Uuid::new_v4()),
+            MediaBrowse::new(VideoId::new("5gM58GXt6mw").unwrap(), Uuid::new_v4()),
+            MediaBrowse::new(VideoId::new("gB25L_TZ2JI").unwrap(), Uuid::new_v4()),
+            MediaBrowse::new(VideoId::new("lwZ5kD2XyQ4").unwrap(), Uuid::new_v4()),
+            MediaBrowse::new(VideoId::new("iE-gWOoQwCA").unwrap(), Uuid::new_v4()),
+            MediaBrowse::new(VideoId::new("wRG9RUhk04c").unwrap(), Uuid::new_v4()),
+            MediaBrowse::new(VideoId::new("0TlhLb4MnbQ").unwrap(), Uuid::new_v4()),
+            MediaBrowse::new(VideoId::new("F0Tq8RAIXpA").unwrap(), Uuid::new_v4()),
+            MediaBrowse::new(VideoId::new("06wKiEOItfM").unwrap(), Uuid::new_v4()),
+            MediaBrowse::new(VideoId::new("O9g7RUOYbGM").unwrap(), Uuid::new_v4()),
+            MediaBrowse::new(VideoId::new("A_fXr89fAfk").unwrap(), Uuid::new_v4()),
+            MediaBrowse::new(VideoId::new("78efw-z8tc0").unwrap(), Uuid::new_v4()),
         ]
     )
 }

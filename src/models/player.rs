@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
 use serde::Deserialize;
+use uuid::Uuid;
 
 use crate::{
     Downloader,
@@ -77,7 +78,7 @@ pub enum PlayabilityStatusValue {
 }
 
 impl PlayerResponse {
-    pub fn extract(self, downloader: Arc<Downloader>) -> Result<Media> {
+    pub fn extract(self, downloader: Arc<Downloader>, id: Uuid) -> Result<Media> {
         let streaming_data = self
             .streaming_data
             .ok_or(YtuwuError::PlayerDataNotFound("Streaming data"))?;
@@ -93,7 +94,7 @@ impl PlayerResponse {
         let thumbnail_streams = ExtractedThumbnails::new(video_details.thumbnail.thumbnails);
         let metadata = MediaMetadata::new(&video_details.title, &video_details.author);
 
-        Ok(Media::new(media_streams, thumbnail_streams, metadata, downloader))
+        Ok(Media::new(media_streams, thumbnail_streams, metadata, downloader, id))
     }
 
     pub fn get_playability_reason(&self) -> Result<&str> {

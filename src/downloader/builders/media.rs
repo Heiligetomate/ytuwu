@@ -1,10 +1,13 @@
 use std::{fmt::Debug, sync::Arc};
 
+use uuid::Uuid;
+
 pub use crate::{Downloader, GetId, Result, downloader::builders::empty::EmptyBuilder, types::VideoId};
 use crate::{
     DwnBundleMedia, DwnMedia, ThumbRes,
     downloader::media::browse::MediaBrowse,
     itags::{AnyItag, AudioItag, Itag, VideoItag},
+    streams::AnyStream,
 };
 
 pub struct EmptyMediaBuilder {
@@ -72,6 +75,7 @@ impl<I> MediaBuilder<I>
 where
     I: Itag + Copy + Debug + Send + 'static,
     I::Stream: Debug + Send,
+    AnyStream: From<I::Stream>,
 {
     pub fn thumbnail(self) -> Self {
         Self {
@@ -80,12 +84,23 @@ where
         }
     }
 
-    pub async fn download(self) -> Result<DwnMedia<I::Stream>> {
-        let downloaded = MediaBrowse::new(self.id)
-            .browse(self.downloader)
-            .await?
-            .download(self.itag, self.thumbnail)
-            .await?;
+    pub async fn download(self) -> Result<DwnMedia<AnyStream>> {
+        let id = Uuid::new_v4();
+
+        self.downloader
+            .task_handler
+            .lock()
+            .await
+            .push(self.id, None, None, id);
+
+        self.downloader.work(self.itag).await?;
+
+        let downloaded = self
+            .downloader
+            .downloaded
+            .lock()
+            .await
+            .extract_media(id)?;
         Ok(downloaded)
     }
 }
@@ -99,7 +114,7 @@ impl MultipleMediaBuilder {
     }
 
     pub async fn download(self) -> Result<DwnBundleMedia> {
-        let downloaded = MediaBrowse::new(self.id)
+        let downloaded = MediaBrowse::new(self.id, Uuid::new_v4())
             .browse(self.downloader)
             .await?
             .download_bundle(self.itags, self.thumbnail)

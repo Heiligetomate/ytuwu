@@ -4,6 +4,7 @@ use std::{fs, sync::Arc};
 
 use bytes::Bytes;
 use tokio::sync::Mutex;
+use uuid::Uuid;
 
 use crate::{
     Downloader, DwnBundleMedia, DwnMedia, Id, ThumbRes,
@@ -22,7 +23,7 @@ use crate::{
 async fn test_browse_media() {
     let downloader = Downloader::testing();
     let id = VideoId::new("HPG7gYoqpHM").unwrap();
-    let browsed = MediaBrowse::new(id)
+    let browsed = MediaBrowse::new(id, Uuid::new_v4())
         .browse(downloader)
         .await
         .unwrap();
@@ -35,7 +36,7 @@ async fn test_browse_media() {
 async fn test_download_media_stream() {
     let downloader = Downloader::testing();
     let id = VideoId::new("HPG7gYoqpHM").unwrap();
-    let downloaded = MediaBrowse::new(id)
+    let downloaded = MediaBrowse::new(id, Uuid::new_v4())
         .browse(downloader)
         .await
         .unwrap()
@@ -58,7 +59,7 @@ async fn test_download_media_stream() {
 async fn test_download_media_streams() {
     let downloader = Downloader::testing();
     let id = VideoId::new("HPG7gYoqpHM").unwrap();
-    let downloaded = MediaBrowse::new(id)
+    let downloaded = MediaBrowse::new(id, Uuid::new_v4())
         .browse(downloader)
         .await
         .unwrap()
@@ -84,7 +85,7 @@ async fn test_download_media_streams() {
 async fn test_download_full_media() {
     let downloader = Downloader::testing();
     let id = VideoId::new("HPG7gYoqpHM").unwrap();
-    let downloaded = MediaBrowse::new(id)
+    let downloaded = MediaBrowse::new(id, Uuid::new_v4())
         .browse(downloader)
         .await
         .unwrap()
@@ -111,7 +112,9 @@ async fn test_extracted_streams() {
         .await
         .unwrap();
 
-    let extr = resp.extract(downloader).unwrap();
+    let extr = resp
+        .extract(downloader, Uuid::new_v4())
+        .unwrap();
 
     let best_stream = extr
         .media_streams
@@ -140,7 +143,7 @@ fn test_save_normal_media_full() {
     let mut stream = AudioStream::new(AudioItag::OpusLow);
     stream.push_data(Bytes::from("meow"));
 
-    let media = DwnMedia::new(stream, metadata, Some(thumbnail));
+    let media = DwnMedia::new(stream, metadata, Some(thumbnail), Uuid::new_v4());
 
     let tempdir = tempfile::tempdir().unwrap();
     let path = tempdir.path();
@@ -174,7 +177,7 @@ fn test_save_normal_media_stream() {
     let mut stream = AudioStream::new(AudioItag::OpusLow);
     stream.push_data(Bytes::from("meow"));
 
-    let media = DwnMedia::new(stream, metadata, None);
+    let media = DwnMedia::new(stream, metadata, None, Uuid::new_v4());
 
     let tempdir = tempfile::tempdir().unwrap();
     let path = tempdir.path();
@@ -205,7 +208,7 @@ fn test_save_bundle_media_full() {
     stream_two.push_data(Bytes::from("meow2"));
 
     let streams = vec![AnyStream::Audio(stream_one), AnyStream::Video(stream_two)];
-    let media = DwnBundleMedia::new(streams, metadata, Some(thumbnail));
+    let media = DwnBundleMedia::new(streams, metadata, Some(thumbnail), Uuid::new_v4());
 
     let tempdir = tempfile::tempdir().unwrap();
     let path = tempdir.path();
@@ -253,7 +256,7 @@ fn test_save_bundle_media_streams() {
     stream_two.push_data(Bytes::from("meow2"));
 
     let streams = vec![AnyStream::Audio(stream_one), AnyStream::Video(stream_two)];
-    let media = DwnBundleMedia::new(streams, metadata, None);
+    let media = DwnBundleMedia::new(streams, metadata, None, Uuid::new_v4());
 
     let tempdir = tempfile::tempdir().unwrap();
     let path = tempdir.path();
@@ -286,10 +289,10 @@ fn test_merge_two_dwn_media() {
     let metadata = MediaMetadata::new("meow", "kitty");
 
     let stream_one = AudioStream::new(AudioItag::AacLow);
-    let media_one = DwnMedia::new(stream_one, metadata.clone(), None);
+    let media_one = DwnMedia::new(stream_one, metadata.clone(), None, Uuid::new_v4());
 
     let stream_two = VideoStream::new(VideoItag::MP4240p);
-    let media_two = DwnMedia::new(stream_two, metadata.clone(), None);
+    let media_two = DwnMedia::new(stream_two, metadata.clone(), None, Uuid::new_v4());
 
     let merged = DwnBundleMedia::from_dwn_medias(vec![media_one.to_any(), media_two.to_any()]).unwrap();
 

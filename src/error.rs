@@ -10,6 +10,8 @@ pub enum YtuwuError {
     ReqwestError(String),
     CaptchaBypassFailed(u16),
 
+    MediaNotInStorage,
+
     NoThumbnail,
 
     YoutubeAPIReturn,
@@ -41,6 +43,7 @@ pub enum YtuwuError {
 impl Display for YtuwuError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
+            Self::MediaNotInStorage => write!(f, "the media with the id was not found in the downloaded storage"),
             Self::EmptyMediaBundle => write!(f, "media bundle was empty"),
             Self::ProgressHandler => write!(f, "Error while getting progress handler"),
             Self::Tokio(e) => write!(f, "tokio error: {}", e),

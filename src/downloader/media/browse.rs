@@ -1,19 +1,22 @@
 use std::sync::Arc;
 
+use uuid::Uuid;
+
 use crate::{Downloader, Result, downloader::media::core::Media, request::core::api_captcha_bypass, types::VideoId};
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct MediaBrowse {
     pub video_id: VideoId,
+    pub id: Uuid,
 }
 
 impl MediaBrowse {
-    pub fn new(id: VideoId) -> Self {
-        Self { video_id: id }
+    pub fn new(video_id: VideoId, id: Uuid) -> Self {
+        Self { video_id, id }
     }
 
     pub async fn browse(self, downloader: Arc<Downloader>) -> Result<Media> {
         let response = api_captcha_bypass(&self.video_id, 5, &downloader.visitor_data, &downloader.client).await?;
-        response.extract(downloader)
+        response.extract(downloader, self.id)
     }
 }
