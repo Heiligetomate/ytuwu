@@ -156,10 +156,8 @@ impl Media {
         })
     }
 
-    pub async fn download<I>(self, itag: I, thumb_res: Option<ThumbRes>) -> Result<DwnMedia<I::Stream>>
-    where
-        I: Itag + Copy + Debug,
-    {
+    pub async fn download<I: Itag>(self, itag: I, thumb_res: Option<ThumbRes>) -> Result<DwnMedia<I::Stream>>
+where {
         let mut thumbnail = None;
 
         if let Some(res) = thumb_res {

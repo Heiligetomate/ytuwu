@@ -1,6 +1,8 @@
+use std::fmt::Debug;
+
 use crate::{Result, downloader::mime_types::MimeType, streams::MediaStream};
 
-pub trait Itag {
+pub trait Itag: Copy + Debug + Send {
     type Stream: MediaStream;
     fn is_highest(&self) -> bool;
     fn highest() -> Self

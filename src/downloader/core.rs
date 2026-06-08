@@ -91,10 +91,8 @@ impl Downloader {
             .await?)
     }
 
-    pub async fn download_media<I>(self: Arc<Self>, video_id: VideoId, itag: I, thumbnail_resolution: Option<ThumbRes>) -> Result<DwnMedia<I::Stream>>
-    where
-        I: Itag + Copy + Debug,
-    {
+    pub async fn download_media<I: Itag>(self: Arc<Self>, video_id: VideoId, itag: I, thumbnail_resolution: Option<ThumbRes>) -> Result<DwnMedia<I::Stream>>
+where {
         Ok(MediaBrowse::new(video_id, Uuid::new_v4())
             .browse(self)
             .await?
@@ -133,10 +131,8 @@ impl Downloader {
             .await?)
     }
 
-    pub async fn download_short<I>(self: Arc<Self>, short_id: ShortId, itag: I, thumbnail_resolution: Option<ThumbRes>) -> Result<DwnMedia<I::Stream>>
-    where
-        I: Itag + Copy + Debug,
-    {
+    pub async fn download_short<I: Itag>(self: Arc<Self>, short_id: ShortId, itag: I, thumbnail_resolution: Option<ThumbRes>) -> Result<DwnMedia<I::Stream>>
+where {
         let video_id = short_id.transform()?;
 
         Ok(self

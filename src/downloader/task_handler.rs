@@ -16,10 +16,8 @@ pub struct DownloadTask {
 }
 
 impl DownloadTask {
-    async fn run<I>(self, downloader: Arc<Downloader>, itag: I) -> Result<DwnMedia<I::Stream>>
-    where
-        I: Itag + Copy + Debug,
-    {
+    async fn run<I: Itag>(self, downloader: Arc<Downloader>, itag: I) -> Result<DwnMedia<I::Stream>>
+where {
         let media = MediaBrowse::new(self.video_id, self.id)
             .browse(downloader)
             .await?
