@@ -76,8 +76,8 @@ impl HandleProgress for DefaultProgressHandler {
         self.print();
     }
 
-    fn on_channel_started(&self, _id: Uuid, single_count: u16, ep_count: u16, album_count: u16) {
-        println!("channel download started. singles: {single_count}\neps: {ep_count}\nalbums: {album_count}");
+    fn on_channel_started(&self, _id: Uuid, single_count: u16, ep_count: u16, album_count: u16, title: &str) {
+        println!("channel download started.\nname: {title} singles: {single_count}\neps: {ep_count}\nalbums: {album_count}");
     }
 
     fn on_channel_downloaded(&self, _id: Uuid) {}

@@ -1,15 +1,13 @@
-use std::{
-    fmt::Debug,
-    fs::create_dir_all,
-    path::{Path, PathBuf},
-};
-
-use uuid::Uuid;
-
 use crate::{
     DwnBundleList, DwnBundleMedia, Dwnlist, Result,
     downloader::{media::downloaded::DwnMedia, streams::MediaStream},
     error::YtuwuError,
+    metadata::ChannelMetadata,
+};
+use std::{
+    fmt::Debug,
+    fs::create_dir_all,
+    path::{Path, PathBuf},
 };
 
 #[derive(Debug)]
@@ -17,6 +15,7 @@ pub struct DwnChannel<M: MediaStream + Debug> {
     pub singles: Vec<DwnMedia<M>>,
     pub eps: Vec<Dwnlist<M>>,
     pub albums: Vec<Dwnlist<M>>,
+    pub metadata: ChannelMetadata,
 }
 
 #[derive(Debug)]
@@ -24,6 +23,7 @@ pub struct DwnBundelChannel {
     pub singles: Vec<DwnBundleMedia>,
     pub eps: Vec<DwnBundleList>,
     pub albums: Vec<DwnBundleList>,
+    pub metadata: ChannelMetadata,
 }
 
 impl DwnBundelChannel {
@@ -65,10 +65,9 @@ impl<M: MediaStream + Debug> DwnChannel<M> {
         Ok(())
     }
 
-    // TODO: get the channel name
     pub fn save_with_dir(&self, path: &Path) -> Result<()> {
         let mut full_path = PathBuf::from(path);
-        full_path.push(Uuid::new_v4().to_string());
+        full_path.push(&self.metadata.name);
 
         self.save(&full_path)
     }

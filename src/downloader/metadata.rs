@@ -11,6 +11,11 @@ pub struct PlaylistMetadata {
     pub song_count: u16,
 }
 
+#[derive(Debug)]
+pub struct ChannelMetadata {
+    pub name: String,
+}
+
 impl MediaMetadata {
     pub fn new(title: &str, author: &str) -> Self {
         Self {
@@ -23,5 +28,11 @@ impl MediaMetadata {
 impl PlaylistMetadata {
     pub fn new(title: &str, song_count: u16) -> Self {
         Self { title: title.to_owned(), song_count }
+    }
+}
+
+impl ChannelMetadata {
+    pub fn new(name: &str) -> Self {
+        Self { name: name.to_owned() }
     }
 }

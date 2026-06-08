@@ -83,7 +83,7 @@ impl HandleProgress for CleanChannelHandler {
         self.print();
     }
 
-    fn on_channel_started(&self, id: Uuid, single_count: u16, playlist_count: u16, ep_count: u16) {
+    fn on_channel_started(&self, id: Uuid, single_count: u16, playlist_count: u16, ep_count: u16, _title: &str) {
         self.channels
             .lock()
             .unwrap()

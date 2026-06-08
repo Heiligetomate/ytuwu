@@ -7,6 +7,7 @@ use crate::{
     downloader::{channel::downloaded::DwnChannel, media::downloaded::DwnMedia, playlist::browse::PlaylistBrowse, streams::MediaStream},
     id_resolver::types::{BrowseId, ChannelPlaylistId},
     itags::{AnyItag, Itag},
+    metadata::ChannelMetadata,
 };
 
 #[derive(Debug)]
@@ -218,11 +219,12 @@ impl ChannelContentBrowse {
     {
         self.downloader
             .progress_handler
-            .on_channel_started(self.id, self.singles.len() as u16, self.eps.len() as u16, self.albums.len() as u16);
+            .on_channel_started(self.id, self.singles.len() as u16, self.eps.len() as u16, self.albums.len() as u16, self.title.as_str());
         Ok(DwnChannel {
             albums: self.download_albums(itag).await?,
             eps: self.download_eps(itag).await?,
             singles: self.download_singles(itag).await?,
+            metadata: ChannelMetadata::new(self.title.as_str()),
         })
     }
 
@@ -235,6 +237,7 @@ impl ChannelContentBrowse {
             singles: self
                 .download_bundle_singles(itags)
                 .await?,
+            metadata: ChannelMetadata::new(self.title.as_str()),
         })
     }
 }
