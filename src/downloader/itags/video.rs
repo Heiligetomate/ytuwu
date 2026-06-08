@@ -5,7 +5,6 @@ use crate::{
     downloader::{itags::core::Itag, mime_types::MimeType},
     error::YtuwuError,
     streams::VideoStream,
-    types::VideoId,
 };
 
 // TODO: There should be 2k itags etc
