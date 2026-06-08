@@ -31,12 +31,6 @@ fn test_itag_mime_types() {
 
 #[test]
 fn test_video_itag_next_best() {
-    assert_eq!(
-        VideoItag::WebM1080p
-            .next_best()
-            .unwrap(),
-        VideoItag::MP41080p
-    );
     assert_eq!(VideoItag::Highest.next_best().unwrap(), VideoItag::WebM1080p);
     assert_eq!(
         VideoItag::WebM1080p
@@ -44,9 +38,33 @@ fn test_video_itag_next_best() {
             .unwrap(),
         VideoItag::MP41080p
     );
-    assert_eq!(VideoItag::MP41080p.next_best().unwrap(), VideoItag::WebM720p);
+    assert_eq!(VideoItag::MP41080p.next_best().unwrap(), VideoItag::Webm1080p50);
+    assert_eq!(
+        VideoItag::Webm1080p50
+            .next_best()
+            .unwrap(),
+        VideoItag::MP41080p50
+    );
+    assert_eq!(
+        VideoItag::MP41080p50
+            .next_best()
+            .unwrap(),
+        VideoItag::WebM720p
+    );
     assert_eq!(VideoItag::WebM720p.next_best().unwrap(), VideoItag::MP4720p);
-    assert_eq!(VideoItag::MP4720p.next_best().unwrap(), VideoItag::Webm480p);
+    assert_eq!(VideoItag::MP4720p.next_best().unwrap(), VideoItag::Webm720p50);
+    assert_eq!(
+        VideoItag::Webm720p50
+            .next_best()
+            .unwrap(),
+        VideoItag::MP4720p50
+    );
+    assert_eq!(
+        VideoItag::MP4720p50
+            .next_best()
+            .unwrap(),
+        VideoItag::Webm480p
+    );
     assert_eq!(VideoItag::Webm480p.next_best().unwrap(), VideoItag::MP4480p);
     assert_eq!(VideoItag::MP4480p.next_best().unwrap(), VideoItag::WebM360p);
     assert_eq!(VideoItag::WebM360p.next_best().unwrap(), VideoItag::MP4360p);
