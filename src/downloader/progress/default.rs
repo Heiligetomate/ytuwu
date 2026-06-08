@@ -54,8 +54,8 @@ impl HandleProgress for DefaultProgressHandler {
         self.print();
     }
 
-    fn on_download_complete(&self, _: Uuid) {
-        // self.active.lock().unwrap().remove(&id);
+    fn on_download_complete(&self, id: Uuid) {
+        self.active.lock().unwrap().remove(&id);
         self.print();
     }
 
