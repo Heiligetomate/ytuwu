@@ -31,7 +31,58 @@ However, I've never heard of anyone actually getting in trouble for using the in
 - some singles have multiple songs in them for some stupid reason
 - better error handling (crashes when there are is no thumbnail for example)
 
-## Example usages: 
+## Example usages (high level api): 
+
+### download media (audio/video/both/thumbnail): 
+
+```rs
+let downloader = Downloader::default();
+
+let dwn = downloader
+    .from_url(url)?
+    .as_media()?
+    .audio() // or .video() for video and .dual() for both 
+    .thumbnail() // if you want to download the thumbnail 
+    .await?;
+
+dwn.save_media_stream(Path::new("silly_path"))?; // save fn can be different depending on what you downloaded
+
+```
+
+### download playlist (audio/video/both/thumbnail):
+
+```rs 
+let downloader = Downloader::default();
+
+let dwn = downloader
+    .from_url(url)?
+    .as_list()?
+    .audio() // or .video() for video and .dual() for both 
+    .thumbnail() // if you want to download the thumbnail 
+    .await?;
+
+dwn.save_with_dir(Path::new("silly_path"))?; 
+
+```
+
+### download channel (audio/video/both/thumbnail):
+
+```rs 
+let downloader = Downloader::default();
+
+let dwn = downloader
+    .from_url(url)?
+    .as_channel()?
+    .audio() // or .video() for video and .dual() for both 
+    .thumbnail() // if you want to download the thumbnail 
+    .await?;
+
+dwn.save_with_dir(Path::new("silly_path"))?; 
+
+```
+
+
+## Example usages (more low level api): 
 
 ### download the highest audio stream of a video/song, ignore the thumbnail and save the result: 
 ```rs 
