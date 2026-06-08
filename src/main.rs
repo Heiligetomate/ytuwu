@@ -6,20 +6,20 @@ use ytuwu::{Downloader, Result};
 async fn main() -> Result<()> {
     // let start_time = SystemTime::now();
 
-    let url = "https://music.youtube.com/@theknife";
+    let url = "https://music.youtube.com/watch?v=d1mkqz422lg";
 
-    let downloader = Downloader::default();
+    let downloader = Downloader::testing();
 
     let start_time = SystemTime::now();
 
     let dwn = downloader
         .from_url(url)?
-        .as_channel()?
-        .audio()
+        .as_media()?
+        .dual()
         .download()
         .await?;
 
-    dwn.save_with_dir(Path::new("teehee"))?;
+    dwn.save_media_streams(Path::new("teehee"))?;
 
     println!("download took {:?}", start_time.elapsed().unwrap());
 
