@@ -11,6 +11,7 @@ use crate::{
 
 #[derive(Debug)]
 pub struct ChannelContentBrowse {
+    pub title: String,
     pub downloader: Arc<Downloader>,
     pub albums: Vec<ChannelPlaylistId>,
     pub eps: Vec<ChannelPlaylistId>,

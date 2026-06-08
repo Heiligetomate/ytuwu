@@ -15,6 +15,31 @@ use crate::{
 #[serde(rename_all = "camelCase")]
 pub struct ChannelBrowseResponse {
     contents: Option<ChannelContents>,
+    header: Option<Header>,
+}
+
+#[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+struct Header {
+    music_header_renderer: MusicHeaderRenderer,
+}
+
+#[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+struct MusicHeaderRenderer {
+    title: HeaderTitle,
+}
+
+#[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+struct HeaderTitle {
+    runs: Vec<Title>,
+}
+
+#[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+struct Title {
+    text: Option<String>,
 }
 
 #[derive(Deserialize, Debug)]
@@ -97,7 +122,7 @@ struct SubtitleRun {
 }
 
 impl ChannelBrowseResponse {
-    pub fn extract_all_releases(&self, downloader: Arc<Downloader>, id: Uuid) -> Result<ChannelContentBrowse> {
+    pub fn extract_all_releases(self, downloader: Arc<Downloader>, id: Uuid) -> Result<ChannelContentBrowse> {
         let mut albums: Vec<ChannelPlaylistId> = Vec::new();
         let mut eps: Vec<ChannelPlaylistId> = Vec::new();
         let mut singles: Vec<ChannelPlaylistId> = Vec::new();
@@ -155,7 +180,28 @@ impl ChannelBrowseResponse {
             }
         }
 
-        Ok(ChannelContentBrowse { albums, eps, singles, downloader, id })
+        let title = self
+            .header
+            .as_ref()
+            .ok_or(YtuwuError::ChannelDataNotFound("header"))?
+            .music_header_renderer
+            .title
+            .runs
+            .first()
+            .as_ref()
+            .ok_or(YtuwuError::ChannelDataNotFound("title"))?
+            .text
+            .as_ref()
+            .ok_or(YtuwuError::ChannelDataNotFound("title"))?;
+
+        Ok(ChannelContentBrowse {
+            albums,
+            eps,
+            singles,
+            downloader,
+            id,
+            title: title.to_owned(),
+        })
     }
 }
 

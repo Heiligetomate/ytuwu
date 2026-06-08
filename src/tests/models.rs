@@ -50,10 +50,12 @@ async fn channel_resp() {
     let res: ChannelBrowseResponse = api_request(&id, &reqwest::Client::new())
         .await
         .unwrap();
+
+    assert_eq!(res.get_status(), Status::Success);
+
     let extracted = res
         .extract_all_releases(Downloader::testing(), Uuid::new_v4())
         .unwrap();
-    assert_eq!(res.get_status(), Status::Success);
     assert!(extracted.singles.len() >= 40);
     assert!(extracted.eps.len() >= 7);
     assert!(extracted.albums.len() >= 4);
