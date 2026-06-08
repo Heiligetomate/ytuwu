@@ -65,7 +65,7 @@ impl Media {
         }
     }
 
-    pub async fn download_stream<I: Itag + Copy>(&self, itag: I) -> Result<I::Stream> {
+    pub async fn download_stream<I: Itag>(&self, itag: I) -> Result<I::Stream> {
         let url = self
             .media_streams
             .get_best_stream(&itag)?;

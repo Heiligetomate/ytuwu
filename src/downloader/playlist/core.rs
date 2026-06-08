@@ -40,7 +40,7 @@ impl Playlist {
 
     pub async fn download<I>(mut self, itag: I, thumb_res: Option<ThumbRes>) -> Result<Dwnlist<I::Stream>>
     where
-        I: Itag + Copy + Debug + Send + 'static,
+        I: Itag + 'static,
     {
         self.downloader
             .progress_handler

@@ -1,4 +1,4 @@
-use std::{fmt::Debug, sync::Arc};
+use std::sync::Arc;
 
 use crate::{
     Downloader, DwnBundleList, GetId, Result, ThumbRes,
@@ -68,7 +68,7 @@ impl EmptyListBuilder {
 
 impl<I> ListBuilder<I>
 where
-    I: Itag + Copy + Debug + Send + 'static,
+    I: Itag + 'static,
     I::Stream: Into<AnyStream>,
 {
     pub fn thumbnail(self) -> Self {

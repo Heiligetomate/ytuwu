@@ -47,7 +47,7 @@ impl Downloader {
 
     pub async fn work<I>(self: &Arc<Self>, itag: I) -> Result<()>
     where
-        I: Itag + Copy + Debug + Send + 'static,
+        I: Itag + 'static,
         I::Stream: MediaStream + Into<AnyStream> + 'static,
     {
         let handler = std::mem::take(&mut *self.task_handler.lock().await);
@@ -110,7 +110,7 @@ where {
 
     pub async fn download_album<I>(self: Arc<Self>, browse_id: BrowseId, itag: I, thumbnail_resolution: Option<ThumbRes>) -> Result<Dwnlist<I::Stream>>
     where
-        I: Itag + Copy + Debug + Send + 'static,
+        I: Itag + 'static,
     {
         Ok(PlaylistBrowse::new(browse_id, self)
             .browse()
@@ -142,7 +142,7 @@ where {
 
     pub async fn download_channel<I>(self: Arc<Self>, channel_id: ChannelId, itag: I) -> Result<DwnChannel<I::Stream>>
     where
-        I: Itag + Copy + Debug + Send + 'static,
+        I: Itag + 'static,
     {
         Ok(ChannelBrowse::new(channel_id, self)
             .await?

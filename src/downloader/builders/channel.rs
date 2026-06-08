@@ -65,7 +65,7 @@ impl EmptyChannelBuilder {
 
 impl<I> ChannelBuilder<I>
 where
-    I: Itag + Copy + Debug + Send + 'static,
+    I: Itag + 'static,
 {
     // pub fn thumbnail(self) -> Self {
     //     Self {

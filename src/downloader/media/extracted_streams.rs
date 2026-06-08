@@ -48,7 +48,7 @@ impl ExtractedStreams {
         None
     }
 
-    pub fn get_best_stream<I: Itag + Copy>(&self, itag: &I) -> Result<&str> {
+    pub fn get_best_stream<I: Itag>(&self, itag: &I) -> Result<&str> {
         if !itag.is_highest() {
             return self
                 .get_url_by_itag(itag)

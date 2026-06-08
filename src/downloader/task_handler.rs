@@ -50,7 +50,7 @@ impl TaskHandler {
 
     pub async fn work<I>(self, downloader: Arc<Downloader>, itag: I) -> Vec<DwnMedia<I::Stream>>
     where
-        I: Itag + Copy + Debug + Send + 'static,
+        I: Itag + 'static,
         I::Stream: 'static,
     {
         let mut handles = Vec::new();

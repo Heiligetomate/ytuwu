@@ -70,7 +70,7 @@ impl EmptyMediaBuilder {
 
 impl<I> MediaBuilder<I>
 where
-    I: Itag + Copy + Debug + Send + 'static,
+    I: Itag + 'static,
     AnyStream: From<I::Stream>,
 {
     pub fn thumbnail(self) -> Self {
