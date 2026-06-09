@@ -3,7 +3,7 @@ use std::fmt::Debug;
 use uuid::Uuid;
 
 use crate::{
-    DwnMedia, Result,
+    DwnBundleMedia, DwnMedia, Result,
     error::YtuwuError,
     streams::{AnyStream, MediaStream},
 };
@@ -12,37 +12,56 @@ type AnyMedia = DwnMedia<AnyStream>;
 
 #[derive(Debug)]
 pub struct DownloadedStore {
-    contents: Vec<AnyMedia>,
+    media: Vec<AnyMedia>,
+    bundle: Vec<DwnBundleMedia>,
 }
 
 impl Default for DownloadedStore {
     fn default() -> Self {
-        Self { contents: Vec::new() }
+        Self {
+            media: Vec::new(),
+            bundle: Vec::new(),
+        }
     }
 }
 
 impl DownloadedStore {
     pub fn push(&mut self, media: AnyMedia) {
-        self.contents.push(media);
+        self.media.push(media);
+    }
+
+    pub fn push_bundle(&mut self, media: DwnBundleMedia) {
+        self.bundle.push(media);
     }
 
     pub fn push_any_vec(&mut self, medias: Vec<AnyMedia>) {
-        self.contents.extend(medias);
+        self.media.extend(medias);
     }
 
     pub fn push_vec<M>(&mut self, mut medias: Vec<DwnMedia<M>>)
     where
-        M: MediaStream + Debug + Into<AnyStream>,
+        M: MediaStream + Into<AnyStream>,
     {
         for media in medias.drain(..) {
-            self.contents.push(media.to_any());
+            self.media.push(media.to_any());
         }
     }
 
+    pub fn push_bundle_vec(&mut self, medias: Vec<DwnBundleMedia>) {
+        self.bundle.extend(medias);
+    }
+
     pub fn extract_media(&mut self, id: Uuid) -> Result<DwnMedia<AnyStream>> {
-        for (i, media) in self.contents.iter().enumerate() {
+        for (i, media) in self.media.iter().enumerate() {
             if media.id == id {
-                let media = self.contents.remove(i);
+                let media = self.media.remove(i);
+                return Ok(media);
+            }
+        }
+
+        for (i, media) in self.bundle.iter().enumerate() {
+            if media.id == id {
+                let media = self.media.remove(i);
                 return Ok(media);
             }
         }

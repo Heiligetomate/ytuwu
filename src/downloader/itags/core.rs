@@ -14,6 +14,5 @@ pub trait Itag: Copy + Debug + Send {
 
     fn to_int(&self) -> u16;
     fn get_mime_type(&self) -> MimeType;
-
     fn new_stream(self) -> Self::Stream;
 }

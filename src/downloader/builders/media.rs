@@ -54,7 +54,10 @@ impl EmptyMediaBuilder {
     }
 
     pub fn thumbnail(self) -> Self {
-        Self { thumbnail: Some(ThumbRes::VeryHigh), ..self }
+        Self {
+            thumbnail: Some(ThumbRes::VeryHigh),
+            ..self
+        }
     }
 
     pub fn dual(self) -> MultipleMediaBuilder {
@@ -74,7 +77,10 @@ where
     AnyStream: From<I::Stream>,
 {
     pub fn thumbnail(self) -> Self {
-        Self { thumbnail: Some(ThumbRes::VeryHigh), ..self }
+        Self {
+            thumbnail: Some(ThumbRes::VeryHigh),
+            ..self
+        }
     }
 
     pub async fn download(self) -> Result<DwnMedia<AnyStream>> {
@@ -100,15 +106,29 @@ where
 
 impl MultipleMediaBuilder {
     pub fn thumbnail(self) -> Self {
-        Self { thumbnail: Some(ThumbRes::VeryHigh), ..self }
+        Self {
+            thumbnail: Some(ThumbRes::VeryHigh),
+            ..self
+        }
     }
 
     pub async fn download(self) -> Result<DwnBundleMedia> {
-        let downloaded = MediaBrowse::new(self.id, Uuid::new_v4())
-            .browse(self.downloader)
-            .await?
-            .download_bundle(self.itags, self.thumbnail)
-            .await?;
+        let id = Uuid::new_v4();
+        self.downloader
+            .task_handler
+            .lock()
+            .await
+            .push_bundle(self.id, None, None, id, self.itags);
+
+        self.downloader.work(self.itag).await?;
+
+        let downloaded = self
+            .downloader
+            .downloaded
+            .lock()
+            .await
+            .extract_media(id)?;
+
         Ok(downloaded)
     }
 }
