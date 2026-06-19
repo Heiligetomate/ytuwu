@@ -5,7 +5,7 @@ use crate::{
         collection::IdCollection,
         id::{GetId, Id},
     },
-    request::clients::player::PlayerClient,
+    request::clients::PlayerClient,
 };
 
 use serde::{Deserialize, Serialize};

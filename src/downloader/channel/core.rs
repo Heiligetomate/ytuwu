@@ -3,11 +3,16 @@ use std::{fmt::Debug, sync::Arc};
 use uuid::Uuid;
 
 use crate::{
-    Downloader, DwnBundelChannel, DwnBundleList, DwnBundleMedia, Dwnlist, Result,
-    downloader::{channel::downloaded::DwnChannel, media::downloaded::DwnMedia, playlist::browse::PlaylistBrowse},
+    Result,
+    downloader::{
+        Downloader,
+        channel::{DwnBundelChannel, DwnChannel},
+        media::{DwnBundleMedia, DwnMedia},
+        metadata::ChannelMetadata,
+        playlist::{DwnBundleList, Dwnlist, PlaylistBrowse},
+    },
     id_resolver::types::{BrowseId, ChannelPlaylistId},
     itags::{AnyItag, Itag},
-    metadata::ChannelMetadata,
 };
 
 #[derive(Debug)]

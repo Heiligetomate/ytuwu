@@ -1,8 +1,16 @@
 use std::sync::Arc;
 
 use crate::{
-    Downloader, DwnBundelChannel, DwnChannel, GetId, Result,
-    downloader::{builders::empty::EmptyBuilder, channel::browse::ChannelBrowse},
+    Result,
+    downloader::{
+        Downloader,
+        builders::empty::EmptyBuilder,
+        channel::{
+            browse::ChannelBrowse,
+            downloaded::{DwnBundelChannel, DwnChannel},
+        },
+    },
+    id_resolver::GetId,
     itags::{AnyItag, AudioItag, Itag, VideoItag},
     types::ChannelId,
 };

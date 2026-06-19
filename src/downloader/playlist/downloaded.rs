@@ -5,10 +5,13 @@ use std::{
 };
 
 use crate::{
-    DwnBundleMedia, Result,
-    downloader::{media::downloaded::DwnMedia, streams::MediaStream},
+    Result,
+    downloader::{
+        media::{DwnBundleMedia, DwnMedia},
+        metadata::PlaylistMetadata,
+        streams::MediaStream,
+    },
     error::YtuwuError,
-    metadata::PlaylistMetadata,
 };
 
 #[derive(Debug)]

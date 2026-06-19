@@ -3,9 +3,10 @@ mod audio;
 mod core;
 mod muxed;
 mod short;
+mod video;
+
 #[cfg(test)]
 mod test;
-mod video;
 
 pub use any::AnyItag;
 pub use audio::AudioItag;

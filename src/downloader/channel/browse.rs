@@ -2,7 +2,12 @@ use std::sync::Arc;
 
 use uuid::Uuid;
 
-use crate::{Downloader, Result, downloader::channel::core::ChannelContentBrowse, id_resolver::types::ChannelId, request::core::api_request};
+use crate::{
+    Result,
+    downloader::{Downloader, channel::core::ChannelContentBrowse},
+    id_resolver::types::ChannelId,
+    request::api_request,
+};
 
 pub struct ChannelBrowse {
     channel_id: ChannelId,

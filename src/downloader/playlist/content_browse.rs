@@ -3,11 +3,13 @@ use std::sync::Arc;
 use uuid::Uuid;
 
 use crate::{
-    Downloader, Id, Result,
+    Result,
     downloader::{
-        media::{browse::MediaBrowse, core::Media},
+        Downloader,
+        media::{Media, MediaBrowse},
         playlist::core::Playlist,
     },
+    id_resolver::Id,
     itags::AnyItag,
 };
 

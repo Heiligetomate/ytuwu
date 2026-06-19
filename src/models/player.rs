@@ -4,13 +4,12 @@ use serde::Deserialize;
 use uuid::Uuid;
 
 use crate::{
-    Downloader,
-    downloader::media::{
-        core::Media,
-        extracted_streams::{ExtractedStreams, ExtractedThumbnails},
+    downloader::{
+        Downloader,
+        media::{ExtractedStreams, ExtractedThumbnails, Media},
+        metadata::MediaMetadata,
     },
     error::{Result, YtuwuError},
-    metadata::MediaMetadata,
     models::response::{Response, Status},
 };
 

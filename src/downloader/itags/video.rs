@@ -2,9 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     Result,
-    downloader::{itags::core::Itag, mime_types::MimeType},
+    downloader::{itags::core::Itag, mime_types::MimeType, streams::VideoStream},
     error::YtuwuError,
-    streams::VideoStream,
 };
 
 // TODO: There should be 2k itags etc

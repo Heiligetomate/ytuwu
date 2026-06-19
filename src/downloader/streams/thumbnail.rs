@@ -1,9 +1,11 @@
 use std::path::Path;
 
 use crate::{
-    downloader::mime_types::MimeType,
+    downloader::{
+        mime_types::MimeType,
+        streams::{MediaStream, util::save_media_stream},
+    },
     error::Result,
-    streams::{MediaStream, util::save_media_stream},
 };
 use bytes::{BufMut, Bytes, BytesMut};
 

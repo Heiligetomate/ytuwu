@@ -3,9 +3,8 @@ use std::fs;
 use bytes::Bytes;
 
 use crate::{
-    downloader::streams::{AudioStream, MediaStream, MuxedStream, ShortStream, VideoStream},
+    downloader::streams::{AudioStream, MediaStream, MuxedStream, ShortStream, Thumbnail, VideoStream},
     itags::*,
-    streams::Thumbnail,
 };
 
 #[test]

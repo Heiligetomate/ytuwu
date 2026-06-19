@@ -1,4 +1,4 @@
-use crate::{Result, error::YtuwuError, id_resolver::id::Id, request::clients::browse::BrowseClient};
+use crate::{Result, error::YtuwuError, id_resolver::id::Id, request::clients::BrowseClient};
 
 use serde::{Deserialize, Serialize};
 

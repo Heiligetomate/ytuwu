@@ -1,8 +1,11 @@
 use std::fs::read_dir;
 
 use crate::{
-    Downloader, GetId, Id, IdCollection,
-    downloader::channel::{browse::ChannelBrowse, downloaded::create_paths},
+    downloader::{
+        Downloader,
+        channel::{browse::ChannelBrowse, downloaded::create_paths},
+    },
+    id_resolver::{GetId, Id, IdCollection},
     itags::{AnyItag, AudioItag},
     types::ChannelId,
 };

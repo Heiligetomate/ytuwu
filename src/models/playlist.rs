@@ -1,8 +1,8 @@
 use serde::Deserialize;
 
 use crate::{
-    Id,
     error::YtuwuError,
+    id_resolver::Id,
     models::response::{BrowseResponse, Response, Status},
     types::VideoId,
 };

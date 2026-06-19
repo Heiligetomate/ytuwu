@@ -2,7 +2,7 @@ use crate::{
     Result,
     error::YtuwuError,
     itags::Itag,
-    models::player::{Stream, ThumbnailStream},
+    models::{Stream, ThumbnailStream},
 };
 
 #[derive(Debug)]

@@ -1,4 +1,4 @@
-use crate::{Result, error::YtuwuError, id_resolver::id::Id, request::clients::playlist::PlaylistBrowseClient};
+use crate::{Result, error::YtuwuError, id_resolver::id::Id, request::clients::PlaylistBrowseClient};
 
 use serde::{Deserialize, Serialize};
 

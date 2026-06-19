@@ -2,9 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     Result,
-    downloader::{itags::core::Itag, mime_types::MimeType},
+    downloader::{itags::core::Itag, mime_types::MimeType, streams::ShortStream},
     error::YtuwuError,
-    streams::ShortStream,
 };
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone, Copy)]

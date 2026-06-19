@@ -5,7 +5,7 @@ use crate::{
         collection::IdCollection,
         id::{GetId, Id},
     },
-    request::{clients::channel::ChannelClient, core::api_request},
+    request::{api_request, clients::ChannelClient},
     types::{channel_name::ChannelNameId, channel_raw::ChannelRawId},
 };
 

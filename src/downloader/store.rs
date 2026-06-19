@@ -3,10 +3,14 @@ use std::{collections::HashMap, fmt::Debug};
 use uuid::Uuid;
 
 use crate::{
-    DwnBundleMedia, DwnMedia, Dwnlist, Result,
-    downloader::task_handler::{FinishedBundleTask, FinishedTask},
+    Result,
+    downloader::{
+        media::{DwnBundleMedia, DwnMedia},
+        playlist::Dwnlist,
+        streams::AnyStream,
+        task_handler::{FinishedBundleTask, FinishedTask},
+    },
     error::YtuwuError,
-    streams::AnyStream,
 };
 
 #[derive(Debug)]

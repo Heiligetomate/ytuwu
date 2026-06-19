@@ -1,4 +1,4 @@
-use crate::{Result, request::clients::client::ClientWithHeaders};
+use crate::{Result, request::clients::ClientWithHeaders};
 
 pub trait GetId<T: Id> {
     fn get_id(&self) -> Result<T>;

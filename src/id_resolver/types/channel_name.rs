@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::{Result, id_resolver::id::Id, request::clients::channel_name_to_id::ChannelNameClient};
+use crate::{Result, id_resolver::id::Id, request::clients::ChannelNameClient};
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct ChannelNameId {

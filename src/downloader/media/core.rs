@@ -1,17 +1,18 @@
 use std::{fmt::Debug, sync::Arc};
 
 use crate::{
-    Downloader, DwnBundleMedia, DwnMedia,
     downloader::{
+        Downloader,
         media::{
+            DwnBundleMedia, DwnMedia,
             extracted_streams::{ExtractedStreams, ExtractedThumbnails, ThumbRes},
             util::extract_size,
         },
+        metadata::MediaMetadata,
         streams::{AnyStream, MediaStream, Thumbnail},
     },
     error::Result,
     itags::{AnyItag, Itag},
-    metadata::MediaMetadata,
 };
 use bytes::Bytes;
 use std::sync::atomic::{AtomicU32, Ordering};

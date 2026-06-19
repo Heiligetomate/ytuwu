@@ -1,5 +1,5 @@
 use crate::{
-    GetId, Id, IdCollection,
+    id_resolver::{GetId, Id, IdCollection},
     types::{AlbumId, BrowseId, ChannelId, PlaylistId, VideoId},
 };
 

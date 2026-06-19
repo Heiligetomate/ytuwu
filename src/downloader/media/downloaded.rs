@@ -5,9 +5,11 @@ use uuid::Uuid;
 
 use crate::{
     Result,
-    downloader::streams::{AnyStream, MediaStream, Thumbnail},
+    downloader::{
+        metadata::MediaMetadata,
+        streams::{AnyStream, MediaStream, Thumbnail},
+    },
     error::YtuwuError,
-    metadata::MediaMetadata,
     name_trimmer::default_trim,
 };
 

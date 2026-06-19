@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::{Result, error::YtuwuError, id_resolver::id::Id, request::clients::channel::ChannelClient};
+use crate::{Result, error::YtuwuError, id_resolver::id::Id, request::clients::ChannelClient};
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct ChannelRawId {

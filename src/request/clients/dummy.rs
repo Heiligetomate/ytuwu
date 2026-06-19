@@ -1,5 +1,5 @@
 use crate::{
-    models::dummy::DummyResponse,
+    models::DummyResponse,
     request::clients::client::{ClientPrebuild, ClientWithHeaders},
 };
 

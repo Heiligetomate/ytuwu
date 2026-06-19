@@ -4,10 +4,10 @@ use serde::Deserialize;
 use uuid::Uuid;
 
 use crate::{
-    Downloader, Result,
-    downloader::ChannelContentBrowse,
+    Result,
+    downloader::{ChannelContentBrowse, Downloader},
     error::YtuwuError,
-    id_resolver::{id::Id, types::ChannelPlaylistId},
+    id_resolver::{Id, types::ChannelPlaylistId},
     models::response::{Response, Status},
 };
 

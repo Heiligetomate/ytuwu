@@ -1,7 +1,9 @@
 use crate::{
-    downloader::itags::{audio::AudioItag, muxed::MuxedItag, short::ShortItag, video::VideoItag},
+    downloader::{
+        itags::{audio::AudioItag, muxed::MuxedItag, short::ShortItag, video::VideoItag},
+        streams::AnyStream,
+    },
     itags::Itag,
-    streams::AnyStream,
 };
 
 #[derive(Debug, Clone, Copy)]

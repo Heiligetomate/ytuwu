@@ -1,14 +1,17 @@
-pub mod builders;
-pub mod channel;
-pub mod mime_types;
-pub mod store;
-pub mod task_handler;
-pub(crate) use channel::core::ChannelContentBrowse;
-pub mod core;
 pub mod itags;
-pub mod media;
 pub mod metadata;
-pub mod playlist;
+pub mod progress;
 pub mod streams;
 
-pub mod progress;
+mod builders;
+mod channel;
+mod core;
+pub mod media;
+mod mime_types;
+mod playlist;
+mod store;
+mod task_handler;
+
+pub(crate) use channel::core::ChannelContentBrowse;
+pub use core::Downloader;
+pub(crate) use core::SharedVd;

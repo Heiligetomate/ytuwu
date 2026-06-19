@@ -3,7 +3,16 @@ use std::{fmt::Debug, sync::Arc};
 use tokio::sync::Semaphore;
 use uuid::Uuid;
 
-use crate::{Downloader, DwnBundleMedia, DwnMedia, Result, downloader::media::browse::MediaBrowse, itags::AnyItag, streams::AnyStream, types::VideoId};
+use crate::{
+    Result,
+    downloader::{
+        Downloader,
+        media::{DwnBundleMedia, DwnMedia, MediaBrowse},
+        streams::AnyStream,
+    },
+    itags::AnyItag,
+    types::VideoId,
+};
 
 const MAX_TASKS: usize = 4;
 

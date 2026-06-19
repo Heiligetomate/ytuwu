@@ -3,10 +3,16 @@ use std::sync::Arc;
 use uuid::Uuid;
 
 use crate::{
-    Downloader, DwnBundleList, Dwnlist, GetId, Result, ThumbRes,
-    downloader::{builders::empty::EmptyBuilder, playlist::browse::PlaylistBrowse},
+    Result,
+    downloader::{
+        Downloader,
+        builders::empty::EmptyBuilder,
+        media::ThumbRes,
+        playlist::{DwnBundleList, Dwnlist, PlaylistBrowse},
+        streams::AnyStream,
+    },
+    id_resolver::GetId,
     itags::{AnyItag, AudioItag, Itag, VideoItag},
-    streams::AnyStream,
     types::BrowseId,
 };
 

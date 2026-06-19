@@ -3,8 +3,11 @@ use std::{fmt::Debug, sync::Arc};
 use uuid::Uuid;
 
 use crate::{
-    Downloader, DwnBundleList, DwnMedia, Dwnlist,
-    downloader::media::{core::Media, extracted_streams::ThumbRes},
+    downloader::{
+        Downloader,
+        media::{DwnMedia, Media, ThumbRes},
+        playlist::{DwnBundleList, Dwnlist},
+    },
     error::{Result, YtuwuError},
     itags::{AnyItag, Itag},
 };

@@ -1,8 +1,12 @@
 use crate::{
-    DwnBundleList, DwnBundleMedia, Dwnlist, Result,
-    downloader::{media::downloaded::DwnMedia, streams::MediaStream},
+    Result,
+    downloader::{
+        media::{DwnBundleMedia, DwnMedia},
+        metadata::ChannelMetadata,
+        playlist::{DwnBundleList, Dwnlist},
+        streams::MediaStream,
+    },
     error::YtuwuError,
-    metadata::ChannelMetadata,
 };
 use std::{
     fmt::Debug,

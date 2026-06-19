@@ -2,7 +2,12 @@ use std::sync::Arc;
 
 use uuid::Uuid;
 
-use crate::{Downloader, Result, downloader::media::core::Media, request::core::api_captcha_bypass, types::VideoId};
+use crate::{
+    Result,
+    downloader::{Downloader, media::Media},
+    request::api_captcha_bypass,
+    types::VideoId,
+};
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct MediaBrowse {

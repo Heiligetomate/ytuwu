@@ -4,9 +4,8 @@ use crate::{
     Result,
     downloader::{
         mime_types::MimeType,
-        streams::{audio::AudioStream, core::MediaStream, long_video::VideoStream, muxed::MuxedStream, short_video::ShortStream},
+        streams::{Thumbnail, audio::AudioStream, core::MediaStream, long_video::VideoStream, muxed::MuxedStream, short_video::ShortStream},
     },
-    streams::Thumbnail,
 };
 
 #[derive(Debug, PartialEq, Eq)]

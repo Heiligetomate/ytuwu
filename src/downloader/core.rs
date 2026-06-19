@@ -1,21 +1,22 @@
 use std::{fmt::Debug, sync::Arc};
 
 use crate::{
-    DwnBundelChannel, DwnBundleList, DwnBundleMedia, DwnMedia, Dwnlist, IdCollection,
     downloader::{
-        builders::empty::EmptyBuilder,
-        channel::{browse::ChannelBrowse, downloaded::DwnChannel},
-        media::{browse::MediaBrowse, extracted_streams::ThumbRes},
-        playlist::browse::PlaylistBrowse,
-        progress::EmptyHandler,
+        builders::EmptyBuilder,
+        channel::{DwnBundelChannel, browse::ChannelBrowse, downloaded::DwnChannel},
+        media::{DwnBundleMedia, DwnMedia, MediaBrowse, ThumbRes},
+        playlist::{DwnBundleList, Dwnlist, PlaylistBrowse},
+        progress::{DefaultProgressHandler, EmptyHandler, HandleProgress},
         store::DownloadedStore,
+        streams::Thumbnail,
         task_handler::TaskHandler,
     },
     error::Result,
-    id_resolver::types::{BrowseId, VideoId},
+    id_resolver::{
+        IdCollection,
+        types::{BrowseId, VideoId},
+    },
     itags::{AnyItag, Itag},
-    progress::{DefaultProgressHandler, HandleProgress},
-    streams::Thumbnail,
     types::{ChannelId, ShortId},
 };
 use reqwest::Client;

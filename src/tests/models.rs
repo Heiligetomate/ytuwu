@@ -4,19 +4,16 @@ use tokio::sync::Mutex;
 use uuid::Uuid;
 
 use crate::{
-    Downloader,
+    downloader::Downloader,
     id_resolver::{
-        id::Id,
+        Id,
         types::{AlbumId, ChannelId, ChannelPlaylistId, VideoId},
     },
     models::{
-        channel_browse::ChannelBrowseResponse,
-        fast_browse::FastBrowseResponse,
-        player::PlayerResponse,
+        ChannelBrowseResponse, FastBrowseResponse, PlayerResponse, SlowBrowseResponse,
         response::{BrowseResponse, Response, Status},
-        slow_browse::SlowBrowseResponse,
     },
-    request::core::{api_captcha_bypass, api_request},
+    request::{api_captcha_bypass, api_request},
 };
 
 #[tokio::test]

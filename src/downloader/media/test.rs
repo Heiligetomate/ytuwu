@@ -7,15 +7,15 @@ use tokio::sync::Mutex;
 use uuid::Uuid;
 
 use crate::{
-    Downloader, DwnBundleMedia, DwnMedia, Id, ThumbRes,
     downloader::{
-        media::{browse::MediaBrowse, util::extract_size},
-        streams::{AudioStream, MediaStream, VideoStream},
+        Downloader,
+        media::{DwnBundleMedia, DwnMedia, browse::MediaBrowse, extracted_streams::ThumbRes, util::extract_size},
+        metadata::MediaMetadata,
+        streams::{AnyStream, AudioStream, MediaStream, Thumbnail, VideoStream},
     },
+    id_resolver::Id,
     itags::*,
-    metadata::MediaMetadata,
-    request::core::api_captcha_bypass,
-    streams::{AnyStream, Thumbnail},
+    request::api_captcha_bypass,
     types::VideoId,
 };
 

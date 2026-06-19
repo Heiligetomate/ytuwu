@@ -1,8 +1,12 @@
 use std::sync::Arc;
 
 use crate::{
-    Downloader, IdCollection, Result,
-    downloader::builders::{channel::EmptyChannelBuilder, media::EmptyMediaBuilder, playlist::EmptyListBuilder},
+    Result,
+    downloader::{
+        Downloader,
+        builders::{channel::EmptyChannelBuilder, media::EmptyMediaBuilder, playlist::EmptyListBuilder},
+    },
+    id_resolver::IdCollection,
 };
 
 #[derive(Debug)]

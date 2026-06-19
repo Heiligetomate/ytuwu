@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::{Result, error::YtuwuError, id_resolver::id::Id, request::clients::slow_browse::SlowBrowseClient};
+use crate::{Result, error::YtuwuError, id_resolver::id::Id, request::clients::SlowBrowseClient};
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct ChannelPlaylistId {

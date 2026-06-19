@@ -2,11 +2,15 @@ use std::sync::Arc;
 
 use uuid::Uuid;
 
-pub use crate::{Downloader, GetId, Result, downloader::builders::empty::EmptyBuilder, types::VideoId};
+pub use crate::{Result, downloader::builders::empty::EmptyBuilder, types::VideoId};
 use crate::{
-    DwnBundleMedia, DwnMedia, ThumbRes,
+    downloader::{
+        Downloader,
+        media::{DwnBundleMedia, DwnMedia, ThumbRes},
+        streams::AnyStream,
+    },
+    id_resolver::GetId,
     itags::{AnyItag, AudioItag, Itag, VideoItag},
-    streams::AnyStream,
 };
 
 pub struct EmptyMediaBuilder {

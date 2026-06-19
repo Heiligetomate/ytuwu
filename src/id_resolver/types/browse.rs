@@ -1,9 +1,10 @@
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    GetId, Id, IdCollection, Result,
+    Result,
     error::YtuwuError,
-    request::clients::dummy::DummyClient,
+    id_resolver::{GetId, Id, IdCollection},
+    request::clients::DummyClient,
     types::{AlbumId, ChannelPlaylistId, PlaylistId},
 };
 

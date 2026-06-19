@@ -1,14 +1,14 @@
 use std::time::Duration;
 
 use crate::{
-    downloader::core::SharedVd,
+    downloader::SharedVd,
     error::{Result, YtuwuError},
-    id_resolver::id::Id,
+    id_resolver::Id,
     models::{
-        player::PlayerResponse,
+        PlayerResponse,
         response::{Response, Status},
     },
-    request::clients::client::ClientWithHeaders,
+    request::clients::ClientWithHeaders,
     types::VideoId,
 };
 use serde::de::DeserializeOwned;

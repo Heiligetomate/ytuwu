@@ -3,11 +3,11 @@ use std::{fmt::Debug, sync::Arc};
 use uuid::Uuid;
 
 use crate::{
-    Downloader, Result,
-    downloader::{media::browse::MediaBrowse, playlist::content_browse::PlaylistContentBrowse},
+    Result,
+    downloader::{Downloader, media::MediaBrowse, playlist::content_browse::PlaylistContentBrowse},
     models::response::BrowseResponse,
     name_trimmer,
-    request::core::api_request,
+    request::api_request,
     types::BrowseId,
 };
 

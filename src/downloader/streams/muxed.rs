@@ -6,10 +6,9 @@ use crate::{
     Result,
     downloader::{
         mime_types::MimeType,
-        streams::{core::MediaStream, util::save_media_stream},
+        streams::{AnyStream, core::MediaStream, util::save_media_stream},
     },
     itags::{Itag, MuxedItag},
-    streams::AnyStream,
 };
 
 #[derive(Debug, PartialEq, Eq)]
