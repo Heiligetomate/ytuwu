@@ -1,4 +1,4 @@
-use std::{fmt::Debug, sync::Arc};
+use std::sync::Arc;
 
 use crate::{
     Downloader, DwnBundelChannel, DwnChannel, GetId, Result,

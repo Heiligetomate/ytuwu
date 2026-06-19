@@ -8,6 +8,7 @@ use crate::{
         media::{browse::MediaBrowse, core::Media},
         playlist::core::Playlist,
     },
+    itags::AnyItag,
 };
 
 #[derive(Debug)]
@@ -19,23 +20,30 @@ pub struct PlaylistContentBrowse {
 }
 
 impl PlaylistContentBrowse {
-    pub fn new(title: &str, media: Vec<MediaBrowse>, downloader: Arc<Downloader>) -> Self {
+    pub fn new(title: &str, media: Vec<MediaBrowse>, downloader: Arc<Downloader>, id: Uuid) -> Self {
         Self {
-            id: Uuid::new_v4(),
+            id,
             title: title.to_owned(),
             media,
             downloader,
         }
     }
 
-    pub async fn add_tasks(mut self) -> Result<()> {
+    pub async fn add_tasks(mut self, itag: AnyItag) -> Result<()> {
         for media in self.media.drain(..) {
             let id = media.video_id;
+
+            self.downloader
+                .downloaded
+                .lock()
+                .await
+                .push_list_title(self.id, &self.title);
+
             self.downloader
                 .task_handler
                 .lock()
                 .await
-                .push(id, Some(self.id), None, Uuid::new_v4());
+                .push(id, Some(self.id), None, Uuid::new_v4(), itag);
         }
 
         Ok(())

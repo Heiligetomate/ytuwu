@@ -32,7 +32,7 @@ impl ChannelContentBrowse {
 
         for single in self.singles.iter() {
             let downloader = Arc::clone(&self.downloader);
-            browse_tasks.push(tokio::spawn(PlaylistBrowse::new(BrowseId::ChannelBrowseId(single.clone()), downloader).browse()));
+            browse_tasks.push(tokio::spawn(PlaylistBrowse::new(BrowseId::ChannelBrowseId(single.clone()), downloader, Uuid::new_v4()).browse()));
         }
 
         let mut browse_results = Vec::new();
@@ -68,7 +68,7 @@ impl ChannelContentBrowse {
 
         for single in self.singles.iter() {
             let downloader = Arc::clone(&self.downloader);
-            browse_tasks.push(tokio::spawn(PlaylistBrowse::new(BrowseId::ChannelBrowseId(single.clone()), downloader).browse()));
+            browse_tasks.push(tokio::spawn(PlaylistBrowse::new(BrowseId::ChannelBrowseId(single.clone()), downloader, Uuid::new_v4()).browse()));
         }
 
         let mut browse_results = Vec::new();
@@ -112,7 +112,7 @@ impl ChannelContentBrowse {
 
         for ep in self.eps.iter() {
             let downloader = Arc::clone(&self.downloader);
-            let ep = PlaylistBrowse::new(BrowseId::ChannelBrowseId(ep.clone()), downloader)
+            let ep = PlaylistBrowse::new(BrowseId::ChannelBrowseId(ep.clone()), downloader, Uuid::new_v4())
                 .browse()
                 .await?
                 .browse()
@@ -139,7 +139,7 @@ impl ChannelContentBrowse {
             let downloader = Arc::clone(&self.downloader);
             let ep = ep.clone();
             ep_tasks.push(tokio::spawn(async move {
-                PlaylistBrowse::new(BrowseId::ChannelBrowseId(ep), downloader)
+                PlaylistBrowse::new(BrowseId::ChannelBrowseId(ep), downloader, Uuid::new_v4())
                     .browse()
                     .await?
                     .browse()
@@ -167,7 +167,7 @@ impl ChannelContentBrowse {
             let downloader = Arc::clone(&self.downloader);
             let ep = ep.clone();
             ep_tasks.push(tokio::spawn(async move {
-                PlaylistBrowse::new(BrowseId::ChannelBrowseId(ep), downloader)
+                PlaylistBrowse::new(BrowseId::ChannelBrowseId(ep), downloader, Uuid::new_v4())
                     .browse()
                     .await?
                     .browse()
@@ -193,7 +193,7 @@ impl ChannelContentBrowse {
 
         for album in self.albums.iter() {
             let downloader = Arc::clone(&self.downloader);
-            let album = PlaylistBrowse::new(BrowseId::ChannelBrowseId(album.clone()), downloader)
+            let album = PlaylistBrowse::new(BrowseId::ChannelBrowseId(album.clone()), downloader, Uuid::new_v4())
                 .browse()
                 .await?
                 .browse()

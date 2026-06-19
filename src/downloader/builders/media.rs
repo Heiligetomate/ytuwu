@@ -1,11 +1,10 @@
-use std::{fmt::Debug, sync::Arc};
+use std::sync::Arc;
 
 use uuid::Uuid;
 
 pub use crate::{Downloader, GetId, Result, downloader::builders::empty::EmptyBuilder, types::VideoId};
 use crate::{
     DwnBundleMedia, DwnMedia, ThumbRes,
-    downloader::media::browse::MediaBrowse,
     itags::{AnyItag, AudioItag, Itag, VideoItag},
     streams::AnyStream,
 };
@@ -90,9 +89,9 @@ where
             .task_handler
             .lock()
             .await
-            .push(self.id, None, None, id);
+            .push(self.id, None, None, id, self.itag.to_any());
 
-        self.downloader.work(self.itag).await?;
+        self.downloader.work().await;
 
         let downloaded = self
             .downloader
@@ -120,14 +119,14 @@ impl MultipleMediaBuilder {
             .await
             .push_bundle(self.id, None, None, id, self.itags);
 
-        self.downloader.work(self.itag).await?;
+        self.downloader.work().await;
 
         let downloaded = self
             .downloader
             .downloaded
             .lock()
             .await
-            .extract_media(id)?;
+            .extract_bundle_media(id)?;
 
         Ok(downloaded)
     }

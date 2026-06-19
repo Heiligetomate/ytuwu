@@ -15,7 +15,7 @@ use crate::{
     id_resolver::types::{BrowseId, VideoId},
     itags::{AnyItag, Itag},
     progress::{DefaultProgressHandler, HandleProgress},
-    streams::{AnyStream, MediaStream, Thumbnail},
+    streams::Thumbnail,
     types::{ChannelId, ShortId},
 };
 use reqwest::Client;
@@ -45,22 +45,9 @@ impl Downloader {
         })
     }
 
-    pub async fn work<I>(self: &Arc<Self>, itag: I) -> Result<()>
-    where
-        I: Itag + 'static,
-        I::Stream: MediaStream + Into<AnyStream> + 'static,
-    {
+    pub async fn work(self: &Arc<Self>) {
         let handler = std::mem::take(&mut *self.task_handler.lock().await);
-        let results = handler
-            .work(Arc::clone(&self), itag)
-            .await;
-
-        self.downloaded
-            .lock()
-            .await
-            .push_vec(results);
-
-        Ok(())
+        handler.work(Arc::clone(&self)).await;
     }
 
     pub fn from_url(self: &Arc<Self>, url: &str) -> Result<EmptyBuilder> {
@@ -112,7 +99,7 @@ where {
     where
         I: Itag + 'static,
     {
-        Ok(PlaylistBrowse::new(browse_id, self)
+        Ok(PlaylistBrowse::new(browse_id, self, Uuid::new_v4())
             .browse()
             .await?
             .browse()
@@ -122,7 +109,7 @@ where {
     }
 
     pub async fn download_bundle_album(self: Arc<Self>, browse_id: BrowseId, itags: &[AnyItag], thumbnail_resolution: Option<ThumbRes>) -> Result<DwnBundleList> {
-        Ok(PlaylistBrowse::new(browse_id, self)
+        Ok(PlaylistBrowse::new(browse_id, self, Uuid::new_v4())
             .browse()
             .await?
             .browse()

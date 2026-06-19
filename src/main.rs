@@ -14,12 +14,12 @@ async fn main() -> Result<()> {
 
     let dwn = downloader
         .from_url(url)?
-        .as_media()?
+        .as_list()?
         .audio()
         .download()
         .await?;
 
-    dwn.save_media_stream(Path::new("teehee"))?;
+    dwn.save_with_dir(Path::new("teehee"))?;
 
     println!("download took {:?}", start_time.elapsed().unwrap());
 

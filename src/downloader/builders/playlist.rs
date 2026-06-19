@@ -1,7 +1,9 @@
 use std::sync::Arc;
 
+use uuid::Uuid;
+
 use crate::{
-    Downloader, DwnBundleList, GetId, Result, ThumbRes,
+    Downloader, DwnBundleList, Dwnlist, GetId, Result, ThumbRes,
     downloader::{builders::empty::EmptyBuilder, playlist::browse::PlaylistBrowse},
     itags::{AnyItag, AudioItag, Itag, VideoItag},
     streams::AnyStream,
@@ -44,7 +46,10 @@ impl EmptyListBuilder {
     }
 
     pub fn thumbnail(self) -> Self {
-        Self { thumbnail: Some(ThumbRes::VeryHigh), ..self }
+        Self {
+            thumbnail: Some(ThumbRes::VeryHigh),
+            ..self
+        }
     }
 
     pub fn audio(self) -> ListBuilder<AudioItag> {
@@ -72,29 +77,46 @@ where
     I::Stream: Into<AnyStream>,
 {
     pub fn thumbnail(self) -> Self {
-        Self { thumbnail: Some(ThumbRes::VeryHigh), ..self }
+        Self {
+            thumbnail: Some(ThumbRes::VeryHigh),
+            ..self
+        }
     }
 
-    pub async fn download(self) -> Result<()> {
+    pub async fn download(self) -> Result<Dwnlist<AnyStream>> {
+        let id = Uuid::new_v4();
+
         let downloader = self.downloader;
-        PlaylistBrowse::new(self.id, Arc::clone(&downloader))
+        PlaylistBrowse::new(self.id, Arc::clone(&downloader), id)
             .browse()
             .await?
-            .add_tasks()
+            .add_tasks(self.itag.to_any())
             .await?;
-        downloader.work(self.itag).await?;
+        downloader.work().await;
 
-        Ok(())
+        let downloaded = downloader
+            .downloaded
+            .lock()
+            .await
+            .extract_list(id)?;
+
+        Ok(downloaded)
     }
 }
 
 impl MultipleListBuilder {
     pub fn thumbnail(self) -> Self {
-        Self { thumbnail: Some(ThumbRes::VeryHigh), ..self }
+        Self {
+            thumbnail: Some(ThumbRes::VeryHigh),
+            ..self
+        }
     }
 
     pub async fn download(self) -> Result<DwnBundleList> {
-        let downloaded = PlaylistBrowse::new(self.id, self.downloader)
+        // TODO: RAWR (add to task pool)
+        let id = Uuid::new_v4();
+
+        let downloaded = PlaylistBrowse::new(self.id, self.downloader, id)
             .browse()
             .await?
             .browse()

@@ -13,13 +13,14 @@ use crate::{
 
 #[derive(Debug)]
 pub struct PlaylistBrowse {
+    id: Uuid,
     browse_id: BrowseId,
     downloader: Arc<Downloader>,
 }
 
 impl PlaylistBrowse {
-    pub fn new(id: BrowseId, downloader: Arc<Downloader>) -> Self {
-        Self { browse_id: id, downloader }
+    pub fn new(browse_id: BrowseId, downloader: Arc<Downloader>, id: Uuid) -> Self {
+        Self { browse_id, downloader, id }
     }
 
     pub async fn browse(self) -> Result<PlaylistContentBrowse> {
@@ -51,6 +52,6 @@ impl PlaylistBrowse {
             .drain(..)
             .map(|id| MediaBrowse::new(id, Uuid::new_v4()))
             .collect();
-        Ok(PlaylistContentBrowse::new(&trimmed_title, media, self.downloader))
+        Ok(PlaylistContentBrowse::new(&trimmed_title, media, self.downloader, self.id))
     }
 }

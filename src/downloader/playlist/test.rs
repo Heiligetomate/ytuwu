@@ -17,14 +17,14 @@ async fn test_playlist_browse_request() {
     let downloader = Downloader::testing();
 
     assert!(
-        PlaylistBrowse::new(BrowseId::AlbumId(id), Arc::clone(&downloader))
+        PlaylistBrowse::new(BrowseId::AlbumId(id), Arc::clone(&downloader), Uuid::new_v4())
             .browse()
             .await
             .is_ok()
     );
 
     assert!(
-        PlaylistBrowse::new(BrowseId::AlbumId(invalid_id), downloader)
+        PlaylistBrowse::new(BrowseId::AlbumId(invalid_id), downloader, Uuid::new_v4())
             .browse()
             .await
             .is_err()
@@ -37,27 +37,34 @@ async fn test_playlist_content_browse() {
 
     let downloader = Downloader::testing();
 
-    let browsed = PlaylistBrowse::new(BrowseId::AlbumId(id), downloader)
+    let browsed = PlaylistBrowse::new(BrowseId::AlbumId(id), downloader, Uuid::new_v4())
         .browse()
         .await
         .unwrap();
 
     assert_eq!(browsed.title.as_str(), "album-amen");
+
+    let video_ids = browsed
+        .media
+        .iter()
+        .map(|p| p.video_id.clone())
+        .collect::<Vec<VideoId>>();
+
     assert_eq!(
-        browsed.media,
+        video_ids,
         vec![
-            MediaBrowse::new(VideoId::new("535-Bxyf_OY").unwrap(), Uuid::new_v4()),
-            MediaBrowse::new(VideoId::new("5gM58GXt6mw").unwrap(), Uuid::new_v4()),
-            MediaBrowse::new(VideoId::new("gB25L_TZ2JI").unwrap(), Uuid::new_v4()),
-            MediaBrowse::new(VideoId::new("lwZ5kD2XyQ4").unwrap(), Uuid::new_v4()),
-            MediaBrowse::new(VideoId::new("iE-gWOoQwCA").unwrap(), Uuid::new_v4()),
-            MediaBrowse::new(VideoId::new("wRG9RUhk04c").unwrap(), Uuid::new_v4()),
-            MediaBrowse::new(VideoId::new("0TlhLb4MnbQ").unwrap(), Uuid::new_v4()),
-            MediaBrowse::new(VideoId::new("F0Tq8RAIXpA").unwrap(), Uuid::new_v4()),
-            MediaBrowse::new(VideoId::new("06wKiEOItfM").unwrap(), Uuid::new_v4()),
-            MediaBrowse::new(VideoId::new("O9g7RUOYbGM").unwrap(), Uuid::new_v4()),
-            MediaBrowse::new(VideoId::new("A_fXr89fAfk").unwrap(), Uuid::new_v4()),
-            MediaBrowse::new(VideoId::new("78efw-z8tc0").unwrap(), Uuid::new_v4()),
+            VideoId::new("535-Bxyf_OY").unwrap(),
+            VideoId::new("5gM58GXt6mw").unwrap(),
+            VideoId::new("gB25L_TZ2JI").unwrap(),
+            VideoId::new("lwZ5kD2XyQ4").unwrap(),
+            VideoId::new("iE-gWOoQwCA").unwrap(),
+            VideoId::new("wRG9RUhk04c").unwrap(),
+            VideoId::new("0TlhLb4MnbQ").unwrap(),
+            VideoId::new("F0Tq8RAIXpA").unwrap(),
+            VideoId::new("06wKiEOItfM").unwrap(),
+            VideoId::new("O9g7RUOYbGM").unwrap(),
+            VideoId::new("A_fXr89fAfk").unwrap(),
+            VideoId::new("78efw-z8tc0").unwrap(),
         ]
     )
 }
@@ -70,7 +77,7 @@ async fn test_playlist_content_browse_request() {
     let downloader = Downloader::testing();
 
     assert!(
-        PlaylistBrowse::new(BrowseId::AlbumId(id), Arc::clone(&downloader))
+        PlaylistBrowse::new(BrowseId::AlbumId(id), Arc::clone(&downloader), Uuid::new_v4())
             .browse()
             .await
             .unwrap()
@@ -80,7 +87,7 @@ async fn test_playlist_content_browse_request() {
     );
 
     assert!(
-        PlaylistBrowse::new(BrowseId::AlbumId(invalid_id), downloader)
+        PlaylistBrowse::new(BrowseId::AlbumId(invalid_id), downloader, Uuid::new_v4())
             .browse()
             .await
             .is_err()
@@ -93,7 +100,7 @@ async fn test_playlist() {
 
     let downloader = Downloader::testing();
 
-    let browsed = PlaylistBrowse::new(BrowseId::AlbumId(id), downloader)
+    let browsed = PlaylistBrowse::new(BrowseId::AlbumId(id), downloader, Uuid::new_v4())
         .browse()
         .await
         .unwrap()
@@ -136,7 +143,7 @@ async fn test_download_playlist_stream() {
 
     let downloader = Downloader::testing();
 
-    let downloaded = PlaylistBrowse::new(BrowseId::AlbumId(id), downloader)
+    let downloaded = PlaylistBrowse::new(BrowseId::AlbumId(id), downloader, Uuid::new_v4())
         .browse()
         .await
         .unwrap()
@@ -179,7 +186,7 @@ async fn test_download_playlist_streams() {
 
     let downloader = Downloader::testing();
 
-    let downloaded = PlaylistBrowse::new(BrowseId::AlbumId(id), downloader)
+    let downloaded = PlaylistBrowse::new(BrowseId::AlbumId(id), downloader, Uuid::new_v4())
         .browse()
         .await
         .unwrap()
