@@ -9,6 +9,7 @@ mod request;
 #[cfg(test)]
 mod tests;
 pub use downloader::itags;
+pub use downloader::progress;
 // pub use downloader::media::extracted_streams::ThumbRes;
 // pub use downloader::progress;
 // pub use downloader::streams;
