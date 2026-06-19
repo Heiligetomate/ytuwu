@@ -4,7 +4,7 @@ use uuid::Uuid;
 
 use crate::{
     Downloader, Id, ThumbRes,
-    downloader::{media::browse::MediaBrowse, playlist::browse::PlaylistBrowse},
+    downloader::playlist::browse::PlaylistBrowse,
     itags::{AnyItag, AudioItag, VideoItag},
     types::{AlbumId, BrowseId, VideoId},
 };

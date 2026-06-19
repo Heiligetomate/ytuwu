@@ -20,6 +20,7 @@ pub struct ListBuilder<I: Itag> {
     downloader: Arc<Downloader>,
     id: BrowseId,
     itag: I,
+    #[allow(unused)]
     thumbnail: Option<ThumbRes>,
 }
 

@@ -18,6 +18,7 @@ pub struct EmptyMediaBuilder {
 pub struct MediaBuilder<I: Itag> {
     downloader: Arc<Downloader>,
     id: VideoId,
+    #[allow(unused)]
     thumbnail: Option<ThumbRes>,
     itag: I,
 }
@@ -25,6 +26,7 @@ pub struct MediaBuilder<I: Itag> {
 pub struct MultipleMediaBuilder {
     downloader: Arc<Downloader>,
     id: VideoId,
+    #[allow(unused)]
     thumbnail: Option<ThumbRes>,
     itags: &'static [AnyItag],
 }
