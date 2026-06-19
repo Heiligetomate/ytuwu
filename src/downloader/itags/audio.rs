@@ -67,4 +67,8 @@ impl Itag for AudioItag {
     fn new_stream(self) -> Self::Stream {
         AudioStream::new(self)
     }
+
+    fn to_any(self) -> super::AnyItag {
+        super::AnyItag::Audio(self)
+    }
 }

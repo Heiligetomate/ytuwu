@@ -60,4 +60,8 @@ impl Itag for ShortItag {
     fn new_stream(self) -> Self::Stream {
         ShortStream::new(self)
     }
+
+    fn to_any(self) -> super::AnyItag {
+        super::AnyItag::Short(self)
+    }
 }

@@ -1,4 +1,8 @@
-use crate::downloader::itags::{audio::AudioItag, muxed::MuxedItag, short::ShortItag, video::VideoItag};
+use crate::{
+    downloader::itags::{audio::AudioItag, muxed::MuxedItag, short::ShortItag, video::VideoItag},
+    itags::Itag,
+    streams::AnyStream,
+};
 
 #[derive(Debug, Clone, Copy)]
 pub enum AnyItag {
@@ -6,4 +10,67 @@ pub enum AnyItag {
     Video(VideoItag),
     Short(ShortItag),
     Muxed(MuxedItag),
+}
+
+impl Itag for AnyItag {
+    type Stream = AnyStream;
+
+    fn to_int(&self) -> u16 {
+        match &self {
+            Self::Video(i) => i.to_int(),
+            Self::Audio(i) => i.to_int(),
+            Self::Short(i) => i.to_int(),
+            Self::Muxed(i) => i.to_int(),
+        }
+    }
+
+    fn is_highest(&self) -> bool {
+        match &self {
+            Self::Video(i) => i.is_highest(),
+            Self::Audio(i) => i.is_highest(),
+            Self::Short(i) => i.is_highest(),
+            Self::Muxed(i) => i.is_highest(),
+        }
+    }
+
+    fn next_best(self) -> crate::Result<Self>
+    where
+        Self: Sized,
+    {
+        match &self {
+            Self::Video(i) => i.next_best().map(|i| Self::Video(i)),
+            Self::Audio(i) => i.next_best().map(|i| Self::Audio(i)),
+            Self::Short(i) => i.next_best().map(|i| Self::Short(i)),
+            Self::Muxed(i) => i.next_best().map(|i| Self::Muxed(i)),
+        }
+    }
+
+    fn new_stream(self) -> Self::Stream {
+        match &self {
+            Self::Video(i) => AnyStream::Video(i.new_stream()),
+            Self::Audio(i) => AnyStream::Audio(i.new_stream()),
+            Self::Short(i) => AnyStream::Short(i.new_stream()),
+            Self::Muxed(i) => AnyStream::Muxed(i.new_stream()),
+        }
+    }
+
+    fn get_mime_type(&self) -> crate::downloader::mime_types::MimeType {
+        match &self {
+            Self::Video(i) => i.get_mime_type(),
+            Self::Audio(i) => i.get_mime_type(),
+            Self::Short(i) => i.get_mime_type(),
+            Self::Muxed(i) => i.get_mime_type(),
+        }
+    }
+
+    fn highest() -> Self
+    where
+        Self: Sized,
+    {
+        panic!("cant get highest itag of anyitag because the type is not known")
+    }
+
+    fn to_any(self) -> AnyItag {
+        self
+    }
 }

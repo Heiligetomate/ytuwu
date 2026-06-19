@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use crate::{Result, downloader::mime_types::MimeType, streams::MediaStream};
+use crate::{Result, downloader::mime_types::MimeType, itags::AnyItag, streams::MediaStream};
 
 pub trait Itag: Copy + Debug + Send {
     type Stream: MediaStream;
@@ -15,4 +15,5 @@ pub trait Itag: Copy + Debug + Send {
     fn to_int(&self) -> u16;
     fn get_mime_type(&self) -> MimeType;
     fn new_stream(self) -> Self::Stream;
+    fn to_any(self) -> AnyItag;
 }

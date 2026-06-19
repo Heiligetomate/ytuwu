@@ -4,6 +4,7 @@ use crate::{
     Result,
     downloader::{itags::core::Itag, mime_types::MimeType},
     error::YtuwuError,
+    itags::AnyItag,
     streams::MuxedStream,
 };
 
@@ -38,5 +39,9 @@ impl Itag for MuxedItag {
 
     fn new_stream(self) -> Self::Stream {
         MuxedStream::new(self)
+    }
+
+    fn to_any(self) -> super::AnyItag {
+        AnyItag::Muxed(self)
     }
 }

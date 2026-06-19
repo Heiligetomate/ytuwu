@@ -140,4 +140,8 @@ impl Itag for VideoItag {
     fn new_stream(self) -> Self::Stream {
         VideoStream::new(self)
     }
+
+    fn to_any(self) -> super::AnyItag {
+        super::AnyItag::Video(self)
+    }
 }
