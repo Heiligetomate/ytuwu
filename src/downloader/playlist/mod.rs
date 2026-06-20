@@ -7,4 +7,5 @@ mod downloaded;
 mod test;
 
 pub use browse::PlaylistBrowse;
+pub use core::Playlist;
 pub use downloaded::{DwnBundleList, Dwnlist};

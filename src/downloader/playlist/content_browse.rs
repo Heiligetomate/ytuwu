@@ -9,6 +9,7 @@ use crate::{
         media::{Media, MediaBrowse},
         playlist::core::Playlist,
     },
+    error::YtuwuError,
     id_resolver::Id,
     itags::AnyItag,
 };
@@ -76,5 +77,12 @@ impl PlaylistContentBrowse {
             media_items.push(media);
         }
         Ok(Playlist::new(&self.title, media_items, self.downloader))
+    }
+
+    pub fn first(self) -> Result<MediaBrowse> {
+        self.media
+            .into_iter()
+            .next()
+            .ok_or(YtuwuError::SongInPlaylistNotFound)
     }
 }
