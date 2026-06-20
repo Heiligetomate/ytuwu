@@ -132,7 +132,9 @@ where {
     where
         I: Itag + 'static,
     {
-        Ok(ChannelBrowse::new(channel_id, self)
+        Ok(ChannelBrowse::new(channel_id, self, None)
+            .await?
+            .browse()
             .await?
             .browse()
             .await?
@@ -140,8 +142,10 @@ where {
             .await?)
     }
 
-    pub async fn download_channel_bundle(self: Arc<Self>, channel_id: ChannelId, itags: &[AnyItag]) -> Result<DwnBundelChannel> {
-        Ok(ChannelBrowse::new(channel_id, self)
+    pub async fn download_channel_bundle(self: Arc<Self>, channel_id: ChannelId, itags: &'static [AnyItag]) -> Result<DwnBundelChannel> {
+        Ok(ChannelBrowse::new(channel_id, self, None)
+            .await?
+            .browse()
             .await?
             .browse()
             .await?

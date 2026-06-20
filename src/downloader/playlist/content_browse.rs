@@ -16,10 +16,10 @@ use crate::{
 
 #[derive(Debug)]
 pub struct PlaylistContentBrowse {
-    pub(super) id: Uuid,
-    pub(super) title: String,
-    pub(super) media: Vec<MediaBrowse>,
-    pub(super) downloader: Arc<Downloader>,
+    pub id: Uuid,
+    pub title: String,
+    pub media: Vec<MediaBrowse>,
+    pub downloader: Arc<Downloader>,
 }
 
 impl PlaylistContentBrowse {

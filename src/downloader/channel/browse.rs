@@ -4,7 +4,7 @@ use uuid::Uuid;
 
 use crate::{
     Result,
-    downloader::{Downloader, channel::core::ChannelContentBrowse},
+    downloader::{Downloader, channel::ChannelContentBrowse},
     id_resolver::types::ChannelId,
     request::api_request,
 };
@@ -16,11 +16,13 @@ pub struct ChannelBrowse {
 }
 
 impl ChannelBrowse {
-    pub async fn new(channel_id: ChannelId, downloader: Arc<Downloader>) -> Result<Self> {
+    pub async fn new(channel_id: ChannelId, downloader: Arc<Downloader>, id: Option<Uuid>) -> Result<Self> {
+        let id = id.unwrap_or(Uuid::new_v4());
+
         let channel_id = channel_id
             .make_valid(&downloader.client)
             .await?;
-        let id = Uuid::new_v4();
+
         Ok(Self { channel_id, downloader, id })
     }
 

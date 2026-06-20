@@ -1,5 +1,7 @@
 use std::sync::Arc;
 
+use uuid::Uuid;
+
 use crate::{
     Result,
     downloader::{
@@ -79,20 +81,25 @@ where
     //     }
     // }
 
-    pub async fn download(self) -> Result<DwnChannel<I::Stream>> {
-        let downloaded = ChannelBrowse::new(self.id, self.downloader)
+    pub async fn download(self) -> Result<()> {
+        let id = Uuid::new_v4();
+
+        ChannelBrowse::new(self.id, self.downloader, Some(id))
             .await?
             .browse()
             .await?
-            .download(self.itag)
+            .add_tasks(self.itag.to_any())
             .await?;
-        Ok(downloaded)
+
+        Ok(())
     }
 }
 
 impl MultipleChannelBuilder {
     pub async fn download(self) -> Result<DwnBundelChannel> {
-        let downloaded = ChannelBrowse::new(self.id, self.downloader)
+        let downloaded = ChannelBrowse::new(self.id, self.downloader, None)
+            .await?
+            .browse()
             .await?
             .browse()
             .await?

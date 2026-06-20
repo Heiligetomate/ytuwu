@@ -15,7 +15,7 @@ async fn test_normal_channel_browse_creation() {
     let downloader = Downloader::testing();
     let normal_id = ChannelId::new("MPADUC6Tg7GWjZw48EiZ8m5bRtWg").unwrap();
 
-    ChannelBrowse::new(normal_id, downloader)
+    ChannelBrowse::new(normal_id, downloader, None)
         .await
         .unwrap();
 }
@@ -26,14 +26,14 @@ async fn test_name_channel_browse_creation() {
 
     let name_id = ChannelId::new("@ntomusic").unwrap();
 
-    ChannelBrowse::new(name_id, downloader)
+    ChannelBrowse::new(name_id, downloader, None)
         .await
         .unwrap();
 }
 
 #[tokio::test]
 async fn test_channel_browse() {
-    let browse = ChannelBrowse::new(ChannelId::new("@ntomusic").unwrap(), Downloader::testing())
+    let browse = ChannelBrowse::new(ChannelId::new("@ntomusic").unwrap(), Downloader::testing(), None)
         .await
         .unwrap();
 
@@ -53,7 +53,11 @@ async fn test_channel_download_and_saving() {
             .get_id()
             .unwrap(),
         Downloader::testing(),
+        None,
     )
+    .await
+    .unwrap()
+    .browse()
     .await
     .unwrap()
     .browse()
@@ -119,7 +123,11 @@ async fn test_channel_bundle_download_and_saving() {
             .get_id()
             .unwrap(),
         Downloader::testing(),
+        None,
     )
+    .await
+    .unwrap()
+    .browse()
     .await
     .unwrap()
     .browse()

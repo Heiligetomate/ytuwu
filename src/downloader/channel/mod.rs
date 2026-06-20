@@ -1,4 +1,5 @@
 mod browse;
+mod content_browse;
 mod core;
 mod downloaded;
 
@@ -6,5 +7,5 @@ mod downloaded;
 mod test;
 
 pub use browse::ChannelBrowse;
-pub use core::ChannelContentBrowse;
+pub use content_browse::ChannelContentBrowse;
 pub use downloaded::{DwnBundelChannel, DwnChannel};
