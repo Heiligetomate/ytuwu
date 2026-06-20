@@ -31,7 +31,7 @@ pub struct Downloader {
     pub progress_handler: Arc<dyn HandleProgress + Send + Sync>,
     pub client: Client,
     pub task_handler: Mutex<TaskHandler>,
-    pub downloaded: Mutex<DownloadedStore>,
+    pub storage: Mutex<DownloadedStore>,
 }
 
 impl Downloader {
@@ -42,7 +42,7 @@ impl Downloader {
             progress_handler,
             client: Client::new(),
             task_handler: Mutex::new(TaskHandler::default()),
-            downloaded: Mutex::new(DownloadedStore::default()),
+            storage: Mutex::new(DownloadedStore::default()),
         })
     }
 

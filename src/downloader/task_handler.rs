@@ -179,7 +179,7 @@ impl TaskHandler {
             }
         }
 
-        let mut storage = downloader.downloaded.lock().await;
+        let mut storage = downloader.storage.lock().await;
 
         storage.push_any_vec(results);
         storage.push_bundle_vec(bundle_results);

@@ -101,7 +101,7 @@ where
 
         let downloaded = self
             .downloader
-            .downloaded
+            .storage
             .lock()
             .await
             .extract_media(id)?;
@@ -129,7 +129,7 @@ impl MultipleMediaBuilder {
 
         let downloaded = self
             .downloader
-            .downloaded
+            .storage
             .lock()
             .await
             .extract_bundle_media(id)?;

@@ -37,7 +37,7 @@ impl PlaylistContentBrowse {
             let id = media.video_id;
 
             self.downloader
-                .downloaded
+                .storage
                 .lock()
                 .await
                 .push_list_title(self.id, &self.title);

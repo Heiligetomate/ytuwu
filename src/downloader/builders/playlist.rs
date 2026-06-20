@@ -102,7 +102,7 @@ where
         downloader.work().await;
 
         let downloaded = downloader
-            .downloaded
+            .storage
             .lock()
             .await
             .extract_list(id)?;
