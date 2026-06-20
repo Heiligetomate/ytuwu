@@ -5,7 +5,7 @@ use uuid::Uuid;
 
 use crate::{
     Result,
-    downloader::{ChannelContentBrowse, Downloader},
+    downloader::{Downloader, channel::ChannelContentBrowse},
     error::YtuwuError,
     id_resolver::{Id, types::ChannelPlaylistId},
     models::response::{Response, Status},

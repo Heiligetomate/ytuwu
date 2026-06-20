@@ -5,10 +5,7 @@ use crate::{
     downloader::{
         Downloader,
         builders::empty::EmptyBuilder,
-        channel::{
-            browse::ChannelBrowse,
-            downloaded::{DwnBundelChannel, DwnChannel},
-        },
+        channel::{ChannelBrowse, DwnBundelChannel, DwnChannel},
     },
     id_resolver::GetId,
     itags::{AnyItag, AudioItag, Itag, VideoItag},

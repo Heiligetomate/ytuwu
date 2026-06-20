@@ -3,7 +3,7 @@ use std::{fmt::Debug, sync::Arc};
 use crate::{
     downloader::{
         builders::EmptyBuilder,
-        channel::{DwnBundelChannel, browse::ChannelBrowse, downloaded::DwnChannel},
+        channel::{ChannelBrowse, DwnBundelChannel, DwnChannel},
         media::{DwnBundleMedia, DwnMedia, MediaBrowse, ThumbRes},
         playlist::{DwnBundleList, Dwnlist, PlaylistBrowse},
         progress::{DefaultProgressHandler, EmptyHandler, HandleProgress},
