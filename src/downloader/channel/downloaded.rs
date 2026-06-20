@@ -60,6 +60,13 @@ impl DwnBundelChannel {
 
         Ok(())
     }
+
+    pub fn save_with_dir(&self, path: &Path) -> Result<()> {
+        let mut full_path = PathBuf::from(path);
+        full_path.push(&self.metadata.name);
+
+        self.save(&full_path)
+    }
 }
 
 impl<M: MediaStream + Debug> DwnChannel<M> {
