@@ -15,11 +15,11 @@ async fn main() -> Result<()> {
     let dwn = downloader
         .from_url(url)?
         .as_channel()?
-        .audio()
+        .dual()
         .download()
         .await?;
 
-    dwn.save_with_dir(Path::new("teehee"))?;
+    dwn.save(Path::new("teehee"))?;
 
     println!("download took {:?}", start_time.elapsed().unwrap());
 

@@ -5,10 +5,10 @@ use uuid::Uuid;
 use crate::{
     Result,
     downloader::{
-        channel::DwnChannel,
+        channel::{DwnBundelChannel, DwnChannel},
         media::{DwnBundleMedia, DwnMedia},
         metadata::ChannelMetadata,
-        playlist::Dwnlist,
+        playlist::{DwnBundleList, Dwnlist},
         streams::AnyStream,
         task_handler::{FinishedBundleTask, FinishedTask},
     },
@@ -140,6 +140,27 @@ impl DownloadedStore {
         Ok(dwn_list)
     }
 
+    pub fn extract_bundle_list(&mut self, list_id: Uuid) -> Result<DwnBundleList> {
+        let mut extracted = Vec::new();
+
+        let mut remaining = Vec::new();
+
+        for finished in self.bundle.drain(..) {
+            if finished.playlist_id == Some(list_id) {
+                extracted.push(finished.data);
+            } else {
+                remaining.push(finished);
+            }
+        }
+
+        self.bundle = remaining;
+
+        let title = self.extract_list_title(list_id)?;
+        let dwn_list = DwnBundleList::new(extracted, title);
+
+        Ok(dwn_list)
+    }
+
     pub fn extract_channel(&mut self, id: Uuid) -> Result<DwnChannel<AnyStream>> {
         let ChannelTemplate { metadata, eps, albums, singles } = self
             .channel_templates
@@ -166,6 +187,36 @@ impl DownloadedStore {
         }
 
         let channel = DwnChannel::new(dwn_singles, dwn_eps, dwn_albums, metadata);
+
+        Ok(channel)
+    }
+
+    pub fn extract_bundle_channel(&mut self, id: Uuid) -> Result<DwnBundelChannel> {
+        let ChannelTemplate { metadata, eps, albums, singles } = self
+            .channel_templates
+            .remove(&id)
+            .ok_or(YtuwuError::InvalidChannelId)?;
+
+        let mut dwn_singles = Vec::with_capacity(singles.len());
+        let mut dwn_eps = Vec::with_capacity(eps.len());
+        let mut dwn_albums = Vec::with_capacity(albums.len());
+
+        for id in singles.iter() {
+            let single = self.extract_bundle_media(*id)?;
+            dwn_singles.push(single);
+        }
+
+        for id in eps.iter() {
+            let ep = self.extract_bundle_list(*id)?;
+            dwn_eps.push(ep);
+        }
+
+        for id in albums.iter() {
+            let album = self.extract_bundle_list(*id)?;
+            dwn_albums.push(album);
+        }
+
+        let channel = DwnBundelChannel::new(dwn_singles, dwn_eps, dwn_albums, metadata);
 
         Ok(channel)
     }

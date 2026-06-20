@@ -111,14 +111,28 @@ where
 
 impl MultipleChannelBuilder {
     pub async fn download(self) -> Result<DwnBundelChannel> {
-        let downloaded = ChannelBrowse::new(self.id, self.downloader, None)
+        let id = Uuid::new_v4();
+
+        ChannelBrowse::new(self.id, Arc::clone(&self.downloader), Some(id))
             .await?
             .browse()
             .await?
-            .browse()
-            .await?
-            .download_bundle(self.itags)
+            .add_bundle_tasks(self.itags)
             .await?;
-        Ok(downloaded)
+
+        let downloader = self.downloader;
+
+        let task_handler = std::mem::take(&mut *downloader.task_handler.lock().await);
+        task_handler
+            .work(Arc::clone(&downloader))
+            .await;
+
+        let channel = downloader
+            .storage
+            .lock()
+            .await
+            .extract_bundle_channel(id)?;
+
+        Ok(channel)
     }
 }

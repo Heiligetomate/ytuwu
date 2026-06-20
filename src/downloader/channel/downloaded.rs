@@ -30,6 +30,12 @@ pub struct DwnBundelChannel {
     pub metadata: ChannelMetadata,
 }
 
+impl DwnBundelChannel {
+    pub fn new(singles: Vec<DwnBundleMedia>, eps: Vec<DwnBundleList>, albums: Vec<DwnBundleList>, metadata: ChannelMetadata) -> Self {
+        Self { singles, eps, albums, metadata }
+    }
+}
+
 impl DwnChannel<AnyStream> {
     pub fn new(singles: Vec<DwnMedia<AnyStream>>, eps: Vec<Dwnlist<AnyStream>>, albums: Vec<Dwnlist<AnyStream>>, metadata: ChannelMetadata) -> Self {
         Self { singles, eps, albums, metadata }
