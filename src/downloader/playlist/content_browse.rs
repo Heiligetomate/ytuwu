@@ -40,7 +40,7 @@ impl PlaylistContentBrowse {
                 .storage
                 .lock()
                 .await
-                .push_list_title(self.id, &self.title);
+                .insert_list_title(self.id, &self.title);
 
             self.downloader
                 .task_handler

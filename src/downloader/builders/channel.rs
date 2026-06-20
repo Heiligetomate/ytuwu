@@ -8,6 +8,7 @@ use crate::{
         Downloader,
         builders::empty::EmptyBuilder,
         channel::{ChannelBrowse, DwnBundelChannel, DwnChannel},
+        streams::AnyStream,
     },
     id_resolver::GetId,
     itags::{AnyItag, AudioItag, Itag, VideoItag},
@@ -81,17 +82,30 @@ where
     //     }
     // }
 
-    pub async fn download(self) -> Result<()> {
+    pub async fn download(self) -> Result<DwnChannel<AnyStream>> {
         let id = Uuid::new_v4();
 
-        ChannelBrowse::new(self.id, self.downloader, Some(id))
+        ChannelBrowse::new(self.id, Arc::clone(&self.downloader), Some(id))
             .await?
             .browse()
             .await?
             .add_tasks(self.itag.to_any())
             .await?;
 
-        Ok(())
+        let downloader = self.downloader;
+
+        let task_handler = std::mem::take(&mut *downloader.task_handler.lock().await);
+        task_handler
+            .work(Arc::clone(&downloader))
+            .await;
+
+        let channel = downloader
+            .storage
+            .lock()
+            .await
+            .extract_channel(id)?;
+
+        Ok(channel)
     }
 }
 

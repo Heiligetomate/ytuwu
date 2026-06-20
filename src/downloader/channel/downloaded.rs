@@ -4,7 +4,7 @@ use crate::{
         media::{DwnBundleMedia, DwnMedia},
         metadata::ChannelMetadata,
         playlist::{DwnBundleList, Dwnlist},
-        streams::MediaStream,
+        streams::{AnyStream, MediaStream},
     },
     error::YtuwuError,
 };
@@ -28,6 +28,12 @@ pub struct DwnBundelChannel {
     pub eps: Vec<DwnBundleList>,
     pub albums: Vec<DwnBundleList>,
     pub metadata: ChannelMetadata,
+}
+
+impl DwnChannel<AnyStream> {
+    pub fn new(singles: Vec<DwnMedia<AnyStream>>, eps: Vec<Dwnlist<AnyStream>>, albums: Vec<Dwnlist<AnyStream>>, metadata: ChannelMetadata) -> Self {
+        Self { singles, eps, albums, metadata }
+    }
 }
 
 impl DwnBundelChannel {

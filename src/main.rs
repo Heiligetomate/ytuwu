@@ -6,7 +6,7 @@ use ytuwu::{Downloader, Result};
 async fn main() -> Result<()> {
     // let start_time = SystemTime::now();
 
-    let url = "https://music.youtube.com/watch?v=vHdCCc1T8os&list=OLAK5uy_lD0SLa66bgs9XtbHQAlQjqlwdfHc72mDI";
+    let url = "https://music.youtube.com/channel/UCSM02YABF__s7_3et2UommA";
 
     let downloader = Downloader::default();
 
@@ -14,7 +14,7 @@ async fn main() -> Result<()> {
 
     let dwn = downloader
         .from_url(url)?
-        .as_list()?
+        .as_channel()?
         .audio()
         .download()
         .await?;

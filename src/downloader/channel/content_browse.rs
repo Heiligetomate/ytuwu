@@ -7,7 +7,9 @@ use crate::{
     downloader::{
         channel::core::Channel,
         media::{Media, MediaBrowse},
+        metadata::ChannelMetadata,
         playlist::{Playlist, PlaylistBrowse, PlaylistContentBrowse},
+        store::ChannelTemplate,
     },
     itags::AnyItag,
     types::{BrowseId, ChannelPlaylistId},
@@ -35,13 +37,19 @@ impl ChannelContentBrowse {
         let eps = self.half_browse_eps().await?;
         let albums = self.half_browse_albums().await?;
 
+        let mut single_ids = Vec::with_capacity(self.singles.len());
+        let mut ep_ids = Vec::with_capacity(self.eps.len());
+        let mut album_ids = Vec::with_capacity(self.albums.len());
+
         let channel_id = Some(self.id);
 
         for single in singles {
+            single_ids.push(single.id);
             task_pool.push(single.video_id, None, channel_id, single.id, itag);
         }
 
         for ep in eps {
+            ep_ids.push(ep.id);
             let ep_id = Some(ep.id);
             for media in ep.media {
                 task_pool.push(media.video_id, ep_id, channel_id, media.id, itag);
@@ -49,11 +57,21 @@ impl ChannelContentBrowse {
         }
 
         for album in albums {
-            let ep_id = Some(album.id);
+            album_ids.push(album.id);
+            let album_id = Some(album.id);
             for media in album.media {
-                task_pool.push(media.video_id, ep_id, channel_id, media.id, itag);
+                task_pool.push(media.video_id, album_id, channel_id, media.id, itag);
             }
         }
+
+        let metadata = ChannelMetadata::new(&self.title);
+        let template = ChannelTemplate::new(metadata, ep_ids, album_ids, single_ids);
+
+        self.downloader
+            .storage
+            .lock()
+            .await
+            .insert_channel_template(self.id, template);
 
         Ok(())
     }

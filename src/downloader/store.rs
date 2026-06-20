@@ -5,7 +5,9 @@ use uuid::Uuid;
 use crate::{
     Result,
     downloader::{
+        channel::DwnChannel,
         media::{DwnBundleMedia, DwnMedia},
+        metadata::ChannelMetadata,
         playlist::Dwnlist,
         streams::AnyStream,
         task_handler::{FinishedBundleTask, FinishedTask},
@@ -15,6 +17,7 @@ use crate::{
 
 #[derive(Debug)]
 pub struct DownloadedStore {
+    channel_templates: HashMap<Uuid, ChannelTemplate>,
     list_names: HashMap<Uuid, String>,
     media: Vec<FinishedTask>,
     bundle: Vec<FinishedBundleTask>,
@@ -23,6 +26,7 @@ pub struct DownloadedStore {
 impl Default for DownloadedStore {
     fn default() -> Self {
         Self {
+            channel_templates: HashMap::new(),
             list_names: HashMap::new(),
             media: Vec::new(),
             bundle: Vec::new(),
@@ -30,10 +34,43 @@ impl Default for DownloadedStore {
     }
 }
 
+#[derive(Debug)]
+pub struct ChannelTemplate {
+    metadata: ChannelMetadata,
+    eps: Vec<Uuid>,
+    albums: Vec<Uuid>,
+    singles: Vec<Uuid>,
+}
+
+impl ChannelTemplate {
+    pub fn new(metadata: ChannelMetadata, ep_ids: Vec<Uuid>, album_ids: Vec<Uuid>, single_ids: Vec<Uuid>) -> Self {
+        Self {
+            metadata,
+            eps: ep_ids,
+            albums: album_ids,
+            singles: single_ids,
+        }
+    }
+}
+
 impl DownloadedStore {
-    pub fn push_list_title(&mut self, id: Uuid, name: &str) {
+    pub fn insert_channel_template(&mut self, id: Uuid, template: ChannelTemplate) {
+        self.channel_templates
+            .insert(id, template);
+    }
+
+    pub fn insert_list_title(&mut self, id: Uuid, name: &str) {
         self.list_names
             .insert(id, name.to_owned());
+    }
+
+    pub fn extract_list_title(&self, list_id: Uuid) -> Result<&str> {
+        let title = self
+            .list_names
+            .get(&list_id)
+            .ok_or(YtuwuError::ListNameNotFound)?;
+
+        Ok(title.as_str())
     }
 
     pub fn push(&mut self, finished: FinishedTask) {
@@ -97,13 +134,39 @@ impl DownloadedStore {
 
         self.media = remaining;
 
-        let title = self
-            .list_names
-            .get(&list_id)
-            .ok_or(YtuwuError::ListNameNotFound)?;
-
+        let title = self.extract_list_title(list_id)?;
         let dwn_list = Dwnlist::new(extracted, title);
 
         Ok(dwn_list)
+    }
+
+    pub fn extract_channel(&mut self, id: Uuid) -> Result<DwnChannel<AnyStream>> {
+        let ChannelTemplate { metadata, eps, albums, singles } = self
+            .channel_templates
+            .remove(&id)
+            .ok_or(YtuwuError::InvalidChannelId)?;
+
+        let mut dwn_singles = Vec::with_capacity(singles.len());
+        let mut dwn_eps = Vec::with_capacity(eps.len());
+        let mut dwn_albums = Vec::with_capacity(albums.len());
+
+        for id in singles.iter() {
+            let single = self.extract_media(*id)?;
+            dwn_singles.push(single);
+        }
+
+        for id in eps.iter() {
+            let ep = self.extract_list(*id)?;
+            dwn_eps.push(ep);
+        }
+
+        for id in albums.iter() {
+            let album = self.extract_list(*id)?;
+            dwn_albums.push(album);
+        }
+
+        let channel = DwnChannel::new(dwn_singles, dwn_eps, dwn_albums, metadata);
+
+        Ok(channel)
     }
 }
