@@ -18,9 +18,13 @@ use bytes::Bytes;
 use std::sync::atomic::{AtomicU32, Ordering};
 use uuid::Uuid;
 
+/// This is the chunk size used for downloading chunks.
 const CHUNK_SIZE: u32 = 1024 * 1024;
+/// This determines the number of chunks downloaded at the same time
 const MAX_TASKS: usize = 8;
 
+/// This struct contains all downloadable media streams, thumbnail streams, an arc of the
+/// downloader and an uuid for identification  
 #[derive(Debug)]
 pub struct Media {
     downloader: Arc<Downloader>,
@@ -30,6 +34,8 @@ pub struct Media {
     pub metadata: MediaMetadata,
 }
 
+/// This struct holds the stream url and the range of what it has to download.
+/// It is used for downloading chunks of media which is needed for better and faster downloads
 struct DownloadTask {
     from: u32,
     to: u32,
@@ -37,13 +43,15 @@ struct DownloadTask {
 }
 
 impl DownloadTask {
+    /// Creates a new Task
     fn new(from: u32, to: u32, url: &str) -> Self {
         Self { from, to, url: url.to_owned() }
     }
 
+    /// Uses a reference to a client to download.
+    /// Downloads the task and returns the downloaded bytes
+    /// Fails if anything went wrong while downloading
     async fn download(&self, client: &reqwest::Client) -> Result<Bytes> {
-        // println!("downloading chunk {} to {}", self.from, self.to);
-
         let chunk_url = format!("{}&range={}-{}", self.url, self.from, self.to);
         let chunk = client
             .get(&chunk_url)
@@ -56,6 +64,8 @@ impl DownloadTask {
 }
 
 impl Media {
+    /// Takes ExtractedStreams, ExtractedThumbnails, MediaMetadata, an Arc to a downloader and an
+    /// unique Uuid for identification
     pub fn new(media_streams: ExtractedStreams, thumbnail_streams: ExtractedThumbnails, metadata: MediaMetadata, downloader: Arc<Downloader>, id: Uuid) -> Self {
         Self {
             downloader,
@@ -66,6 +76,11 @@ impl Media {
         }
     }
 
+    /// Downloads a single stream with the given Itag
+    /// Gets the best available Itag if the Itag is Itag::Highest
+    /// Returns the Stream of the Itag I::Stream
+    /// Returns Err if the itag does not exist, something went wrong while downloading or the
+    /// acquire of the permit went wrong.
     pub async fn download_stream<I: Itag>(&self, itag: I) -> Result<I::Stream> {
         let url = self
             .media_streams
@@ -115,6 +130,10 @@ impl Media {
         Ok(downloaded_stream)
     }
 
+    /// Extracts the stream with the correct thumbnail resolution
+    /// Downloads the thumbnail with the extracted url
+    /// Returns the downloaded thumbnail
+    /// Returns Err if something went wrong while sending the requests
     pub async fn download_thumbnail(&self, resolution: ThumbRes) -> Result<Thumbnail> {
         let url = self
             .thumbnail_streams
@@ -130,6 +149,11 @@ impl Media {
         Ok(Thumbnail::new(thumbnail))
     }
 
+    /// Downloads all streams for the given itags by matching against every of the itags
+    /// Downloads the thumbnail if there was a thumbnail passed into the function
+    /// Returns DwnBundleMedia if everything worked well.
+    /// Uses the already existing metadata on self for the DwnBundleMedia
+    /// Returns Err if something went wrong while downloading
     pub async fn download_bundle(self, itags: &[AnyItag], thumb_res: Option<ThumbRes>) -> Result<DwnBundleMedia> {
         let mut thumbnail = None;
         let mut streams = vec![];
