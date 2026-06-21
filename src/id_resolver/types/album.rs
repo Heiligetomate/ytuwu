@@ -2,6 +2,11 @@ use crate::{Result, error::YtuwuError, id_resolver::id::Id, request::clients::Br
 
 use serde::{Deserialize, Serialize};
 
+/// This struct is for normal album ids.
+/// Example: OLAK5uy_mgi7GF3ptCZvPbGOBICaqmMQlHCH7p0Uk
+/// When creating a new AlbumId, it checks for the correct length and the correct format. An album
+/// id should always start with OLAK5uy_
+/// After validating, it adds VL at the beginning because thats what youtube expects
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct AlbumId {
     id: String,

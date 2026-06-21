@@ -2,6 +2,10 @@ use serde::{Deserialize, Serialize};
 
 use crate::{Result, error::YtuwuError, id_resolver::id::Id, request::clients::ChannelClient};
 
+/// This id is used for browsing channels
+/// This struct holds the channel id which, unlike channel names, does not have to be converted
+/// When creating a new channel id, it should start with MPADUC or with UC. MPAD will be added to if
+/// it starts with UC. After that add, the id should have a len of 28
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct ChannelRawId {
     id: String,

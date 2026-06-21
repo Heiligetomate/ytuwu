@@ -2,6 +2,9 @@ use crate::{Result, error::YtuwuError, id_resolver::id::Id, request::clients::Pl
 
 use serde::{Deserialize, Serialize};
 
+/// This id is used for browsing playlists, not albums or channel browsed stuff
+/// When crating a new PlaylistId, i should either start with RDCLAK5uy and have a len of 43 or it should start with PL and have a len of 34.
+/// "VL" is added in front to both of them after they are validated
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct PlaylistId {
     id: String,

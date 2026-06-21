@@ -8,6 +8,10 @@ use crate::{
     types::{AlbumId, ChannelPlaylistId, PlaylistId},
 };
 
+/// This is a wrapper for all Browse ids which is needed for a clean .get_id() in the api
+/// When creating a new BrowseId, it tries to create all different browse ids
+/// This works because all Browse ids have a different format
+/// All other functions just match self and return the function call of the matched value
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub enum BrowseId {
     PlaylistId(PlaylistId),

@@ -11,6 +11,11 @@ use crate::{
 
 use serde::{Deserialize, Serialize};
 
+// TODO: This is probably not useful
+/// This id is for downloading short videos
+/// This id is a wrapper for VideoId and the only difference is that when extracting the ids, the
+/// short ids can be verified
+/// When creating a new ShortId, it uses the same validation as a normal video id
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct ShortId {
     id: String,

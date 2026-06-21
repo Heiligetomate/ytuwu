@@ -11,6 +11,10 @@ use crate::{
 
 use serde::{Deserialize, Serialize};
 
+// TODO: Maybe enum?
+/// This is a wrapper for all Channel ids which is needed for a clean .get_id() in the api
+/// When creating a new ChannelId, it tries to create all different channel ids
+/// This works because all Channel ids have a different format
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct ChannelId {
     id: Option<ChannelRawId>,
@@ -18,6 +22,9 @@ pub struct ChannelId {
 }
 
 impl ChannelId {
+    // TODO: Maybe make this return the correct channel id?
+    /// This function returns self if id is Some
+    /// This function uses the ChannelNameId client to convert the name to an id if name is Some
     pub async fn make_valid(self, client: &reqwest::Client) -> Result<Self> {
         let id = if let Some(id) = self.id {
             id.get_id()

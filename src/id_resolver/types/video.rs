@@ -10,6 +10,9 @@ use crate::{
 
 use serde::{Deserialize, Serialize};
 
+/// This id is used for downloading media by using the player client
+/// When creating a new VideoId, it checks if the len is 11 and if there are any forbidden
+/// characters in the raw id
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct VideoId {
     id: String,

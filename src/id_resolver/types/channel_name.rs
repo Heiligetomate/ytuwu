@@ -2,6 +2,9 @@ use serde::{Deserialize, Serialize};
 
 use crate::{Result, id_resolver::id::Id, request::clients::ChannelNameClient};
 
+/// This struct contains a channel name
+/// This will later be converted to an id
+/// There is no validation when creating a channelname id because there is no format
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct ChannelNameId {
     name: String,

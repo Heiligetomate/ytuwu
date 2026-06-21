@@ -2,6 +2,9 @@ use serde::{Deserialize, Serialize};
 
 use crate::{Result, error::YtuwuError, id_resolver::id::Id, request::clients::SlowBrowseClient};
 
+/// This struct is for the content that gets extracted when browsing a channel
+/// The if format is different to the other browse ids
+/// When creating this, ther len should be 17 and the id should start with "MPREb_"
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct ChannelPlaylistId {
     id: String,
