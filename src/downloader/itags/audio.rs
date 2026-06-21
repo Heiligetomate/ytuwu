@@ -6,6 +6,9 @@ use crate::{
     error::YtuwuError,
 };
 
+/// AudioItag contains all pure Audio streams.
+/// It also contains a Highest variant which should be used if the stream quality should be
+/// downgraded to avoid non existent streams
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone, Copy)]
 pub enum AudioItag {
     Highest,
@@ -15,6 +18,8 @@ pub enum AudioItag {
     OpusMedium, // 251
 }
 
+/// Order containing every AudioItag variant
+/// Used for next best
 const AUDIO_ORDER: [AudioItag; 5] = [AudioItag::Highest, AudioItag::OpusMedium, AudioItag::AacMedium, AudioItag::OpusLow, AudioItag::AacLow];
 
 impl Itag for AudioItag {

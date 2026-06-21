@@ -6,6 +6,9 @@ use crate::{
     error::YtuwuError,
 };
 
+/// ShortItag contains all pure short video formats.
+/// It also contains a Highest variant which should be used if the stream quality should be.
+/// downgraded to avoid non existent streams.
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone, Copy)]
 pub enum ShortItag {
     Highest,
@@ -13,6 +16,8 @@ pub enum ShortItag {
     High, // 780
 }
 
+/// Order containing every ShortItag variant
+/// Used for next best
 const SHORT_LONG_VIDEO_ORDER: [ShortItag; 3] = [ShortItag::Highest, ShortItag::High, ShortItag::Low];
 
 impl Itag for ShortItag {

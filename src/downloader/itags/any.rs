@@ -6,6 +6,10 @@ use crate::{
     itags::Itag,
 };
 
+/// This enum holds a variant of any Itag.
+/// Its used to prevent dynamic traits
+/// It implements Itag by matching self and calling the function on the matched value
+/// highest cant be called because it doesnt know which itag is present
 #[derive(Debug, Clone, Copy)]
 pub enum AnyItag {
     Audio(AudioItag),

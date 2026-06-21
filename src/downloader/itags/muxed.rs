@@ -7,6 +7,10 @@ use crate::{
     itags::AnyItag,
 };
 
+/// MuxedItag contains all muxed formats.
+/// It also contains a Highest variant which should be used if the stream quality should be.
+/// downgraded to avoid non existent streams.
+/// This is useless here because it only has one variant.
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone, Copy)]
 pub enum MuxedItag {
     Highest,
