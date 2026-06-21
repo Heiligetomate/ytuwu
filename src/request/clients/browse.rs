@@ -17,6 +17,9 @@ const CLIENT_VERSION: &str = "1.60.19";
 const DEVICE_MAKE: &str = "Oculus";
 const DEVICE_MODEL: &str = "Quest 2";
 
+/// This client should be used for albums / albumids
+/// It returns a much smaller response than the regular browse client
+/// The response is a FastBrowseResponse
 pub struct BrowseClient {}
 
 impl ClientWithHeaders for BrowseClient {

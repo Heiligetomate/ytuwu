@@ -16,6 +16,9 @@ const X_CLIENT_VERSION: &str = "1.20260428.11.00";
 const CLIENT_NAME: &str = "WEB_REMIX";
 const CLIENT_VERSION: &str = "1.20260428.11.00";
 
+/// This client is for browing playlists, not albums
+/// It should be used with a playlist id
+/// Returns a PlaylistResponse
 pub struct PlaylistBrowseClient {}
 
 impl ClientWithHeaders for PlaylistBrowseClient {

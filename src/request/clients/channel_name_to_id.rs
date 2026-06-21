@@ -16,6 +16,8 @@ const X_CLIENT_VERSION: &str = "1.20260428.11.00";
 const CLIENT_NAME: &str = "WEB_REMIX";
 const CLIENT_VERSION: &str = "1.20260428.11.00";
 
+/// This is the client for converting channel names such as @ntomusic to an actual channel id
+/// Returns a ChannelNameToIdResponse containing the id
 pub struct ChannelNameClient {}
 
 impl ClientWithHeaders for ChannelNameClient {

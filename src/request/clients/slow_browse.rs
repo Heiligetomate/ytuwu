@@ -16,6 +16,14 @@ const X_CLIENT_VERSION: &str = "1.20260428.11.00";
 const CLIENT_NAME: &str = "WEB_REMIX";
 const CLIENT_VERSION: &str = "1.20260428.11.00";
 
+/// This Client has the same function as the normal BrowseClient
+/// The problem is that the normal browse client can only use album ids
+/// The channel response returns a type of id that is different to the album id which means that
+/// there is another client needed for them
+/// This client gets a much bigger response which is why this client is not used for albums (even
+/// though that would be possible)
+/// This client should be used with the ChannelPlaylistId
+/// This client returns a SlowBrowseResponse
 pub struct SlowBrowseClient {}
 
 impl ClientWithHeaders for SlowBrowseClient {

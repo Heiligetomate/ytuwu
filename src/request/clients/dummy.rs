@@ -3,6 +3,9 @@ use crate::{
     request::clients::client::{ClientPrebuild, ClientWithHeaders},
 };
 
+/// This client exists because of traits expecting a Client as a type  
+/// This will panic if this client is actually used
+/// Just use this an actual dummy
 pub struct DummyClient {}
 
 impl ClientWithHeaders for DummyClient {

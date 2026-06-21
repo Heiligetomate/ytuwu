@@ -18,6 +18,9 @@ const DEVICE_MODEL: &str = "Quest 2";
 const CLIENT_NAME: &str = "WEB_REMIX";
 const CLIENT_VERSION: &str = "1.20260428.11.00";
 
+/// This is the regular client for browing channels
+/// It should be used for the ChannelId
+/// Returns ChannelBrowseResponse
 pub struct ChannelClient {}
 
 impl ClientWithHeaders for ChannelClient {
