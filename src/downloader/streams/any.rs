@@ -4,6 +4,9 @@ use crate::{Result, downloader::mime_types::MimeType};
 
 use super::{AudioStream, MediaStream, MuxedStream, ShortStream, Thumbnail, VideoStream};
 
+/// Enum that holds every other stream as a variant
+/// Implements MediaStream by matching self and calling the function of the matched value
+/// This enum prevents the usage of dynamic traits
 #[derive(Debug, PartialEq, Eq)]
 pub enum AnyStream {
     Audio(AudioStream),

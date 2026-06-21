@@ -11,6 +11,9 @@ use crate::{
     itags::{AudioItag, Itag},
 };
 
+/// Holds data as Bytes and mime type
+/// Gets created when AudioIta gets used
+/// Implements MediaStream
 #[derive(Debug, PartialEq, Eq)]
 pub struct AudioStream {
     data: BytesMut,
@@ -43,6 +46,7 @@ impl From<AudioStream> for AnyStream {
 }
 
 impl AudioStream {
+    /// Takes an AudioItag and creates a new AudioStream from that
     pub fn new(itag: AudioItag) -> Self {
         Self {
             data: BytesMut::new(),

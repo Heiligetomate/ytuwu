@@ -6,6 +6,9 @@ use std::{
 
 use crate::{Result, downloader::streams::core::MediaStream, error::YtuwuError};
 
+/// This function takes a media stream, a path asnd a file name
+/// The full path consists of the trimmed file name with the mime type as extension and the path
+/// Returns an error if the given path is not a directory or if teh file saving did not work
 pub fn save_media_stream<M>(path: &Path, file_name: &str, media_stream: &M) -> Result<()>
 where
     M: MediaStream,
@@ -23,6 +26,7 @@ where
     Ok(())
 }
 
+/// This function replaces the most common special characters in file names with a "-"
 pub fn trim_filename(filename: &str) -> String {
     // TODO: This is really bad
     filename

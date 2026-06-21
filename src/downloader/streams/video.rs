@@ -11,6 +11,9 @@ use crate::{
     itags::{Itag, VideoItag},
 };
 
+/// Holds data as Bytes and mime type
+/// Gets created when VideoItag gets used
+/// Implements MediaStream
 #[derive(Debug, PartialEq, Eq)]
 pub struct VideoStream {
     data: BytesMut,
@@ -43,6 +46,7 @@ impl From<VideoStream> for AnyStream {
 }
 
 impl VideoStream {
+    /// Takes a VideoItag and creates a new VideoStream from that
     pub fn new(itag: VideoItag) -> Self {
         Self {
             data: BytesMut::new(),

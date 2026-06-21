@@ -9,6 +9,8 @@ use crate::{
 };
 use bytes::{BufMut, Bytes, BytesMut};
 
+/// Holds data as Bytes
+/// Implements MediaStream
 #[derive(Debug, PartialEq, Eq)]
 pub struct Thumbnail {
     data: BytesMut,
@@ -34,6 +36,7 @@ impl MediaStream for Thumbnail {
 }
 
 impl Thumbnail {
+    /// Taskes Bytes, converts them to BytesMut and returns Self  
     pub fn new(data: Bytes) -> Self {
         Self { data: data.into() }
     }
