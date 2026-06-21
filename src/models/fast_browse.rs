@@ -15,7 +15,7 @@ pub struct FastBrowseResponse {
 }
 
 #[derive(Deserialize, Debug)]
-pub struct ErrorResponse {}
+struct ErrorResponse {}
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
