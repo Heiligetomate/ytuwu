@@ -7,6 +7,9 @@ use crate::{
     types::VideoId,
 };
 
+/// This response is used by the Playlist client and used for Playlists
+/// Implements the basic structure the extract the ids and the title
+/// It implements the Response trait and it also implements the BrowseResponse trait
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct PlaylistResponse {

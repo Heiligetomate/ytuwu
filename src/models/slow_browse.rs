@@ -7,6 +7,9 @@ use crate::{
     models::response::{BrowseResponse, Response, Status},
 };
 
+/// This Response is used by the SlowBrowse Client and is used for browing browsed Channel content   
+/// This stuct has the basic structure to extract all ids and the name
+/// It implements the Response trait and it also implements the BrowseResponse trait
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct SlowBrowseResponse {

@@ -17,6 +17,9 @@ pub struct FastBrowseResponse {
 #[derive(Deserialize, Debug)]
 struct ErrorResponse {}
 
+/// This response is for the regular BrowseClient
+/// Its used for browing albums and has the basic structure to get the ids and the title
+/// It implements the Response trait and it also implements the BrowseResponse trait
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct FullResponse {

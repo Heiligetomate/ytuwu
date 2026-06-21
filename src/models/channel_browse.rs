@@ -11,6 +11,10 @@ use crate::{
     models::response::{Response, Status},
 };
 
+/// This is the response for the results of browsed Channels
+/// For example: A channel contains an album. This album can not be browsed with the regular
+/// BrowseClient. The SlowBrowseClient has to browse and this is the response.
+/// This basic structure allows the extraction if the ids and the title
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct ChannelBrowseResponse {
@@ -122,6 +126,10 @@ struct SubtitleRun {
 }
 
 impl ChannelBrowseResponse {
+    /// Extracts all singles, eps, albums and the title
+    /// Returns a ChannelContentBrowse with all the fields needed
+    /// singles, albums and eps are all from type ChannelPlaylistId because youtube thinks that its
+    /// a good idea to store singles as a playlist
     pub fn extract_all_releases(self, downloader: Arc<Downloader>, id: Uuid) -> Result<ChannelContentBrowse> {
         let mut albums: Vec<ChannelPlaylistId> = Vec::new();
         let mut eps: Vec<ChannelPlaylistId> = Vec::new();

@@ -2,6 +2,8 @@ use serde::Deserialize;
 
 use crate::{Result, error::YtuwuError, models::response::Response};
 
+/// This structs only function is to convert channel names such as @ntomusic to actual channel ids
+/// This is needed because the regular clients can not use the channel name for browsing
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ChannelNameToIdResponse {
@@ -21,6 +23,7 @@ struct BrowseEndpoint {
 }
 
 impl ChannelNameToIdResponse {
+    /// This function extracts the channel id from the response and returns it as a &str
     pub fn get_id(&self) -> Result<&str> {
         let id: &str = &self
             .endpoint
