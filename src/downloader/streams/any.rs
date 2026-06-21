@@ -1,12 +1,8 @@
 use bytes::{Bytes, BytesMut};
 
-use crate::{
-    Result,
-    downloader::{
-        mime_types::MimeType,
-        streams::{Thumbnail, audio::AudioStream, core::MediaStream, long_video::VideoStream, muxed::MuxedStream, short_video::ShortStream},
-    },
-};
+use crate::{Result, downloader::mime_types::MimeType};
+
+use super::{AudioStream, MediaStream, MuxedStream, ShortStream, Thumbnail, VideoStream};
 
 #[derive(Debug, PartialEq, Eq)]
 pub enum AnyStream {

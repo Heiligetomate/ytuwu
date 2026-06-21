@@ -1,18 +1,20 @@
 mod any;
 mod audio;
 mod core;
-mod long_video;
 mod muxed;
-mod short_video;
+mod short;
+mod thumbnail;
+mod video;
+
+pub(self) mod util;
+
 #[cfg(test)]
 mod test;
-mod thumbnail;
-pub(self) mod util;
 
 pub use any::AnyStream;
 pub use audio::AudioStream;
 pub use core::MediaStream;
-pub use long_video::VideoStream;
 pub use muxed::MuxedStream;
-pub use short_video::ShortStream;
+pub use short::ShortStream;
 pub use thumbnail::Thumbnail;
+pub use video::VideoStream;
