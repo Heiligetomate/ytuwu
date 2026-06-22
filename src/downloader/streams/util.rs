@@ -1,5 +1,5 @@
 use std::{
-    fs,
+    fs::File,
     io::Write,
     path::{Path, PathBuf},
 };
@@ -15,14 +15,16 @@ where
 {
     let file_name = format!("{}.{}", trim_filename(file_name), media_stream.get_mime_type().as_str());
     if !path.is_dir() {
-        return Err(YtuwuError::InvalidPath);
+        return Err(YtuwuError::NotADir(Some(
+            "Tried to save a media stream with a path that is not a directory. The file name gets automatically crated and should not be passed into the saving function.".into(),
+        )));
     }
     let mut file_path = PathBuf::from(path);
     file_path.push(file_name);
 
-    let mut file = fs::File::create(file_path).map_err(|_| YtuwuError::CreateFile)?;
+    let mut file = File::create(file_path).map_err(|e| YtuwuError::CreateFile(Some(format!("Tried to create a new file to save a mediasteam but failed: {}", e.to_string()))))?;
     file.write_all(&media_stream.get_data())
-        .map_err(|_| YtuwuError::WriteToFile)?;
+        .map_err(|e| YtuwuError::WriteToFile(Some(format!("Tried to write the mediastream bytes to the file and failed: {}", e.to_string()))))?;
     Ok(())
 }
 

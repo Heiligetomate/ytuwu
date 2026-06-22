@@ -58,7 +58,7 @@ impl DwnBundleList {
     pub fn save_with_dir(&self, path: &Path) -> Result<()> {
         let mut full_path = PathBuf::from(path);
         full_path.push(&self.metadata.title);
-        create_dir_all(&full_path).map_err(|_| YtuwuError::CreateDir)?;
+        create_dir_all(&full_path).map_err(|e| YtuwuError::CreateDir(Some(format!("Tried to save a playlist but the creation of the directory failed: {}", e.to_string()))))?;
         self.save(&full_path)?;
 
         Ok(())
@@ -91,7 +91,8 @@ impl<M: MediaStream + Debug> Dwnlist<M> {
     pub fn save_with_dir(&self, path: &Path) -> Result<()> {
         let mut full_path = PathBuf::from(path);
         full_path.push(&self.metadata.title);
-        create_dir_all(&full_path).map_err(|_| YtuwuError::CreateDir)?;
+
+        create_dir_all(&full_path).map_err(|e| YtuwuError::CreateDir(Some(format!("Tried to save a playlist but the creation of the directory failed: {}", e.to_string()))))?;
         self.save(&full_path)?;
 
         Ok(())

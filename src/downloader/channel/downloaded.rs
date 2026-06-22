@@ -135,9 +135,15 @@ pub(super) fn create_paths(path: &Path) -> Result<(PathBuf, PathBuf, PathBuf)> {
     eps_path.push("eps");
     albums_path.push("albums");
 
-    create_dir_all(&singles_path).map_err(|_| YtuwuError::CreateDir)?;
-    create_dir_all(&eps_path).map_err(|_| YtuwuError::CreateDir)?;
-    create_dir_all(&albums_path).map_err(|_| YtuwuError::CreateDir)?;
-
+    create_dir_all(&singles_path).map_err(|e| channel_dir_error_message(e, "singles"))?;
+    create_dir_all(&eps_path).map_err(|e| channel_dir_error_message(e, "eps"))?;
+    create_dir_all(&albums_path).map_err(|e| channel_dir_error_message(e, "albums"))?;
     Ok((singles_path, eps_path, albums_path))
+}
+
+/// Creates a clean error message for the creation of directories for downloaded channels
+/// Takes the std::io::Error that gets created when creating the dir and the type of the directory
+/// that gets created which is just the name (single, album or ep)
+fn channel_dir_error_message(e: std::io::Error, dir_type: &str) -> YtuwuError {
+    YtuwuError::CreateDir(Some(format!("Failed to create the directory '{}' for storing the downloaded {} of the channel: {}", dir_type, dir_type, e.to_string())))
 }
