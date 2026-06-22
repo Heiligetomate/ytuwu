@@ -6,8 +6,6 @@ use crate::{
     error::YtuwuError,
 };
 
-// TODO: There should be 2k itags etc.
-
 /// VideoItag contains all pure Video streams.
 /// It also contains a Highest variant which should be used if the stream quality should be
 /// downgraded to avoid non existent streams
