@@ -146,7 +146,6 @@ impl MultipleListBuilder {
     /// from the downloader storage with the previously created uuid.
     /// Fails if any of the songs could not be downloaded
     pub async fn download(self) -> Result<DwnBundleList> {
-        // TODO: RAWR (add to task pool)
         let id = Uuid::new_v4();
 
         let downloaded = PlaylistBrowse::new(self.id, self.downloader, id)
