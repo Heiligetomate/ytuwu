@@ -1,7 +1,12 @@
 use std::{error::Error, fmt::Display};
 
+/// Custom restul for ytuwu which should be used for every funciton in this library that returns a
+/// result.
+/// Holds a generic value T and a variant of the enum YtuwuError
 pub type Result<T> = std::result::Result<T, YtuwuError>;
 
+// TODO: documents this
+// TODO: Clean this up
 #[derive(Debug, Clone)]
 pub enum YtuwuError {
     BrowseDataNotFound(&'static str),
