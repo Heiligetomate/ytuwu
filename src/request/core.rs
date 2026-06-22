@@ -11,6 +11,7 @@ use crate::{
     request::clients::ClientWithHeaders,
     types::VideoId,
 };
+use bytes::Bytes;
 use serde::de::DeserializeOwned;
 
 /// This is the time that should be waited between every captcha bypass attempt
@@ -87,4 +88,16 @@ where {
     }
     println!("Could not bypass the captcha. Reason: {}", error_message);
     Err(YtuwuError::CaptchaBypassFailed(max_tries))
+}
+
+/// Takes the url that is already formatted for the correct chunk size
+/// Sends a request to the url and returns the Bytes that were returned
+/// Failes if the request failed
+pub async fn download_bytes(url: &str, client: &reqwest::Client) -> Result<Bytes> {
+    Ok(client
+        .get(url)
+        .send()
+        .await?
+        .bytes()
+        .await?)
 }

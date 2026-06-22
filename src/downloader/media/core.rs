@@ -13,6 +13,7 @@ use crate::{
     },
     error::Result,
     itags::{AnyItag, Itag},
+    request,
 };
 use bytes::Bytes;
 use std::sync::atomic::{AtomicU32, Ordering};
@@ -54,12 +55,7 @@ impl DownloadTask {
     /// Fails if anything went wrong while downloading
     async fn download(&self, client: &reqwest::Client) -> Result<Bytes> {
         let chunk_url = format!("{}&range={}-{}", self.url, self.from, self.to);
-        let chunk = client
-            .get(&chunk_url)
-            .send()
-            .await?
-            .bytes()
-            .await?;
+        let chunk = request::download_bytes(&chunk_url, client).await?;
         Ok(chunk)
     }
 }
@@ -139,15 +135,11 @@ impl Media {
         let url = self
             .thumbnail_streams
             .get_thumbnail_url_by_res(&resolution)?;
-        let thumbnail = self
-            .downloader
-            .client
-            .get(url)
-            .send()
-            .await?
-            .bytes()
-            .await?;
-        Ok(Thumbnail::new(thumbnail))
+
+        let client = &self.downloader.client;
+
+        let bytes = request::download_bytes(url, &client).await?;
+        Ok(Thumbnail::new(bytes))
     }
 
     /// Downloads all streams for the given itags by matching against every of the itags
