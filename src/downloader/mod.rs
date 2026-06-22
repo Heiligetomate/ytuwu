@@ -11,6 +11,7 @@ mod core;
 mod mime_types;
 mod store;
 mod task_handler;
+mod tasks;
 
 // pub(crate) use channel::ChannelContentBrowse;
 pub use core::Downloader;

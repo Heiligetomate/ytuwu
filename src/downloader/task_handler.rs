@@ -4,100 +4,18 @@ use tokio::sync::Semaphore;
 use uuid::Uuid;
 
 use crate::{
-    Result,
     downloader::{
         Downloader,
-        media::{DwnBundleMedia, DwnMedia, MediaBrowse},
-        streams::AnyStream,
+        tasks::{BundleDownloadTask, DownloadTask},
     },
     itags::AnyItag,
     types::VideoId,
 };
 
+/// This defines how many downlaod tasks can run parallel
+/// Do not set this too high because youtube will rate limit you if this is too high which causes
+/// slower downloads or even full abortion of the download
 const MAX_TASKS: usize = 4;
-
-#[derive(Debug)]
-pub struct DownloadTask {
-    itag: AnyItag,
-    id: Uuid,
-    video_id: VideoId,
-    playlist_id: Option<Uuid>,
-    channel_id: Option<Uuid>,
-}
-
-#[derive(Debug)]
-pub struct BundleDownloadTask {
-    id: Uuid,
-    video_id: VideoId,
-    playlist_id: Option<Uuid>,
-    channel_id: Option<Uuid>,
-    itags: &'static [AnyItag],
-}
-
-#[derive(Debug)]
-pub struct FinishedTask {
-    pub data: DwnMedia<AnyStream>,
-    pub id: Uuid,
-    pub playlist_id: Option<Uuid>,
-    pub channel_id: Option<Uuid>,
-}
-
-#[derive(Debug)]
-pub struct FinishedBundleTask {
-    pub data: DwnBundleMedia,
-    pub id: Uuid,
-    pub playlist_id: Option<Uuid>,
-    pub channel_id: Option<Uuid>,
-}
-
-impl FinishedTask {
-    fn new(media: DwnMedia<AnyStream>, id: Uuid, playlist_id: Option<Uuid>, channel_id: Option<Uuid>) -> Self {
-        Self {
-            data: media,
-            id,
-            playlist_id,
-            channel_id,
-        }
-    }
-}
-
-impl FinishedBundleTask {
-    fn new(media: DwnBundleMedia, id: Uuid, playlist_id: Option<Uuid>, channel_id: Option<Uuid>) -> Self {
-        Self {
-            data: media,
-            id,
-            playlist_id,
-            channel_id,
-        }
-    }
-}
-
-impl DownloadTask {
-    async fn run(self, downloader: Arc<Downloader>) -> Result<FinishedTask> {
-        let media = MediaBrowse::new(self.video_id, self.id)
-            .browse(downloader)
-            .await?
-            .download(self.itag, None)
-            .await?;
-
-        let finished = FinishedTask::new(media, self.id, self.playlist_id, self.channel_id);
-        Ok(finished)
-    }
-}
-
-impl BundleDownloadTask {
-    async fn run(self, downloader: Arc<Downloader>) -> Result<FinishedBundleTask> {
-        let media = MediaBrowse::new(self.video_id, self.id)
-            .browse(downloader)
-            .await?
-            .download_bundle(self.itags, None)
-            .await?;
-
-        let finished = FinishedBundleTask::new(media, self.id, self.playlist_id, self.channel_id);
-
-        Ok(finished)
-    }
-}
 
 #[derive(Debug)]
 pub struct TaskHandler {
@@ -118,24 +36,12 @@ impl Default for TaskHandler {
 
 impl TaskHandler {
     pub fn push(&mut self, video_id: VideoId, playlist_id: Option<Uuid>, channel_id: Option<Uuid>, id: Uuid, itag: AnyItag) {
-        let task = DownloadTask {
-            video_id,
-            playlist_id,
-            channel_id,
-            id,
-            itag: itag,
-        };
+        let task = DownloadTask::new(itag, id, video_id, playlist_id, channel_id);
         self.tasks.push(task);
     }
 
     pub fn push_bundle(&mut self, video_id: VideoId, playlist_id: Option<Uuid>, channel_id: Option<Uuid>, id: Uuid, itags: &'static [AnyItag]) {
-        let task = BundleDownloadTask {
-            video_id,
-            playlist_id,
-            channel_id,
-            id,
-            itags,
-        };
+        let task = BundleDownloadTask::new(itags, id, video_id, playlist_id, channel_id);
         self.bundle_tasks.push(task);
     }
 

@@ -10,7 +10,7 @@ use crate::{
         metadata::ChannelMetadata,
         playlist::{DwnBundleList, Dwnlist},
         streams::AnyStream,
-        task_handler::{FinishedBundleTask, FinishedTask},
+        tasks::{FinishedBundleTask, FinishedTask},
     },
     error::YtuwuError,
 };
