@@ -11,6 +11,9 @@ use crate::{
     types::BrowseId,
 };
 
+/// This struct is used for browsing playlists and extracting all video ids from a playlist
+/// It holds the browseid which can be any of the variants that browseid holds and an arc of the
+/// downloader to use shared data and an uuid for identification
 #[derive(Debug)]
 pub struct PlaylistBrowse {
     id: Uuid,
@@ -19,10 +22,16 @@ pub struct PlaylistBrowse {
 }
 
 impl PlaylistBrowse {
+    /// Creates a new instance of itself with the given parameters  
     pub fn new(browse_id: BrowseId, downloader: Arc<Downloader>, id: Uuid) -> Self {
         Self { browse_id, downloader, id }
     }
 
+    // TODO: Cant we use the browseId trait here?
+    /// Matches against self and makes an api request with the browse id
+    /// After that the ids and the title get extracted
+    /// The title gets trimmed and the ids get merged into a vec of MediaBrowses
+    /// After that a new instance of PlaylistContentBrowse gets created with the collected data
     pub async fn browse(self) -> Result<PlaylistContentBrowse> {
         let (mut ids, title) = match self.browse_id {
             BrowseId::AlbumId(id) => {
