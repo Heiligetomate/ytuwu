@@ -1,5 +1,6 @@
 use crate::{Result, id_resolver::types::VideoId};
 
+// TODO: handle status better for the models
 /// This triat is needed so that the client trait can hold a response
 /// The raw response can then tried to be deserialized into the expected response
 pub trait Response {
