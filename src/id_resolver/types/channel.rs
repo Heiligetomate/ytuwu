@@ -22,6 +22,20 @@ pub struct ChannelId {
 }
 
 impl ChannelId {
+    /// Returns a &str that tells the id type that is currently stored in this channel
+    /// Needed for a clean IdCollection info function
+    /// Panics if both channel name and channel id are none because that should never even be
+    /// possible, invalid state
+    pub fn info(&self) -> &str {
+        if self.id.is_some() {
+            "channelId"
+        } else if self.name.is_some() {
+            "channelName"
+        } else {
+            panic!("invalid state")
+        }
+    }
+
     // TODO: Maybe make this return the correct channel id?
     /// This function returns self if id is Some
     /// This function uses the ChannelNameId client to convert the name to an id if name is Some
@@ -35,10 +49,7 @@ impl ChannelId {
             panic!("Channel id did not contain anything. Invalid state");
         };
 
-        Ok(Self {
-            id: Some(ChannelRawId::new(id)?),
-            name: None,
-        })
+        Ok(Self { id: Some(ChannelRawId::new(id)?), name: None })
     }
 }
 
