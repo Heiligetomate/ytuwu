@@ -16,17 +16,15 @@ However, I've never heard of anyone actually getting in trouble for using the in
 - trait that can be implemented to track the progress (for cli tools) (just for media rn)
 
 ## todos: 
-- better rate limit handler
+- better rate limit handler (kinda done)
 - more metadata (maybe)
 - save chunks when crashing while downloading and continue the download afterwards
 - cache (^ should be included there)
 - continuation
-- better api would be good i think
 - better chunk size (maybe adjust it while running for different internet speed)
 - maybe some more features like searching (not sure if i want that here tho)
 - logging 
 - publish on crates io 
-- documentation
 - some things are just on youtube and not on youtube music
 - some singles have multiple songs in them for some stupid reason
 - better error handling (crashes when there are is no thumbnail for example)
