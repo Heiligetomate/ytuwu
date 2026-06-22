@@ -181,6 +181,12 @@ impl Media {
         })
     }
 
+    /// This funciton downloads the media stream with the given itag
+    /// Downloads the thumbnail if there was a thumbnail passed into the function
+    /// Uses the already existing metadata for DwnMedia
+    /// Returns DwnMedia with the itags stream containing the thumbnail if existent, the mediastream
+    /// and the metadata
+    /// Returns Err if something went wrong while downloadign the streams or the thumbnail
     pub async fn download<I: Itag>(self, itag: I, thumb_res: Option<ThumbRes>) -> Result<DwnMedia<I::Stream>>
 where {
         let mut thumbnail = None;
