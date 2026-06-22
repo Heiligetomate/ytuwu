@@ -48,6 +48,7 @@ impl DownloadTask {
         Self { from, to, url: url.to_owned() }
     }
 
+    // TODO: put this in the request module
     /// Uses a reference to a client to download.
     /// Downloads the task and returns the downloaded bytes
     /// Fails if anything went wrong while downloading
