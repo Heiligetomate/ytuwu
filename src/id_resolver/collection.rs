@@ -55,6 +55,45 @@ impl Host {
 }
 
 impl IdCollection {
+    /// Goes through all ids on the id collection and checks if the id is Some.
+    /// Returns a String containing the name of all existing id types
+    /// Seperates them with a comma
+    /// Good for debugging and clean error messages
+    pub fn info(&self) -> String {
+        let mut existing_ids = Vec::new();
+
+        if self.video_id.is_some() {
+            existing_ids.push("videoId");
+        }
+
+        if self.short_id.is_some() {
+            existing_ids.push("shortId");
+        }
+
+        if let Some(browse_id) = &self.browse_id {
+            existing_ids.push(match browse_id {
+                BrowseId::AlbumId(_) => "albumId",
+                BrowseId::PlaylistId(_) => "playlistId",
+                BrowseId::ChannelBrowseId(_) => "channelBrowseId",
+            });
+        }
+
+        if let Some(channel_id) = &self.channel_id {
+            existing_ids.push(channel_id.info());
+        }
+
+        let mut info_string = String::new();
+
+        for (i, id) in existing_ids.iter().enumerate() {
+            info_string.push_str(id);
+            if i == info_string.len() - 1 {
+                continue;
+            }
+            info_string.push_str(", ");
+        }
+
+        info_string
+    }
     /// returns true if all values of self are None
     /// returns false if any value of self is Some()
     pub fn is_empty(&self) -> bool {
@@ -251,10 +290,7 @@ impl IdCollection {
 
     /// Creates a new IdCollection with just a channelId
     fn with_channel(id: ChannelId) -> Self {
-        Self {
-            channel_id: Some(id),
-            ..Self::empty()
-        }
+        Self { channel_id: Some(id), ..Self::empty() }
     }
 
     /// Creates a new IdCollection with just a shortId
