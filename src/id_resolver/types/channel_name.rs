@@ -13,6 +13,9 @@ pub struct ChannelNameId {
 impl Id for ChannelNameId {
     type Client = ChannelNameClient;
 
+    /// This function nevery fails beecause channel names do not have a fixed format that can be
+    /// checked. Therefore, downloading a channel with an invalid ChannelNameId will return Err as
+    /// soon as the channel is browsed and not as soon as the id gets created
     fn new<T: Into<String>>(id: T) -> Result<Self> {
         let name = id.into();
         let name = name
