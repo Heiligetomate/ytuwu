@@ -23,7 +23,7 @@ impl Id for AlbumId {
         }
 
         if !raw_id.starts_with("OLAK5uy") {
-            return Err(YtuwuError::InvalidIdFormat);
+            return Err(YtuwuError::InvalidIdFormat(("AlbumId", "OLAK5uy_*")));
         }
 
         Ok(Self { id: format!("VL{}", raw_id) })

@@ -20,12 +20,12 @@ impl Id for PlaylistId {
         match raw_id.len() {
             43 => {
                 if !raw_id.starts_with("RDCLAK5uy") {
-                    return Err(YtuwuError::InvalidIdFormat);
+                    return Err(YtuwuError::InvalidIdFormat(("PlaylistId", "RDCLAK5uy*")));
                 }
             }
             34 => {
                 if !raw_id.starts_with("PL") {
-                    return Err(YtuwuError::InvalidIdFormat);
+                    return Err(YtuwuError::InvalidIdFormat(("PlaylistId", "PL*")));
                 }
             }
             _ => return Err(YtuwuError::InvalidIdLength(("PlaylistId", 34))),

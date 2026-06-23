@@ -29,7 +29,7 @@ impl Id for ChannelPlaylistId {
         }
 
         if !raw_id.starts_with("MPREb_") {
-            return Err(YtuwuError::InvalidIdFormat);
+            return Err(YtuwuError::InvalidIdFormat(("ChannelPlaylistId", "MPREb_*")));
         }
 
         Ok(Self { id: raw_id })

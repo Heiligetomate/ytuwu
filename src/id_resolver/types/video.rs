@@ -30,7 +30,7 @@ impl Id for VideoId {
             .chars()
             .all(|c| c.is_alphanumeric() || c == '-' || c == '_')
         {
-            return Err(YtuwuError::InvalidIdFormat);
+            return Err(YtuwuError::InvalidIdFormat(("VideoId", "Can not contain special characters")));
         }
 
         Ok(Self { id: raw_id })

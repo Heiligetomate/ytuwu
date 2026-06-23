@@ -24,12 +24,12 @@ impl Id for ChannelRawId {
             } else if raw_id.starts_with("UC") {
                 format!("MPAD{}", raw_id)
             } else {
-                return Err(YtuwuError::InvalidIdFormat);
+                return Err(YtuwuError::InvalidIdFormat(("ChannelRawId", "UC* / MPADUC*")));
             }
         };
 
         if id_with_prfx.len() != 28 {
-            return Err(YtuwuError::InvalidIdLength(("ChannelId", 28)));
+            return Err(YtuwuError::InvalidIdLength(("ChannelRawId", 28)));
         }
 
         Ok(Self { id: id_with_prfx })

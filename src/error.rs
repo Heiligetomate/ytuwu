@@ -31,11 +31,15 @@ pub enum YtuwuError {
     //
     /// IdCollection did not contain the wanted id.
     IdNotContained(ErrInf),
-    /// Creating the id went wrong. This is used for the enums "channelId" and "browseId" in the IdCollection
+    /// Creating the id went wrong. This is used for the enums "channelId" and "browseId" in the
+    /// IdCollection
     IdCreationError(ErrInf),
-    /// The id creation failed. Holds the id type and the expected id length.
+    /// The id creation failed because the length was invalid. Holds the id type and the expected
+    /// id length.
     InvalidIdLength((&'static str, u16)),
-    InvalidIdFormat,
+    /// The id creation failed because the format was invalid. Holds the id type and the expected
+    /// format
+    InvalidIdFormat((&'static str, &'static str)),
     InvalidChannelId,
 
     BrowseDataNotFound(&'static str),
@@ -106,8 +110,8 @@ impl Display for YtuwuError {
             // Id related
             Self::IdNotContained(e) => write!(f, "Id was not found in the IdCollection{}", fmt_err_inf(e)),
             Self::IdCreationError(e) => write!(f, "Id creation failed{}", fmt_err_inf(e)),
-            Self::InvalidIdLength((k, c)) => write!(f, "{} has an invalid length. Expected length: {}", k, c),
-            Self::InvalidIdFormat => write!(f, "Id has an invalid format."),
+            Self::InvalidIdLength((id, len)) => write!(f, "{} has an invalid length. Expected length: {}", id, len),
+            Self::InvalidIdFormat((id, frm)) => write!(f, "{} has an invalid format. Expected format: {}", id, frm),
             Self::InvalidChannelId => write!(f, "Channel Id is invalid and was not found"),
 
             Self::ListNameNotFound => write!(f, "Playlist name was not found"),
