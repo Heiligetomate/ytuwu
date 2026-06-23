@@ -16,6 +16,7 @@ impl Id for PlaylistId {
     fn new<T: Into<String>>(id: T) -> Result<Self> {
         let raw_id = id.into();
 
+        // TODO: Better handling so the id length gets the correct len error
         match raw_id.len() {
             43 => {
                 if !raw_id.starts_with("RDCLAK5uy") {
