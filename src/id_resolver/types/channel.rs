@@ -63,7 +63,7 @@ impl Id for ChannelId {
         } else if let Ok(name_id) = ChannelNameId::new(raw_id.as_str()) {
             return Ok(Self { id: None, name: Some(name_id) });
         } else {
-            return Err(YtuwuError::NoIdFound);
+            return Err(YtuwuError::IdCreationError(Some("Creating a channel id from the raw id was not possible because no format matched".into())));
         }
     }
 
@@ -95,6 +95,6 @@ impl GetId<ChannelId> for IdCollection {
         Ok(self
             .channel_id
             .clone()
-            .ok_or(YtuwuError::NoIdFound)?)
+            .ok_or(crate::error::get_id_err("channelId", &self))?)
     }
 }

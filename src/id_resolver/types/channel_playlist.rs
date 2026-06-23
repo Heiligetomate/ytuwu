@@ -25,7 +25,7 @@ impl Id for ChannelPlaylistId {
         let raw_id = id.into();
 
         if raw_id.len() != 17 {
-            return Err(YtuwuError::InvalidIdLength);
+            return Err(YtuwuError::InvalidIdLength(("ChannelPlaylistId", 17)));
         }
 
         if !raw_id.starts_with("MPREb_") {

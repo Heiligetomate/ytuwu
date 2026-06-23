@@ -29,7 +29,7 @@ impl Id for ChannelRawId {
         };
 
         if id_with_prfx.len() != 28 {
-            return Err(YtuwuError::InvalidIdLength);
+            return Err(YtuwuError::InvalidIdLength(("ChannelId", 28)));
         }
 
         Ok(Self { id: id_with_prfx })

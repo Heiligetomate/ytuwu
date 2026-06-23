@@ -1,6 +1,5 @@
 use crate::{
     Result,
-    error::YtuwuError,
     id_resolver::{
         collection::IdCollection,
         id::{GetId, Id},
@@ -43,7 +42,7 @@ impl GetId<ShortId> for IdCollection {
         Ok(self
             .short_id
             .clone()
-            .ok_or(YtuwuError::NoIdFound)?)
+            .ok_or(crate::error::get_id_err("shortId", &self))?)
     }
 }
 

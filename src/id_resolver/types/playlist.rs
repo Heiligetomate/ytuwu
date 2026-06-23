@@ -28,7 +28,7 @@ impl Id for PlaylistId {
                     return Err(YtuwuError::InvalidIdFormat);
                 }
             }
-            _ => return Err(YtuwuError::InvalidIdLength),
+            _ => return Err(YtuwuError::InvalidIdLength(("PlaylistId", 34))),
         };
 
         Ok(Self { id: format!("VL{}", raw_id) })

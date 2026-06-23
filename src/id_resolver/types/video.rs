@@ -24,7 +24,7 @@ impl Id for VideoId {
     fn new<T: Into<String>>(id: T) -> Result<Self> {
         let raw_id = id.into();
         if raw_id.len() != 11 {
-            return Err(YtuwuError::InvalidIdLength);
+            return Err(YtuwuError::InvalidIdLength(("VideoId", 11)));
         }
         if !raw_id
             .chars()
@@ -50,6 +50,6 @@ impl GetId<VideoId> for IdCollection {
         Ok(self
             .video_id
             .clone()
-            .ok_or(YtuwuError::NoIdFound)?)
+            .ok_or(crate::error::get_id_err("videoId", &self))?)
     }
 }

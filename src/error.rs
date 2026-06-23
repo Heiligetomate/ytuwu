@@ -1,5 +1,7 @@
 use std::{error::Error, fmt::Display};
 
+use crate::id_resolver::IdCollection;
+
 /// Custom restul for ytuwu which should be used for every funciton in this library that returns a
 /// result.
 /// Holds a generic value T and a variant of the enum YtuwuError
@@ -14,8 +16,8 @@ type ErrInf = Option<String>;
 // TODO: Clean this up
 #[derive(Debug, Clone)]
 pub enum YtuwuError {
-    /// File related errors
-    ///
+    // File related errors
+    //
     /// There was a directory expected but something else like a file path was given.
     NotADir(ErrInf),
     /// A file could not be created.
@@ -24,6 +26,17 @@ pub enum YtuwuError {
     WriteToFile(ErrInf),
     /// Failed to create a directory.
     CreateDir(ErrInf),
+
+    // Id related errors
+    //
+    /// IdCollection did not contain the wanted id.
+    IdNotContained(ErrInf),
+    /// Creating the id went wrong. This is used for the enums "channelId" and "browseId" in the IdCollection
+    IdCreationError(ErrInf),
+    /// The id creation failed. Holds the id type and the expected id length.
+    InvalidIdLength((&'static str, u16)),
+    InvalidIdFormat,
+    InvalidChannelId,
 
     BrowseDataNotFound(&'static str),
     PlayerDataNotFound(&'static str),
@@ -42,17 +55,12 @@ pub enum YtuwuError {
     NoMatchingThumbnail,
     ListNameNotFound,
     SongInPlaylistNotFound,
-
     CaptchaBypassFailed(u16),
+
     YoutubeAPIReturn,
 
     UrlSizeExtract,
     EmptyMediaBundle,
-
-    NoIdFound,
-    InvalidChannelId,
-    InvalidIdLength,
-    InvalidIdFormat,
 }
 
 /// Adds a colon with space infront of the error message if it is Some, returns a . if the error
@@ -66,17 +74,44 @@ fn fmt_err_inf(opt_err: &ErrInf) -> String {
     }
 }
 
+/// Builds a clean error message stating what id was expected and what ids are available
+/// Always returns YtuwuError::NoIdFound
+/// Example
+///```rust
+///impl GetId<VideoId> for IdCollection {
+///    fn get_id(&self) -> Result<VideoId> {
+///        Ok(self
+///            .video_id
+///            .clone()
+///            .ok_or(crate::error::get_id_err("videoId", &self))?)
+///    }
+///}
+///```
+pub fn get_id_err(expected_type: &str, id_collection: &IdCollection) -> YtuwuError {
+    let existing_ids = id_collection.info();
+    let err_string = format!("Failed to get {} from IdCollection. Existing ids in this IdCollection: {}", expected_type, existing_ids);
+
+    YtuwuError::IdNotContained(Some(err_string))
+}
+
 impl Display for YtuwuError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
+            // File related
             Self::NotADir(e) => write!(f, "Expected a dir, did not find a dir{}", fmt_err_inf(e)),
             Self::CreateFile(e) => write!(f, "Failed to create file{}", fmt_err_inf(e)),
             Self::WriteToFile(e) => write!(f, "Failed to write to file{}", fmt_err_inf(e)),
             Self::CreateDir(e) => write!(f, "Failed to create a directory{}", fmt_err_inf(e)),
 
+            // Id related
+            Self::IdNotContained(e) => write!(f, "Id was not found in the IdCollection{}", fmt_err_inf(e)),
+            Self::IdCreationError(e) => write!(f, "Id creation failed{}", fmt_err_inf(e)),
+            Self::InvalidIdLength((k, c)) => write!(f, "{} has an invalid length. Expected length: {}", k, c),
+            Self::InvalidIdFormat => write!(f, "Id has an invalid format."),
             Self::InvalidChannelId => write!(f, "Channel Id is invalid and was not found"),
+
             Self::ListNameNotFound => write!(f, "Playlist name was not found"),
-            Self::MediaNotInStorage => write!(f, "the media with the id was not found in the downloaded storage"),
+            Self::MediaNotInStorage => write!(f, "Media with the id was not found in the downloaded storage"),
             Self::EmptyMediaBundle => write!(f, "media bundle was empty"),
             Self::Tokio(e) => write!(f, "tokio error: {}", e),
             Self::BrowseDataNotFound(e) => write!(f, "Could not get data from response: {}.", e),
@@ -93,11 +128,8 @@ impl Display for YtuwuError {
             Self::NoLowerItagFound => write!(f, "Could not find any lower itag."),
             Self::NoMatchingStream => write!(f, "No matching stream found for this itag."),
             Self::UrlSizeExtract => write!(f, "Failed to extract the size from the url."),
-            &Self::NoIdFound => write!(f, "Could not get id from collection"),
             Self::UrlParsing(e) => write!(f, "Error while parsing the url: {e}"),
             Self::SongInPlaylistNotFound => write!(f, "Song was not found"),
-            Self::InvalidIdLength => write!(f, "Id has an invalid length"),
-            Self::InvalidIdFormat => write!(f, "Id has an invalid format"),
             Self::NoMatchingThumbnail => write!(f, "No matching thumbnail found"),
             Self::NoThumbnail => write!(f, "No Thumbnail"),
         }

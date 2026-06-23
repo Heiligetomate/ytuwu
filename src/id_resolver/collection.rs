@@ -274,7 +274,7 @@ impl IdCollection {
         } else if id.starts_with("OLAK5uy") {
             Ok(Self::with_browse(BrowseId::AlbumId(AlbumId::new(id)?)))
         } else {
-            Err(YtuwuError::NoIdFound)
+            Err(YtuwuError::InvalidIdFormat)
         }
     }
 

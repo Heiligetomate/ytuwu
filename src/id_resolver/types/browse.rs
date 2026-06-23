@@ -32,7 +32,7 @@ impl Id for BrowseId {
         } else if let Ok(id) = ChannelPlaylistId::new(&raw) {
             return Ok(Self::ChannelBrowseId(id));
         }
-        return Err(YtuwuError::NoIdFound);
+        return Err(YtuwuError::IdCreationError(Some("Creating a browse id from the raw id was not possible because no format matched".into())));
     }
 
     fn get_id(self) -> String {
@@ -57,6 +57,6 @@ impl GetId<BrowseId> for IdCollection {
         Ok(self
             .browse_id
             .clone()
-            .ok_or(YtuwuError::NoIdFound)?)
+            .ok_or(crate::error::get_id_err("browseId", &self))?)
     }
 }

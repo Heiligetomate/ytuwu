@@ -19,7 +19,7 @@ impl Id for AlbumId {
         let raw_id = id.into();
 
         if raw_id.len() != 41 {
-            return Err(YtuwuError::InvalidIdLength);
+            return Err(YtuwuError::InvalidIdLength(("AlbumId", 41)));
         }
 
         if !raw_id.starts_with("OLAK5uy") {
