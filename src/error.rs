@@ -12,6 +12,15 @@ pub type Result<T> = std::result::Result<T, YtuwuError>;
 /// This allows the usage of the errors without forcing an extra error message
 type ErrInf = Option<String>;
 
+/// This enum gets used inside the Storage variant in the YtuwuError enum
+/// Holds multiple different types of things that can go wrong in the downlaoder storage for
+/// downloaded media and media bundles.
+#[derive(Debug, Clone)]
+pub enum StorageError {
+    /// Extraction of the channel template with the given id failed.
+    ChannelTemplateExtraction,
+}
+
 // TODO: documents this
 // TODO: Clean this up
 #[derive(Debug, Clone)]
@@ -40,7 +49,10 @@ pub enum YtuwuError {
     /// The id creation failed because the format was invalid. Holds the id type and the expected
     /// format
     InvalidIdFormat((&'static str, &'static str)),
-    InvalidChannelId,
+
+    /// Used for any storage related error
+    /// Holds a StorageError
+    Storage(StorageError),
 
     BrowseDataNotFound(&'static str),
     PlayerDataNotFound(&'static str),
@@ -98,6 +110,14 @@ pub fn get_id_err(expected_type: &str, id_collection: &IdCollection) -> YtuwuErr
     YtuwuError::IdNotContained(Some(err_string))
 }
 
+impl Display for StorageError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::ChannelTemplateExtraction => write!(f, "Channel template with the given id was not found in the channel template collection."),
+        }
+    }
+}
+
 impl Display for YtuwuError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -107,12 +127,14 @@ impl Display for YtuwuError {
             Self::WriteToFile(e) => write!(f, "Failed to write to file{}", fmt_err_inf(e)),
             Self::CreateDir(e) => write!(f, "Failed to create a directory{}", fmt_err_inf(e)),
 
-            // Id related
+            // Id cration, extractiom related
             Self::IdNotContained(e) => write!(f, "Id was not found in the IdCollection{}", fmt_err_inf(e)),
             Self::IdCreationError(e) => write!(f, "Id creation failed{}", fmt_err_inf(e)),
             Self::InvalidIdLength((id, len)) => write!(f, "{} has an invalid length. Expected length: {}", id, len),
             Self::InvalidIdFormat((id, frm)) => write!(f, "{} has an invalid format. Expected format: {}", id, frm),
-            Self::InvalidChannelId => write!(f, "Channel Id is invalid and was not found"),
+
+            // Storage related
+            Self::Storage(e) => write!(f, "Storage error: {}", e.to_string()),
 
             Self::ListNameNotFound => write!(f, "Playlist name was not found"),
             Self::MediaNotInStorage => write!(f, "Media with the id was not found in the downloaded storage"),

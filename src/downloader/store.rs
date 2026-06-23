@@ -12,7 +12,7 @@ use crate::{
         streams::AnyStream,
         tasks::{FinishedBundleTask, FinishedTask},
     },
-    error::YtuwuError,
+    error::{StorageError, YtuwuError},
 };
 
 /// This is a big part of the downloader stuct which holds all downloaded tasks created by the task
@@ -201,7 +201,7 @@ impl DownloadedStore {
         let ChannelTemplate { metadata, eps, albums, singles } = self
             .channel_templates
             .remove(&id)
-            .ok_or(YtuwuError::InvalidChannelId)?;
+            .ok_or(YtuwuError::Storage(StorageError::ChannelTemplateExtraction))?;
 
         let mut dwn_singles = Vec::with_capacity(singles.len());
         let mut dwn_eps = Vec::with_capacity(eps.len());
@@ -238,7 +238,7 @@ impl DownloadedStore {
         let ChannelTemplate { metadata, eps, albums, singles } = self
             .channel_templates
             .remove(&id)
-            .ok_or(YtuwuError::InvalidChannelId)?;
+            .ok_or(YtuwuError::Storage(StorageError::ChannelTemplateExtraction))?;
 
         let mut dwn_singles = Vec::with_capacity(singles.len());
         let mut dwn_eps = Vec::with_capacity(eps.len());
