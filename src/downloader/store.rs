@@ -88,7 +88,7 @@ impl DownloadedStore {
         let title = self
             .list_names
             .get(&list_id)
-            .ok_or(YtuwuError::ListNameNotFound)?;
+            .ok_or(YtuwuError::Storage(StorageError::ListNameExtraction(list_id)))?;
 
         Ok(title.as_str())
     }
@@ -124,7 +124,7 @@ impl DownloadedStore {
             }
         }
 
-        Err(YtuwuError::MediaNotInStorage)
+        Err(YtuwuError::Storage(StorageError::MediaExtraction(id)))
     }
 
     /// Extract a bundle media from the bundle storage.
@@ -137,7 +137,8 @@ impl DownloadedStore {
                 return Ok(media.data);
             }
         }
-        Err(YtuwuError::MediaNotInStorage)
+
+        Err(YtuwuError::Storage(StorageError::MediaExtraction(id)))
     }
 
     // TODO: Fail if empty
@@ -201,7 +202,7 @@ impl DownloadedStore {
         let ChannelTemplate { metadata, eps, albums, singles } = self
             .channel_templates
             .remove(&id)
-            .ok_or(YtuwuError::Storage(StorageError::ChannelTemplateExtraction))?;
+            .ok_or(YtuwuError::Storage(StorageError::ChannelTemplateExtraction(id)))?;
 
         let mut dwn_singles = Vec::with_capacity(singles.len());
         let mut dwn_eps = Vec::with_capacity(eps.len());
@@ -238,7 +239,7 @@ impl DownloadedStore {
         let ChannelTemplate { metadata, eps, albums, singles } = self
             .channel_templates
             .remove(&id)
-            .ok_or(YtuwuError::Storage(StorageError::ChannelTemplateExtraction))?;
+            .ok_or(YtuwuError::Storage(StorageError::ChannelTemplateExtraction(id)))?;
 
         let mut dwn_singles = Vec::with_capacity(singles.len());
         let mut dwn_eps = Vec::with_capacity(eps.len());

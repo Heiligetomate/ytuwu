@@ -1,5 +1,7 @@
 use std::{error::Error, fmt::Display};
 
+use uuid::Uuid;
+
 use crate::id_resolver::IdCollection;
 
 /// Custom restul for ytuwu which should be used for every funciton in this library that returns a
@@ -18,7 +20,14 @@ type ErrInf = Option<String>;
 #[derive(Debug, Clone)]
 pub enum StorageError {
     /// Extraction of the channel template with the given id failed.
-    ChannelTemplateExtraction,
+    /// Holds the Uuid that was used to extract the template.
+    ChannelTemplateExtraction(Uuid),
+    /// Extraction of the playlist name with the given id failed.
+    /// Holds the Uuid that was used to extract the name.
+    ListNameExtraction(Uuid),
+    /// Extaction of the media with the given id failed.
+    /// Holds the Uuid that was used to extract the media.
+    MediaExtraction(Uuid),
 }
 
 // TODO: documents this
@@ -64,12 +73,10 @@ pub enum YtuwuError {
 
     UrlParsing(&'static str),
 
-    MediaNotInStorage,
     NoThumbnail,
     NoLowerItagFound,
     NoMatchingStream,
     NoMatchingThumbnail,
-    ListNameNotFound,
     SongInPlaylistNotFound,
     CaptchaBypassFailed(u16),
 
@@ -113,7 +120,9 @@ pub fn get_id_err(expected_type: &str, id_collection: &IdCollection) -> YtuwuErr
 impl Display for StorageError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::ChannelTemplateExtraction => write!(f, "Channel template with the given id was not found in the channel template collection."),
+            Self::ChannelTemplateExtraction(id) => write!(f, "Channel template with the given id was not found in the channel template collection. Given id: {id}"),
+            Self::ListNameExtraction(id) => write!(f, "Playlist name with the given id was not found in the playlist name collection. Given id: {id}"),
+            Self::MediaExtraction(id) => write!(f, "Media with the given id was not found in the storage. Given id: {id}"),
         }
     }
 }
@@ -136,8 +145,6 @@ impl Display for YtuwuError {
             // Storage related
             Self::Storage(e) => write!(f, "Storage error: {}", e.to_string()),
 
-            Self::ListNameNotFound => write!(f, "Playlist name was not found"),
-            Self::MediaNotInStorage => write!(f, "Media with the id was not found in the downloaded storage"),
             Self::EmptyMediaBundle => write!(f, "media bundle was empty"),
             Self::Tokio(e) => write!(f, "tokio error: {}", e),
             Self::BrowseDataNotFound(e) => write!(f, "Could not get data from response: {}.", e),
