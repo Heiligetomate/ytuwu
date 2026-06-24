@@ -1,34 +1,5 @@
+use crate::error::{ErrInf, StorageError, helper::fmt_err_inf};
 use std::{error::Error, fmt::Display};
-
-use uuid::Uuid;
-
-use crate::id_resolver::IdCollection;
-
-/// Custom restul for ytuwu which should be used for every funciton in this library that returns a
-/// result.
-/// Holds a generic value T and a variant of the enum YtuwuError
-pub type Result<T> = std::result::Result<T, YtuwuError>;
-
-/// This type is for errors and should be used with the fmt_err_inf function to implement Display
-/// cleanly.
-/// This allows the usage of the errors without forcing an extra error message
-type ErrInf = Option<String>;
-
-/// This enum gets used inside the Storage variant in the YtuwuError enum
-/// Holds multiple different types of things that can go wrong in the downlaoder storage for
-/// downloaded media and media bundles.
-#[derive(Debug, Clone)]
-pub enum StorageError {
-    /// Extraction of the channel template with the given id failed.
-    /// Holds the Uuid that was used to extract the template.
-    ChannelTemplateExtraction(Uuid),
-    /// Extraction of the playlist name with the given id failed.
-    /// Holds the Uuid that was used to extract the name.
-    ListNameExtraction(Uuid),
-    /// Extaction of the media with the given id failed.
-    /// Holds the Uuid that was used to extract the media.
-    MediaExtraction(Uuid),
-}
 
 // TODO: documents this
 // TODO: Clean this up
@@ -86,47 +57,6 @@ pub enum YtuwuError {
     EmptyMediaBundle,
 }
 
-/// Adds a colon with space infront of the error message if it is Some, returns a . if the error
-/// message is None.
-/// Use this for implementing Display and do not add a . at the end of the first part of the error
-/// message because this would break the format
-fn fmt_err_inf(opt_err: &ErrInf) -> String {
-    match opt_err {
-        Some(e) => format!(": {}", e),
-        None => String::from("."),
-    }
-}
-
-/// Builds a clean error message stating what id was expected and what ids are available
-/// Always returns YtuwuError::NoIdFound
-/// Example
-///```rust
-///impl GetId<VideoId> for IdCollection {
-///    fn get_id(&self) -> Result<VideoId> {
-///        Ok(self
-///            .video_id
-///            .clone()
-///            .ok_or(crate::error::get_id_err("videoId", &self))?)
-///    }
-///}
-///```
-pub fn get_id_err(expected_type: &str, id_collection: &IdCollection) -> YtuwuError {
-    let existing_ids = id_collection.info();
-    let err_string = format!("Failed to get {} from IdCollection. Existing ids in this IdCollection: {}", expected_type, existing_ids);
-
-    YtuwuError::IdNotContained(Some(err_string))
-}
-
-impl Display for StorageError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Self::ChannelTemplateExtraction(id) => write!(f, "Channel template with the given id was not found in the channel template collection. Given id: {id}"),
-            Self::ListNameExtraction(id) => write!(f, "Playlist name with the given id was not found in the playlist name collection. Given id: {id}"),
-            Self::MediaExtraction(id) => write!(f, "Media with the given id was not found in the storage. Given id: {id}"),
-        }
-    }
-}
-
 impl Display for YtuwuError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -172,35 +102,5 @@ impl Display for YtuwuError {
 impl Error for YtuwuError {
     fn source(&self) -> Option<&(dyn Error + 'static)> {
         None
-    }
-}
-
-impl From<std::io::Error> for YtuwuError {
-    fn from(_: std::io::Error) -> Self {
-        Self::YoutubeAPIReturn
-    }
-}
-
-impl From<serde_json::Error> for YtuwuError {
-    fn from(value: serde_json::Error) -> Self {
-        Self::Deserialize(value.to_string())
-    }
-}
-
-impl From<reqwest::Error> for YtuwuError {
-    fn from(value: reqwest::Error) -> Self {
-        Self::ReqwestError(value.to_string())
-    }
-}
-
-impl From<tokio::task::JoinError> for YtuwuError {
-    fn from(value: tokio::task::JoinError) -> Self {
-        Self::Tokio(value.to_string())
-    }
-}
-
-impl From<tokio::sync::AcquireError> for YtuwuError {
-    fn from(value: tokio::sync::AcquireError) -> Self {
-        Self::Tokio(value.to_string())
     }
 }
