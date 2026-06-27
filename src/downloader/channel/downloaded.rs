@@ -111,7 +111,6 @@ impl<M: MediaStream + Debug> DwnChannel<M> {
         Ok(())
     }
 
-    // TODO: Path is not created, not good
     /// Calls self.save with the given path but adds channel name to the path
     /// Faild if the creation of the directory failed or any of the saving failed
     pub fn save_with_dir(&self, path: &Path) -> Result<()> {
