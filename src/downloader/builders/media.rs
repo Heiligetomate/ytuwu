@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use uuid::Uuid;
 
-pub use crate::{Result, downloader::builders::empty::EmptyBuilder, types::VideoId};
+use crate::{Result, downloader::builders::empty::EmptyBuilder, types::VideoId};
 use crate::{
     downloader::{
         Downloader,
