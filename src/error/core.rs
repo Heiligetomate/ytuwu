@@ -81,7 +81,10 @@ pub enum YtuwuError {
     /// Holds a short description of what went wrong
     BundleMerge(&'static str),
 
+    /// Used when the current itag is already at the bottom of the itag order
+    /// Normally only gets toggled when the itag is completely invalid for the media  
     NoLowerItagFound,
+
     NoMatchingStream,
     NoMatchingThumbnail,
 }
@@ -130,7 +133,10 @@ impl Display for YtuwuError {
             Self::NoThumbnail(e) => write!(f, "Tried to get the thumbnail for media '{}' but did not find any. Download with thumbnail to actually be able to extract it", e),
             Self::MediaNotContained(l, i) => write!(f, "Playlist did not contain the song at the index. Playlist length: {} Index: {}", l, i),
 
-            Self::NoLowerItagFound => write!(f, "Could not find any lower itag."),
+            Self::NoLowerItagFound => write!(
+                f,
+                "Already at the bottom of the itag order, no valid itag for downloading is existent. This normally only occurs when there was the wrong itag used for the media."
+            ),
             Self::NoMatchingStream => write!(f, "No matching stream found for this itag."),
             Self::NoMatchingThumbnail => write!(f, "No matching thumbnail found"),
         }
