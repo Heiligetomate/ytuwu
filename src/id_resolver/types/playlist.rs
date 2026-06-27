@@ -16,20 +16,21 @@ impl Id for PlaylistId {
     fn new<T: Into<String>>(id: T) -> Result<Self> {
         let raw_id = id.into();
 
-        // TODO: Better handling so the id length gets the correct len error
-        match raw_id.len() {
-            43 => {
-                if !raw_id.starts_with("RDCLAK5uy") {
-                    return Err(YtuwuError::InvalidIdFormat(("PlaylistId", "RDCLAK5uy*")));
-                }
-            }
-            34 => {
-                if !raw_id.starts_with("PL") {
-                    return Err(YtuwuError::InvalidIdFormat(("PlaylistId", "PL*")));
-                }
-            }
-            _ => return Err(YtuwuError::InvalidIdLength(("PlaylistId", 34))),
-        };
+        let id_len = raw_id.len();
+        let pl_start = raw_id.starts_with("PL");
+        let rd_start = raw_id.starts_with("RDCLAK5uy");
+
+        if id_len == 43 && !rd_start {
+            return Err(YtuwuError::InvalidIdFormat(("PlaylistId", "RDCLAK5uy*")));
+        } else if id_len != 43 && rd_start {
+            return Err(YtuwuError::InvalidIdLength(("PlaylistId", 43)));
+        } else if id_len == 34 && !pl_start {
+            return Err(YtuwuError::InvalidIdFormat(("PlaylistId", "PL*")));
+        } else if id_len != 34 && pl_start {
+            return Err(YtuwuError::InvalidIdLength(("PlaylistId", 34)));
+        } else if id_len != 34 && !pl_start && !rd_start {
+            return Err(YtuwuError::InvalidIdFormat(("PlaylistId", "RDCLAK5uy* / Pl*")));
+        }
 
         Ok(Self { id: format!("VL{}", raw_id) })
     }
