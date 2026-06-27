@@ -40,20 +40,19 @@ impl PlaylistContentBrowse {
     }
 
     // TODO: This does not have to return result i think
-    // TODO: There are many list titles inserted
     /// Consumes itself, pushes the list title to the downlaoder storage with the own id as key and
     /// pushes every media as a task to the task handler with the playlist id for identification and
     /// mapping later.
     pub async fn add_tasks(mut self, itag: AnyItag) -> Result<()> {
+        self.downloader
+            .storage
+            .lock()
+            .await
+            .insert_list_title(self.id, &self.title);
+
         for media in self.media.drain(..) {
             let video_id = media.video_id;
             let id = media.id;
-
-            self.downloader
-                .storage
-                .lock()
-                .await
-                .insert_list_title(self.id, &self.title);
 
             self.downloader
                 .task_handler
