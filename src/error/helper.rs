@@ -25,14 +25,14 @@ pub(super) fn fmt_err_inf(opt_err: &ErrInf) -> String {
 /// Always returns YtuwuError::NoIdFound
 /// Example
 ///```rust
-///impl GetId<VideoId> for IdCollection {
-///    fn get_id(&self) -> Result<VideoId> {
-///        Ok(self
-///            .video_id
-///            .clone()
-///            .ok_or(crate::error::get_id_err("videoId", &self))?)
-///    }
-///}
+//#impl GetId<VideoId> for IdCollection {
+//#    fn get_id(&self) -> Result<VideoId> {
+//#        Ok(self
+//#            .video_id
+//#            .clone()
+//#            .ok_or(crate::error::get_id_err("videoId", &self))?)
+//#    }
+//#}
 ///```
 pub fn get_id_err(expected_type: &str, id_collection: &IdCollection) -> YtuwuError {
     let existing_ids = id_collection.info();
