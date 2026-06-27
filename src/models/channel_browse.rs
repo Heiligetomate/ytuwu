@@ -6,7 +6,7 @@ use uuid::Uuid;
 use crate::{
     Result,
     downloader::{Downloader, channel::ChannelContentBrowse},
-    error::YtuwuError,
+    error::{ResponseDataError, YtuwuError},
     id_resolver::{Id, types::ChannelPlaylistId},
     models::response::{Response, Status},
 };
@@ -138,13 +138,13 @@ impl ChannelBrowseResponse {
         let contents = &self
             .contents
             .as_ref()
-            .ok_or(YtuwuError::BrowseDataNotFound("contents"))?;
+            .ok_or(YtuwuError::ResponseData(ResponseDataError::ChannelBrowse("contents")))?;
 
         let tab = &contents
             .single_column_browse_results_renderer
             .tabs
             .get(0)
-            .ok_or(YtuwuError::BrowseDataNotFound("tab"))?;
+            .ok_or(YtuwuError::ResponseData(ResponseDataError::ChannelBrowse("tab")))?;
 
         let section_list = &tab
             .tab_renderer
@@ -154,9 +154,9 @@ impl ChannelBrowseResponse {
         let section = &section_list
             .contents
             .as_ref()
-            .ok_or(YtuwuError::BrowseDataNotFound("contents"))?
+            .ok_or(YtuwuError::ResponseData(ResponseDataError::ChannelBrowse("contents")))?
             .get(0)
-            .ok_or(YtuwuError::BrowseDataNotFound("contents is empty"))?;
+            .ok_or(YtuwuError::ResponseData(ResponseDataError::ChannelBrowse("empty contents")))?;
 
         for item in &section.grid_renderer.items {
             let renderer = &item.music_two_row_item_renderer;
@@ -191,16 +191,16 @@ impl ChannelBrowseResponse {
         let title = self
             .header
             .as_ref()
-            .ok_or(YtuwuError::ChannelDataNotFound("header"))?
+            .ok_or(YtuwuError::ResponseData(ResponseDataError::ChannelBrowse("header")))?
             .music_header_renderer
             .title
             .runs
             .first()
             .as_ref()
-            .ok_or(YtuwuError::ChannelDataNotFound("title"))?
+            .ok_or(YtuwuError::ResponseData(ResponseDataError::ChannelBrowse("title")))?
             .text
             .as_ref()
-            .ok_or(YtuwuError::ChannelDataNotFound("title"))?;
+            .ok_or(YtuwuError::ResponseData(ResponseDataError::ChannelBrowse("title")))?;
 
         Ok(ChannelContentBrowse {
             albums,

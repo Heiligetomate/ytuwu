@@ -1,6 +1,10 @@
 use serde::Deserialize;
 
-use crate::{Result, error::YtuwuError, models::response::Response};
+use crate::{
+    Result,
+    error::{ResponseDataError, YtuwuError},
+    models::response::Response,
+};
 
 /// This structs only function is to convert channel names such as @ntomusic to actual channel ids
 /// This is needed because the regular clients can not use the channel name for browsing
@@ -28,13 +32,13 @@ impl ChannelNameToIdResponse {
         let id: &str = &self
             .endpoint
             .as_ref()
-            .ok_or(YtuwuError::ChannelDataNotFound("endpoint"))?
+            .ok_or(YtuwuError::ResponseData(ResponseDataError::ChannelName("endpoint")))?
             .browse_endpoint
             .as_ref()
-            .ok_or(YtuwuError::ChannelDataNotFound("browse endpoint"))?
+            .ok_or(YtuwuError::ResponseData(ResponseDataError::ChannelName("browse endpoint")))?
             .browse_id
             .as_ref()
-            .ok_or(YtuwuError::ChannelDataNotFound("channel id"))?;
+            .ok_or(YtuwuError::ResponseData(ResponseDataError::ChannelName("channel id")))?;
         Ok(id)
     }
 }

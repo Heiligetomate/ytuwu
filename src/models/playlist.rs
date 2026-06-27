@@ -1,7 +1,7 @@
 use serde::Deserialize;
 
 use crate::{
-    error::YtuwuError,
+    error::{ResponseDataError, YtuwuError},
     id_resolver::Id,
     models::response::{BrowseResponse, Response, Status},
     types::VideoId,
@@ -163,13 +163,13 @@ impl BrowseResponse for PlaylistResponse {
         let ids: Vec<VideoId> = self
             .contents
             .as_ref()
-            .ok_or(YtuwuError::BrowseDataNotFound("contents"))?
+            .ok_or(YtuwuError::ResponseData(ResponseDataError::Playlist("contents")))?
             .two_column_browse_results_renderer
             .secondary_contents
             .section_list_renderer
             .contents
             .get(0)
-            .ok_or(YtuwuError::BrowseDataNotFound("first content"))?
+            .ok_or(YtuwuError::ResponseData(ResponseDataError::Playlist("first element in contents")))?
             .music_playlist_shelf_renderer
             .contents
             .iter()
@@ -199,24 +199,24 @@ impl BrowseResponse for PlaylistResponse {
         let title = &self
             .contents
             .as_ref()
-            .ok_or(YtuwuError::BrowseDataNotFound("contents"))?
+            .ok_or(YtuwuError::ResponseData(ResponseDataError::Playlist("contents")))?
             .two_column_browse_results_renderer
             .tabs
             .as_ref()
-            .ok_or(YtuwuError::BrowseDataNotFound("title tabs"))?
+            .ok_or(YtuwuError::ResponseData(ResponseDataError::Playlist("title tabs")))?
             .get(0)
-            .ok_or(YtuwuError::BrowseDataNotFound("first title tab"))?
+            .ok_or(YtuwuError::ResponseData(ResponseDataError::Playlist("first title tab")))?
             .tab_renderer
             .content
             .section_list_renderer
             .contents
             .get(0)
-            .ok_or(YtuwuError::BrowseDataNotFound("name content"))?
+            .ok_or(YtuwuError::ResponseData(ResponseDataError::Playlist("name content")))?
             .music_responsive_header_renderer
             .title
             .runs
             .get(0)
-            .ok_or(YtuwuError::BrowseDataNotFound("first title tab run"))?
+            .ok_or(YtuwuError::ResponseData(ResponseDataError::Playlist("first title tab run")))?
             .text
             .as_ref();
 

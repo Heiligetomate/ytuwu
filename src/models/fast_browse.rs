@@ -1,7 +1,7 @@
 use serde::Deserialize;
 
 use crate::{
-    error::{Result, YtuwuError},
+    error::{ResponseDataError, Result, YtuwuError},
     id_resolver::{Id, types::VideoId},
     models::response::{BrowseResponse, Response, Status},
 };
@@ -103,12 +103,12 @@ impl BrowseResponse for FastBrowseResponse {
         let title = &self
             .header
             .as_ref()
-            .ok_or(YtuwuError::BrowseDataNotFound("header"))?
+            .ok_or(YtuwuError::ResponseData(ResponseDataError::FastBrowse("header")))?
             .playlist_header_renderer
             .title
             .runs
             .get(0)
-            .ok_or(YtuwuError::BrowseDataNotFound("album title"))?
+            .ok_or(YtuwuError::ResponseData(ResponseDataError::FastBrowse("album title ")))?
             .text
             .as_str();
         Ok(title)
@@ -118,26 +118,26 @@ impl BrowseResponse for FastBrowseResponse {
         let ids = self
             .contents
             .as_ref()
-            .ok_or(YtuwuError::BrowseDataNotFound("contents"))?
+            .ok_or(YtuwuError::ResponseData(ResponseDataError::FastBrowse("contents")))?
             .single_column_browse_results_renderer
             .tabs
             .get(0)
             .as_ref()
-            .ok_or(YtuwuError::BrowseDataNotFound("tabs"))?
+            .ok_or(YtuwuError::ResponseData(ResponseDataError::FastBrowse("tabs")))?
             .tab_renderer
             .as_ref()
-            .ok_or(YtuwuError::BrowseDataNotFound("tab renderer"))?
+            .ok_or(YtuwuError::ResponseData(ResponseDataError::FastBrowse("tab renderer")))?
             .content
             .section_list_renderer
             .contents
             .as_ref()
-            .ok_or(YtuwuError::BrowseDataNotFound("section list renderer contents"))?
+            .ok_or(YtuwuError::ResponseData(ResponseDataError::FastBrowse("section list renderer contents")))?
             .get(0)
             .as_ref()
-            .ok_or(YtuwuError::BrowseDataNotFound("first section list renderer element"))?
+            .ok_or(YtuwuError::ResponseData(ResponseDataError::FastBrowse("first section list renderer element")))?
             .playlist_video_list_renderer
             .as_ref()
-            .ok_or(YtuwuError::BrowseDataNotFound("playlist video list renderer"))?
+            .ok_or(YtuwuError::ResponseData(ResponseDataError::FastBrowse("playlist video list renderer")))?
             .contents
             .iter()
             .filter_map(|item| {

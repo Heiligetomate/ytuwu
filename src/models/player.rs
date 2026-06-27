@@ -9,7 +9,7 @@ use crate::{
         media::{ExtractedStreams, ExtractedThumbnails, Media},
         metadata::MediaMetadata,
     },
-    error::{Result, YtuwuError},
+    error::{ResponseDataError, Result, YtuwuError},
     models::response::{Response, Status},
 };
 
@@ -99,7 +99,7 @@ impl PlayerResponse {
     pub fn extract(self, downloader: Arc<Downloader>, id: Uuid) -> Result<Media> {
         let streaming_data = self
             .streaming_data
-            .ok_or(YtuwuError::PlayerDataNotFound("Streaming data"))?;
+            .ok_or(YtuwuError::ResponseData(ResponseDataError::Player("Streaming data")))?;
 
         let mut extracted_streams = streaming_data.formats;
         extracted_streams.extend(streaming_data.adaptive_formats);
@@ -107,7 +107,7 @@ impl PlayerResponse {
 
         let video_details = self
             .video_details
-            .ok_or(YtuwuError::PlayerDataNotFound("video details"))?;
+            .ok_or(YtuwuError::ResponseData(ResponseDataError::Player("video details")))?;
 
         let thumbnail_streams = ExtractedThumbnails::new(video_details.thumbnail.thumbnails);
         let metadata = MediaMetadata::new(&video_details.title, &video_details.author);
@@ -121,10 +121,10 @@ impl PlayerResponse {
         let mesage = self
             .playability_status
             .as_ref()
-            .ok_or(YtuwuError::PlayerDataNotFound("playability_status"))?
+            .ok_or(YtuwuError::ResponseData(ResponseDataError::Player("playability status")))?
             .reason
             .as_ref()
-            .ok_or(YtuwuError::PlayerDataNotFound("status message"))?;
+            .ok_or(YtuwuError::ResponseData(ResponseDataError::Player("status message")))?;
         Ok(mesage)
     }
 

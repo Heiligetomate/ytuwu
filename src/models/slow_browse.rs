@@ -2,7 +2,7 @@ use serde::Deserialize;
 
 use crate::{
     Result,
-    error::YtuwuError,
+    error::{ResponseDataError, YtuwuError},
     id_resolver::{Id, types::VideoId},
     models::response::{BrowseResponse, Response, Status},
 };
@@ -134,7 +134,7 @@ impl BrowseResponse for SlowBrowseResponse {
         let ids = self
             .contents
             .as_ref()
-            .ok_or(YtuwuError::BrowseDataNotFound("contents"))?
+            .ok_or(YtuwuError::ResponseData(ResponseDataError::SlowBrowse("contents")))?
             .two_column_browse_results_renderer
             .secondary_contents
             .section_list_renderer
@@ -160,22 +160,22 @@ impl BrowseResponse for SlowBrowseResponse {
         let title = &self
             .contents
             .as_ref()
-            .ok_or(YtuwuError::BrowseDataNotFound("contents"))?
+            .ok_or(YtuwuError::ResponseData(ResponseDataError::SlowBrowse("contents")))?
             .two_column_browse_results_renderer
             .tabs
             .get(0)
-            .ok_or(YtuwuError::BrowseDataNotFound("first content"))?
+            .ok_or(YtuwuError::ResponseData(ResponseDataError::SlowBrowse("first element in contents")))?
             .tab_renderer
             .content
             .section_list_renderer
             .contents
             .get(0)
-            .ok_or(YtuwuError::BrowseDataNotFound("first content"))?
+            .ok_or(YtuwuError::ResponseData(ResponseDataError::SlowBrowse("first element in contents")))?
             .music_responsive_header_renderer
             .title
             .runs
             .get(0)
-            .ok_or(YtuwuError::BrowseDataNotFound("first Tab"))?
+            .ok_or(YtuwuError::ResponseData(ResponseDataError::SlowBrowse("first tab")))?
             .text;
 
         Ok(title)
