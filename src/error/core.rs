@@ -68,6 +68,8 @@ pub enum YtuwuError {
     Tokio(String),
     Deserialize(String),
 
+    // Media extraction related errors
+    //
     /// Use this when the thumbnail was tried to be extracted in a media even though it does not
     /// contain a thumbnail
     /// Holds the name of the media for better debugging
@@ -81,6 +83,8 @@ pub enum YtuwuError {
     /// Holds a short description of what went wrong
     BundleMerge(&'static str),
 
+    // Itag and thumbnail resolution identification related errors
+    //
     /// Used when the current itag is already at the bottom of the itag order
     /// Normally only gets toggled when the itag is completely invalid for the media  
     NoLowerItagFound,
@@ -123,27 +127,52 @@ impl Display for YtuwuError {
             Self::ResponseData(e) => write!(f, "Missing response data: {}", e.to_string()),
 
             // Response / Request related
-            Self::YoutubeAPIReturn => write!(f, "The Youtube API returned an unexpected or invalid response. This could be caused by invalid ids or other parameters."),
+            Self::YoutubeAPIReturn => write!(
+                f,
+                "
+                The Youtube API returned an unexpected or invalid response. 
+                This could be caused by invalid ids or other parameters.
+                "
+            ),
+            Self::ReqwestError(e) => write!(f, "Reqwest failed: {e}"),
+            Self::CaptchaBypassFailed(e) => write!(f, "The captcha bypass failed after {} tries.", e),
 
+            // Async related
             Self::Tokio(e) => write!(f, "tokio error: {}", e),
 
-            Self::ReqwestError(e) => write!(f, "Reqwest failed: {e}"),
-            Self::CaptchaBypassFailed(e) => {
-                write!(f, "The captcha bypass failed after {} tries.", e)
-            }
-
+            // Response deserialize related
             Self::Deserialize(e) => write!(f, "Could not deserialize the response. {e}"),
 
+            // Media extraction related errors
             Self::BundleMerge(e) => write!(f, "Error while merging media bundles: {}", e),
-            Self::NoThumbnail(e) => write!(f, "Tried to get the thumbnail for media '{}' but did not find any. Download with thumbnail to actually be able to extract it", e),
-            Self::MediaNotContained(l, i) => write!(f, "Playlist did not contain the song at the index. Playlist length: {} Index: {}", l, i),
+            Self::NoThumbnail(e) => write!(
+                f,
+                "
+                Tried to get the thumbnail for media '{}' but did not find any. 
+                Download with thumbnail to actually be able to extract it
+                ",
+                e
+            ),
+            Self::MediaNotContained(l, i) => write!(
+                f,
+                "Playlist did not contain the song at the index. 
+                Playlist length: {} Index: {}",
+                l, i
+            ),
 
+            // Itag and thumbnail resolution identification related errors
             Self::NoLowerItagFound => write!(
                 f,
-                "Already at the bottom of the itag order, no valid itag for downloading is existent. This normally only occurs when there was the wrong itag used for the media."
+                "Already at the bottom of the itag order, no valid itag for downloading is existent. 
+                This normally only occurs when there was the wrong itag used for the media."
             ),
             Self::NoMatchingStream(e) => write!(f, "The media did not contain the stream for the following itag: {e}"),
-            Self::NoMatchingThumbnail(e) => write!(f, "The media did not contain the thumbnail stream for the following thumbnail resolution: {e}"),
+            Self::NoMatchingThumbnail(e) => write!(
+                f,
+                "The media did not contain the thumbnail stream 
+                for the following thumbnail resolution: {}",
+                e
+            ),
         }
     }
 }
