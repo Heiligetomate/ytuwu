@@ -124,9 +124,10 @@ impl Playlist {
         Ok(DwnBundleList::new(downloaded, &self.title))
     }
 
+    // TODO: not needed i think
     /// Consumes itself and returns the first element in self.media
     /// Returns Err if self.media is empty
-    pub fn get_first(mut self) -> Result<Media> {
+    pub fn first(mut self) -> Result<Media> {
         self.media
             .drain(..)
             .next()
