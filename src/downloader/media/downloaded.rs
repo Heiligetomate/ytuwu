@@ -68,7 +68,7 @@ impl<M: MediaStream + Debug> DwnMedia<M> {
     pub fn get_thumbnail(&self) -> Result<&Thumbnail> {
         self.thumbnail
             .as_ref()
-            .ok_or(YtuwuError::NoThumbnail)
+            .ok_or(YtuwuError::NoThumbnail(self.metadata.title.clone()))
     }
 
     /// saves the media stream by trimming the name and calling .save on the mediastream by using
@@ -146,7 +146,7 @@ impl DwnBundleMedia {
     pub fn get_thumbnail(&self) -> Result<&Thumbnail> {
         self.thumbnail
             .as_ref()
-            .ok_or(YtuwuError::NoThumbnail)
+            .ok_or(YtuwuError::NoThumbnail(self.metadata.title.clone()))
     }
 
     /// saves the thumnail by trimming the name and calling .save on the thumnail by using

@@ -66,12 +66,16 @@ pub enum YtuwuError {
     Tokio(String),
     Deserialize(String),
 
-    NoThumbnail,
+    /// Use this when the thumbnail was tried to be extracted in a media even though it does not
+    /// contain a thumbnail
+    /// Holds the name of the media for better debugging
+    NoThumbnail(String),
+
     NoLowerItagFound,
     NoMatchingStream,
     NoMatchingThumbnail,
-    SongInPlaylistNotFound,
 
+    SongInPlaylistNotFound,
     EmptyMediaBundle,
 }
 
@@ -116,7 +120,7 @@ impl Display for YtuwuError {
             Self::Deserialize(e) => write!(f, "Could not deserialize the response. {e}"),
 
             Self::EmptyMediaBundle => write!(f, "media bundle was empty"),
-            Self::NoThumbnail => write!(f, "No Thumbnail"),
+            Self::NoThumbnail(e) => write!(f, "Tried to get the thumbnail for media '{}' but did not find any. Download with thumbnail to actually be able to extract it", e),
             Self::SongInPlaylistNotFound => write!(f, "Song was not found"),
 
             Self::NoLowerItagFound => write!(f, "Could not find any lower itag."),
