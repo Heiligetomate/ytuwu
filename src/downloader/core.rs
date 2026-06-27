@@ -47,11 +47,11 @@ pub type SharedVd = Arc<Mutex<Option<String>>>;
 /// or thumbnail resolutions.
 #[derive(Debug)]
 pub struct Downloader {
-    pub visitor_data: SharedVd,
-    pub progress_handler: Arc<dyn HandleProgress + Send + Sync>,
-    pub client: Client,
-    pub task_handler: Mutex<TaskHandler>,
-    pub storage: Mutex<DownloadedStore>,
+    pub(crate) visitor_data: SharedVd,
+    pub(crate) progress_handler: Arc<dyn HandleProgress + Send + Sync>,
+    pub(crate) client: Client,
+    pub(crate) task_handler: Mutex<TaskHandler>,
+    pub(crate) storage: Mutex<DownloadedStore>,
 }
 
 impl Downloader {
