@@ -41,13 +41,13 @@ impl PlaylistContentBrowse {
 
     // TODO: This does not have to return result i think
     // TODO: There are many list titles inserted
-    // TODO: There is a new uuid created all the time, should reuse the old id again probably
     /// Consumes itself, pushes the list title to the downlaoder storage with the own id as key and
     /// pushes every media as a task to the task handler with the playlist id for identification and
     /// mapping later.
     pub async fn add_tasks(mut self, itag: AnyItag) -> Result<()> {
         for media in self.media.drain(..) {
-            let id = media.video_id;
+            let video_id = media.video_id;
+            let id = media.id;
 
             self.downloader
                 .storage
@@ -59,7 +59,7 @@ impl PlaylistContentBrowse {
                 .task_handler
                 .lock()
                 .await
-                .push(id, Some(self.id), None, Uuid::new_v4(), itag);
+                .push(video_id, Some(self.id), None, id, itag);
         }
 
         Ok(())
