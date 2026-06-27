@@ -3,7 +3,7 @@ use crate::{
     downloader::{
         media::{DwnBundleMedia, DwnMedia},
         metadata::ChannelMetadata,
-        playlist::{DwnBundleList, Dwnlist},
+        playlist::{DwnBundleList, DwnList},
         streams::{AnyStream, MediaStream},
     },
     error::YtuwuError,
@@ -20,8 +20,8 @@ use std::{
 #[derive(Debug)]
 pub struct DwnChannel<M: MediaStream + Debug> {
     pub singles: Vec<DwnMedia<M>>,
-    pub eps: Vec<Dwnlist<M>>,
-    pub albums: Vec<Dwnlist<M>>,
+    pub eps: Vec<DwnList<M>>,
+    pub albums: Vec<DwnList<M>>,
     pub metadata: ChannelMetadata,
 }
 
@@ -46,7 +46,7 @@ impl DwnBundelChannel {
 
 impl DwnChannel<AnyStream> {
     /// Creates a new DwnChannel instance from the given parameters for AnyStreams
-    pub fn new(singles: Vec<DwnMedia<AnyStream>>, eps: Vec<Dwnlist<AnyStream>>, albums: Vec<Dwnlist<AnyStream>>, metadata: ChannelMetadata) -> Self {
+    pub fn new(singles: Vec<DwnMedia<AnyStream>>, eps: Vec<DwnList<AnyStream>>, albums: Vec<DwnList<AnyStream>>, metadata: ChannelMetadata) -> Self {
         Self { singles, eps, albums, metadata }
     }
 }

@@ -7,7 +7,7 @@ use crate::{
     downloader::{
         Downloader,
         builders::empty::EmptyBuilder,
-        playlist::{DwnBundleList, Dwnlist, PlaylistBrowse},
+        playlist::{DwnBundleList, DwnList, PlaylistBrowse},
         streams::AnyStream,
     },
     id_resolver::GetId,
@@ -112,7 +112,7 @@ where
     /// This is achieved by first pushing all tasks to the downloader task handler and extracting it
     /// from the downloader storage with the previously created uuid.
     /// Fails if any of the songs counld not be downloaded
-    pub async fn download(self) -> Result<Dwnlist<AnyStream>> {
+    pub async fn download(self) -> Result<DwnList<AnyStream>> {
         let id = Uuid::new_v4();
 
         let downloader = self.downloader;

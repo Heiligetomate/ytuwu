@@ -6,7 +6,7 @@ use crate::{
     downloader::{
         Downloader,
         media::{DwnMedia, Media},
-        playlist::{DwnBundleList, Dwnlist},
+        playlist::{DwnBundleList, DwnList},
     },
     error::{Result, YtuwuError},
     itags::{AnyItag, Itag, ThumbRes},
@@ -57,7 +57,7 @@ impl Playlist {
     /// Downloads a thumbnail for each media if there was a thumbnail resolution given
     /// Creates a DwnPlaylist with the downloaded media and the already existing metadata
     /// Fails if any of the tasks failed to download or the acquiring of the semaphore failed.
-    pub async fn download<I>(mut self, itag: I, thumb_res: Option<ThumbRes>) -> Result<Dwnlist<I::Stream>>
+    pub async fn download<I>(mut self, itag: I, thumb_res: Option<ThumbRes>) -> Result<DwnList<I::Stream>>
     where
         I: Itag + 'static,
     {
@@ -90,7 +90,7 @@ impl Playlist {
             .progress_handler
             .on_playlist_downloaded(self.id);
 
-        Ok(Dwnlist::new(downloaded, &self.title))
+        Ok(DwnList::new(downloaded, &self.title))
     }
 
     // TODO: Has to use the semaphore for limiting the concurrent downloads

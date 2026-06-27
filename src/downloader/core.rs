@@ -5,7 +5,7 @@ use crate::{
         builders::EmptyBuilder,
         channel::{ChannelBrowse, DwnBundelChannel, DwnChannel},
         media::{DwnBundleMedia, DwnMedia, MediaBrowse},
-        playlist::{DwnBundleList, Dwnlist, PlaylistBrowse},
+        playlist::{DwnBundleList, DwnList, PlaylistBrowse},
         progress::{DefaultProgressHandler, EmptyHandler, HandleProgress},
         store::DownloadedStore,
         streams::Thumbnail,
@@ -150,7 +150,7 @@ where {
     /// the browse id is invalid or the itag was not found for the browsed data
     /// Returns a DwnList which holds the mediastream that the generic itag holds and the thumbnail
     /// if the thumbnail resolution was not None
-    pub async fn download_album<I>(self: Arc<Self>, browse_id: BrowseId, itag: I, thumbnail_resolution: Option<ThumbRes>) -> Result<Dwnlist<I::Stream>>
+    pub async fn download_album<I>(self: Arc<Self>, browse_id: BrowseId, itag: I, thumbnail_resolution: Option<ThumbRes>) -> Result<DwnList<I::Stream>>
     where
         I: Itag + 'static,
     {

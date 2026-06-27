@@ -14,11 +14,10 @@ use crate::{
     error::YtuwuError,
 };
 
-// TODO: Rename to DwnList
 /// This struct represents a downloaded list with just one stream per media which contains
 /// some metadata and a vec of DwnMedia which are all from the same MediaStream type.  
 #[derive(Debug)]
-pub struct Dwnlist<M: MediaStream + Debug> {
+pub struct DwnList<M: MediaStream + Debug> {
     pub media: Vec<DwnMedia<M>>,
     pub metadata: PlaylistMetadata,
 }
@@ -65,7 +64,7 @@ impl DwnBundleList {
     }
 }
 
-impl<M: MediaStream + Debug> Dwnlist<M> {
+impl<M: MediaStream + Debug> DwnList<M> {
     /// takes the downloaded media bundles and a title and returns a new Dwnlist
     /// Creates new metadata from the title and the len of the given media  
     pub fn new(media: Vec<DwnMedia<M>>, title: &str) -> Self {

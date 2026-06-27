@@ -8,7 +8,7 @@ use crate::{
         channel::{DwnBundelChannel, DwnChannel},
         media::{DwnBundleMedia, DwnMedia},
         metadata::ChannelMetadata,
-        playlist::{DwnBundleList, Dwnlist},
+        playlist::{DwnBundleList, DwnList},
         streams::AnyStream,
         tasks::{FinishedBundleTask, FinishedTask},
     },
@@ -145,7 +145,7 @@ impl DownloadedStore {
     /// Extract all finished tasks that have the given list id from the media storage
     /// Removes all the medias from the storage and return them as a Dwnlist with type AnyStream
     /// Fails if no media was found (not true rn)
-    pub fn extract_list(&mut self, list_id: Uuid) -> Result<Dwnlist<AnyStream>> {
+    pub fn extract_list(&mut self, list_id: Uuid) -> Result<DwnList<AnyStream>> {
         let mut extracted = Vec::new();
 
         let mut remaining = Vec::new();
@@ -161,7 +161,7 @@ impl DownloadedStore {
         self.media = remaining;
 
         let title = self.extract_list_title(list_id)?;
-        let dwn_list = Dwnlist::new(extracted, title);
+        let dwn_list = DwnList::new(extracted, title);
 
         Ok(dwn_list)
     }

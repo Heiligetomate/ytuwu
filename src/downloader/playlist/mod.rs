@@ -9,4 +9,4 @@ mod test;
 pub use browse::PlaylistBrowse;
 pub use content_browse::PlaylistContentBrowse;
 pub use core::Playlist;
-pub use downloaded::{DwnBundleList, Dwnlist};
+pub use downloaded::{DwnBundleList, DwnList};

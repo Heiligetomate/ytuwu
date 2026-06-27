@@ -9,7 +9,7 @@ use crate::{
         channel::{DwnBundelChannel, DwnChannel},
         media::{DwnBundleMedia, DwnMedia, Media},
         metadata::ChannelMetadata,
-        playlist::{DwnBundleList, Dwnlist, Playlist},
+        playlist::{DwnBundleList, DwnList, Playlist},
     },
     itags::{AnyItag, Itag},
 };
@@ -78,7 +78,7 @@ impl Channel {
     /// Returns a vec of Dwnlist with the stream of the given itag as stream.
     /// Creates a task for every ep which gets awaited and collected afterwards
     /// Fails if any of the downloads failed which will cause the eps to stay untouched
-    pub async fn download_eps<I>(&mut self, itag: I) -> Result<Vec<Dwnlist<I::Stream>>>
+    pub async fn download_eps<I>(&mut self, itag: I) -> Result<Vec<DwnList<I::Stream>>>
     where
         I: Itag + 'static,
     {
@@ -91,7 +91,7 @@ impl Channel {
             tasks.push(tokio::spawn(ep.download(itag, None)));
         }
 
-        let mut downloaded: Vec<Dwnlist<I::Stream>> = Vec::with_capacity(len);
+        let mut downloaded: Vec<DwnList<I::Stream>> = Vec::with_capacity(len);
 
         for task in tasks {
             downloaded.push(task.await??);
@@ -127,7 +127,7 @@ impl Channel {
     /// Returns a vec of Dwnlist with the stream of the given itag as stream.
     /// Creates a task for every album which gets awaited and collected afterwards
     /// Fails if any of the downloads failed which will cause the albums to stay untouched
-    pub async fn download_albums<I>(&mut self, itag: I) -> Result<Vec<Dwnlist<I::Stream>>>
+    pub async fn download_albums<I>(&mut self, itag: I) -> Result<Vec<DwnList<I::Stream>>>
     where
         I: Itag + 'static,
     {
@@ -140,7 +140,7 @@ impl Channel {
             tasks.push(tokio::spawn(album.download(itag, None)));
         }
 
-        let mut downloaded: Vec<Dwnlist<I::Stream>> = Vec::with_capacity(len);
+        let mut downloaded: Vec<DwnList<I::Stream>> = Vec::with_capacity(len);
 
         for task in tasks {
             downloaded.push(task.await??);
