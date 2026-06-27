@@ -24,7 +24,7 @@ pub struct ChannelMetadata {
 }
 
 impl MediaMetadata {
-    /// takes ownership of the title and the autor and returns a new instance of MediaMetadata
+    /// takes ownership of the title and the autor and returns a new instance of MediaMetadata.
     pub fn new(title: &str, author: &str) -> Self {
         Self {
             title: title.to_owned(),
@@ -34,14 +34,14 @@ impl MediaMetadata {
 }
 
 impl PlaylistMetadata {
-    /// Takes ownership of the title and creates a new instance of PlaylistMetadata
+    /// Takes ownership of the title and creates a new instance of PlaylistMetadata.
     pub fn new(title: &str, song_count: u16) -> Self {
         Self { title: title.to_owned(), song_count }
     }
 }
 
 impl ChannelMetadata {
-    /// Takes ownership of the title and creates a new instance of ChannelMetadata
+    /// Takes ownership of the title and creates a new instance.
     pub fn new(name: &str) -> Self {
         Self { name: name.to_owned() }
     }
