@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 use crate::{
     Result,
     error::YtuwuError,
@@ -38,7 +40,7 @@ impl ExtractedThumbnails {
                 continue;
             }
         }
-        Err(YtuwuError::NoMatchingThumbnail)
+        Err(YtuwuError::NoMatchingThumbnail(resolution.to_string()))
     }
 }
 
@@ -106,5 +108,17 @@ impl ThumbRes {
             640 => Some(Self::VeryHigh),
             _ => None,
         }
+    }
+}
+
+impl Display for ThumbRes {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let raw = match self {
+            ThumbRes::Low => "Low",
+            ThumbRes::Medium => "Medium",
+            ThumbRes::High => "High",
+            ThumbRes::VeryHigh => "VeryHigh",
+        };
+        write!(f, "Thumbnail resolution: {}", raw)
     }
 }
