@@ -9,7 +9,7 @@ use uuid::Uuid;
 use crate::{
     downloader::{
         Downloader,
-        media::{DwnBundleMedia, DwnMedia, browse::MediaBrowse, extracted_streams::ThumbRes, util::extract_size},
+        media::{DwnBundleMedia, DwnMedia, browse::MediaBrowse, util::extract_size},
         metadata::MediaMetadata,
         streams::{AnyStream, AudioStream, MediaStream, Thumbnail, VideoStream},
     },

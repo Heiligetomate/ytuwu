@@ -4,7 +4,7 @@ use crate::{
     downloader::{
         builders::EmptyBuilder,
         channel::{ChannelBrowse, DwnBundelChannel, DwnChannel},
-        media::{DwnBundleMedia, DwnMedia, MediaBrowse, ThumbRes},
+        media::{DwnBundleMedia, DwnMedia, MediaBrowse},
         playlist::{DwnBundleList, Dwnlist, PlaylistBrowse},
         progress::{DefaultProgressHandler, EmptyHandler, HandleProgress},
         store::DownloadedStore,
@@ -16,7 +16,7 @@ use crate::{
         IdCollection,
         types::{BrowseId, VideoId},
     },
-    itags::{AnyItag, Itag},
+    itags::{AnyItag, Itag, ThumbRes},
     types::{ChannelId, ShortId},
 };
 use reqwest::Client;

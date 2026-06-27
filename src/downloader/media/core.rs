@@ -5,14 +5,14 @@ use crate::{
         Downloader,
         media::{
             DwnBundleMedia, DwnMedia,
-            extracted_streams::{ExtractedStreams, ExtractedThumbnails, ThumbRes},
+            extracted_streams::{ExtractedStreams, ExtractedThumbnails},
             util::extract_size,
         },
         metadata::MediaMetadata,
         streams::{AnyStream, MediaStream, Thumbnail},
     },
     error::Result,
-    itags::{AnyItag, Itag},
+    itags::{AnyItag, Itag, ThumbRes},
     request,
 };
 use bytes::Bytes;

@@ -9,4 +9,4 @@ mod util;
 pub use browse::MediaBrowse;
 pub use core::Media;
 pub use downloaded::{DwnBundleMedia, DwnMedia};
-pub use extracted_streams::{ExtractedStreams, ExtractedThumbnails, ThumbRes};
+pub use extracted_streams::{ExtractedStreams, ExtractedThumbnails};

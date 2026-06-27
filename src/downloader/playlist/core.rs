@@ -5,11 +5,11 @@ use uuid::Uuid;
 use crate::{
     downloader::{
         Downloader,
-        media::{DwnMedia, Media, ThumbRes},
+        media::{DwnMedia, Media},
         playlist::{DwnBundleList, Dwnlist},
     },
     error::{Result, YtuwuError},
-    itags::{AnyItag, Itag},
+    itags::{AnyItag, Itag, ThumbRes},
 };
 
 /// This controls how many medias there should be downloaded concurrently
