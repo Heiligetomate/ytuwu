@@ -52,24 +52,26 @@ pub enum YtuwuError {
     /// Used when the url was completely empty and did not contain any valid id
     EmptyUrl,
 
+    /// Used when the extraction of the media size from the url failed
+    UrlSizeExtract,
+
     BrowseDataNotFound(&'static str),
     PlayerDataNotFound(&'static str),
     ChannelDataNotFound(&'static str),
 
     ReqwestError(String),
-    Deserialize(String),
+    CaptchaBypassFailed(u16),
+    YoutubeAPIReturn,
+
     Tokio(String),
+    Deserialize(String),
 
     NoThumbnail,
     NoLowerItagFound,
     NoMatchingStream,
     NoMatchingThumbnail,
     SongInPlaylistNotFound,
-    CaptchaBypassFailed(u16),
 
-    YoutubeAPIReturn,
-
-    UrlSizeExtract,
     EmptyMediaBundle,
 }
 
@@ -96,6 +98,7 @@ impl Display for YtuwuError {
             Self::UrlSegmentExtraction(e, s) => write!(f, "Url with segments '{s}' did not contain the expected id: {e}"),
             Self::InvalidUrl(e) => write!(f, "Invalid url: {e}"),
             Self::EmptyUrl => write!(f, "The url did not contain any valid id meaning the id collection is empty"),
+            Self::UrlSizeExtract => write!(f, "Failed to extract the size from the url."),
 
             Self::EmptyMediaBundle => write!(f, "media bundle was empty"),
             Self::Tokio(e) => write!(f, "tokio error: {}", e),
@@ -112,7 +115,6 @@ impl Display for YtuwuError {
             Self::Deserialize(e) => write!(f, "Could not deserialize the response. {e}"),
             Self::NoLowerItagFound => write!(f, "Could not find any lower itag."),
             Self::NoMatchingStream => write!(f, "No matching stream found for this itag."),
-            Self::UrlSizeExtract => write!(f, "Failed to extract the size from the url."),
             Self::SongInPlaylistNotFound => write!(f, "Song was not found"),
             Self::NoMatchingThumbnail => write!(f, "No matching thumbnail found"),
             Self::NoThumbnail => write!(f, "No Thumbnail"),
