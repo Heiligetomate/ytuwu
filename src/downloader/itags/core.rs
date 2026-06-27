@@ -1,4 +1,4 @@
-use std::fmt::Debug;
+use std::fmt::{Debug, Display};
 
 use crate::{
     Result,
@@ -12,7 +12,7 @@ use crate::{
 /// There are other Itags too which means that we need to have different Itag structs.
 /// This trait is needed to unite these different itags and allow generic functions for different
 /// itags and different produced streams.
-pub trait Itag: Copy + Debug + Send {
+pub trait Itag: Copy + Debug + Send + Display {
     /// This holds the Media stream that is produced when downloading the stream that is
     /// corresponding to this itag.
     type Stream: MediaStream;

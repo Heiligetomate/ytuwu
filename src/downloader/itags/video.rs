@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -145,5 +147,34 @@ impl Itag for VideoItag {
 
     fn to_any(self) -> super::AnyItag {
         super::AnyItag::Video(self)
+    }
+}
+
+impl Display for VideoItag {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let raw = match self {
+            VideoItag::Highest => "Highest",
+            VideoItag::Webm2160p60HDR => "Webm2160p60HDR",
+            VideoItag::Webm2160p60 => "Webm2160p60",
+            VideoItag::Webm1440p60HDR => "Webm1440p60HDR",
+            VideoItag::Webm1440p60 => "Webm2160p60",
+            VideoItag::MP41080p => "MP41080p",
+            VideoItag::WebM1080p => "WebM1080p",
+            VideoItag::MP41080p50 => "Webm1080p50",
+            VideoItag::Webm1080p50 => "Webm1080p50",
+            VideoItag::MP4720p => "MP4720p",
+            VideoItag::WebM720p => "WebM720p",
+            VideoItag::MP4720p50 => "MP4720p50",
+            VideoItag::Webm720p50 => "Webm720p50",
+            VideoItag::MP4480p => "MP4480p",
+            VideoItag::Webm480p => "Webm480p",
+            VideoItag::MP4360p => "MP$WebM360p",
+            VideoItag::WebM360p => "WebM360p",
+            VideoItag::MP4240p => "MP4240p",
+            VideoItag::WebM240p => "WebM240p",
+            VideoItag::MP4144p => "MP4144p",
+            VideoItag::Webm144p => "Webm144p",
+        };
+        write!(f, "Video: {}", raw)
     }
 }

@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -67,5 +69,16 @@ impl Itag for ShortItag {
 
     fn to_any(self) -> super::AnyItag {
         super::AnyItag::Short(self)
+    }
+}
+
+impl Display for ShortItag {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let raw = match self {
+            ShortItag::Highest => "Highest",
+            ShortItag::Low => "Low",
+            ShortItag::High => "High",
+        };
+        write!(f, "Short video: {}", raw)
     }
 }

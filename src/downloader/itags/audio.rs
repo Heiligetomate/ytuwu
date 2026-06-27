@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -74,5 +76,18 @@ impl Itag for AudioItag {
 
     fn to_any(self) -> super::AnyItag {
         super::AnyItag::Audio(self)
+    }
+}
+
+impl Display for AudioItag {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let raw = match self {
+            AudioItag::Highest => "Highest",
+            AudioItag::AacLow => "AacLow",
+            AudioItag::AacMedium => "AacMedium",
+            AudioItag::OpusLow => "OpusLow",
+            AudioItag::OpusMedium => "OpusMedium",
+        };
+        write!(f, "Audio: {}", raw)
     }
 }

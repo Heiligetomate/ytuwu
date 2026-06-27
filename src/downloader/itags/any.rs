@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 use crate::{
     downloader::{
         itags::{audio::AudioItag, muxed::MuxedItag, short::ShortItag, video::VideoItag},
@@ -78,5 +80,17 @@ impl Itag for AnyItag {
 
     fn to_any(self) -> AnyItag {
         self
+    }
+}
+
+impl Display for AnyItag {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let raw = match self {
+            AnyItag::Audio(audio_itag) => audio_itag.to_string(),
+            AnyItag::Video(video_itag) => video_itag.to_string(),
+            AnyItag::Short(short_itag) => short_itag.to_string(),
+            AnyItag::Muxed(muxed_itag) => muxed_itag.to_string(),
+        };
+        write!(f, "Any: {}", raw)
     }
 }

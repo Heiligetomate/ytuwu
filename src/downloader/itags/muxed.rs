@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -46,5 +48,11 @@ impl Itag for MuxedItag {
 
     fn to_any(self) -> super::AnyItag {
         AnyItag::Muxed(self)
+    }
+}
+
+impl Display for MuxedItag {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Muxed: MuxedMP4")
     }
 }
