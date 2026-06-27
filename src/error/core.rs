@@ -1,7 +1,6 @@
 use crate::error::{ErrInf, ResponseDataError, StorageError, helper::fmt_err_inf};
 use std::{error::Error, fmt::Display};
 
-// TODO: documents this
 // TODO: Clean this up
 #[derive(Debug, Clone)]
 pub enum YtuwuError {
@@ -104,7 +103,9 @@ impl Display for YtuwuError {
             // Response data related
             Self::ResponseData(e) => write!(f, "Missing response data: {}", e.to_string()),
 
-            Self::EmptyMediaBundle => write!(f, "media bundle was empty"),
+            // Response / Request related
+            Self::YoutubeAPIReturn => write!(f, "The Youtube API returned an unexpected or invalid response. This could be caused by invalid ids or other parameters."),
+
             Self::Tokio(e) => write!(f, "tokio error: {}", e),
 
             Self::ReqwestError(e) => write!(f, "Reqwest failed: {e}"),
@@ -112,15 +113,15 @@ impl Display for YtuwuError {
                 write!(f, "The captcha bypass failed after {} tries.", e)
             }
 
-            // Response / Request related
-            Self::YoutubeAPIReturn => write!(f, "The Youtube API returned an unexpected or invalid response. This could be caused by invalid ids or other parameters."),
-
             Self::Deserialize(e) => write!(f, "Could not deserialize the response. {e}"),
+
+            Self::EmptyMediaBundle => write!(f, "media bundle was empty"),
+            Self::NoThumbnail => write!(f, "No Thumbnail"),
+            Self::SongInPlaylistNotFound => write!(f, "Song was not found"),
+
             Self::NoLowerItagFound => write!(f, "Could not find any lower itag."),
             Self::NoMatchingStream => write!(f, "No matching stream found for this itag."),
-            Self::SongInPlaylistNotFound => write!(f, "Song was not found"),
             Self::NoMatchingThumbnail => write!(f, "No matching thumbnail found"),
-            Self::NoThumbnail => write!(f, "No Thumbnail"),
         }
     }
 }
