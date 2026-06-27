@@ -34,7 +34,7 @@ pub(super) fn fmt_err_inf(opt_err: &ErrInf) -> String {
 //#    }
 //#}
 ///```
-pub fn get_id_err(expected_type: &str, id_collection: &IdCollection) -> YtuwuError {
+pub(crate) fn get_id_err(expected_type: &str, id_collection: &IdCollection) -> YtuwuError {
     let existing_ids = id_collection.info();
     let err_string = format!("Failed to get {} from IdCollection. Existing ids in this IdCollection: {}", expected_type, existing_ids);
 
