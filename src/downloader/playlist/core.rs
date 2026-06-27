@@ -128,9 +128,10 @@ impl Playlist {
     /// Consumes itself and returns the first element in self.media
     /// Returns Err if self.media is empty
     pub fn first(mut self) -> Result<Media> {
+        let len = self.media.len() as u8;
         self.media
             .drain(..)
             .next()
-            .ok_or(YtuwuError::SongInPlaylistNotFound)
+            .ok_or(YtuwuError::MediaNotContained(len, 0))
     }
 }

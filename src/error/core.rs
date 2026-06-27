@@ -71,12 +71,14 @@ pub enum YtuwuError {
     /// Holds the name of the media for better debugging
     NoThumbnail(String),
 
+    /// Used when the playlist at an index was empty and did not contain the whished media
+    /// Holds the playlist length and the index that was used for getting the song
+    MediaNotContained(u8, u8),
+    EmptyMediaBundle,
+
     NoLowerItagFound,
     NoMatchingStream,
     NoMatchingThumbnail,
-
-    SongInPlaylistNotFound,
-    EmptyMediaBundle,
 }
 
 impl Display for YtuwuError {
@@ -121,7 +123,7 @@ impl Display for YtuwuError {
 
             Self::EmptyMediaBundle => write!(f, "media bundle was empty"),
             Self::NoThumbnail(e) => write!(f, "Tried to get the thumbnail for media '{}' but did not find any. Download with thumbnail to actually be able to extract it", e),
-            Self::SongInPlaylistNotFound => write!(f, "Song was not found"),
+            Self::MediaNotContained(l, i) => write!(f, "Playlist did not contain the song at the index. Playlist length: {} Index: {}", l, i),
 
             Self::NoLowerItagFound => write!(f, "Could not find any lower itag."),
             Self::NoMatchingStream => write!(f, "No matching stream found for this itag."),

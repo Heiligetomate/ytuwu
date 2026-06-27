@@ -105,9 +105,10 @@ impl PlaylistContentBrowse {
     /// This is useful for singles that contain only one song (not sure if thats actually that case)
     /// Fails if there is no element contained in self.media
     pub fn first(self) -> Result<MediaBrowse> {
+        let len = self.media.len() as u8;
         self.media
             .into_iter()
             .next()
-            .ok_or(YtuwuError::SongInPlaylistNotFound)
+            .ok_or(YtuwuError::MediaNotContained(len, 0))
     }
 }

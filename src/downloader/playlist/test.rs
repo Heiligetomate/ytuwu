@@ -126,14 +126,7 @@ async fn test_playlist() {
         ]
     );
 
-    assert_eq!(
-        browsed
-            .get_first()
-            .unwrap()
-            .metadata
-            .title,
-        "Daemoni"
-    );
+    assert_eq!(browsed.first().unwrap().metadata.title, "Daemoni");
 }
 
 #[tokio::test]
