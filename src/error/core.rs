@@ -1,7 +1,6 @@
 use crate::error::{ErrInf, ResponseDataError, StorageError, helper::fmt_err_inf};
 use std::{error::Error, fmt::Display};
 
-// TODO: Clean this up
 #[derive(Debug, Clone)]
 pub enum YtuwuError {
     // File related errors
