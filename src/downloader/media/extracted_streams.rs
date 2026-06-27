@@ -58,7 +58,7 @@ impl ExtractedStreams {
                 return Ok(&stream.url);
             }
         }
-        Err(YtuwuError::NoMatchingStream(itag.to_string())) // TODO: test if type_id is correct here 
+        Err(YtuwuError::NoMatchingStream(itag.to_string()))
     }
 
     /// Gets the best stream for that itag "category".
