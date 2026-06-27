@@ -52,6 +52,8 @@ pub struct FinishedTask {
     pub data: DwnMedia<AnyStream>,
     pub id: Uuid,
     pub playlist_id: Option<Uuid>,
+    // TODO: This is useless now because of the templates
+    #[allow(unused)]
     pub channel_id: Option<Uuid>,
 }
 
@@ -64,6 +66,8 @@ pub struct FinishedBundleTask {
     pub data: DwnBundleMedia,
     pub id: Uuid,
     pub playlist_id: Option<Uuid>,
+    // TODO: This is useless now because of the templates
+    #[allow(unused)]
     pub channel_id: Option<Uuid>,
 }
 
