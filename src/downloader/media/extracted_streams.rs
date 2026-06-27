@@ -85,6 +85,7 @@ impl ExtractedStreams {
 }
 
 // TODO: put thumbnail resolutions as comments
+// TODO: Use this as itag maybe
 /// This enum defines the different resolutions for the thumbnails
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub enum ThumbRes {
