@@ -7,12 +7,11 @@ use crate::{
     downloader::{
         Downloader,
         builders::empty::EmptyBuilder,
-        media::ThumbRes,
         playlist::{DwnBundleList, Dwnlist, PlaylistBrowse},
         streams::AnyStream,
     },
     id_resolver::GetId,
-    itags::{AnyItag, AudioItag, Itag, VideoItag},
+    itags::{AnyItag, AudioItag, Itag, ThumbRes, VideoItag},
     types::BrowseId,
 };
 

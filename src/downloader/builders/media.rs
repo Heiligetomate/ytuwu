@@ -6,11 +6,11 @@ pub use crate::{Result, downloader::builders::empty::EmptyBuilder, types::VideoI
 use crate::{
     downloader::{
         Downloader,
-        media::{DwnBundleMedia, DwnMedia, ThumbRes},
+        media::{DwnBundleMedia, DwnMedia},
         streams::AnyStream,
     },
     id_resolver::GetId,
-    itags::{AnyItag, AudioItag, Itag, VideoItag},
+    itags::{AnyItag, AudioItag, Itag, ThumbRes, VideoItag},
 };
 
 /// This struct gets created when calling as_media on an EmptyBuilder
