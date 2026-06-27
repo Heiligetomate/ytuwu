@@ -8,7 +8,6 @@ readme = "README.md"
 repository = "https://github.com/Heiligetomate/ytuwu"
 license = "GPL-3.0-only"
 keywords = ["youtube", "downloading", "streaming"]
-include = ["/src", "LICENSE", "README.md"]
 exclude = ["/teehee", "/target", "/src/main.rs"]
 
 [lints.rust]
