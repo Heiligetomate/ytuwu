@@ -52,16 +52,16 @@ pub struct Stream {
 /// This struct contains basic information about the media: title and author
 /// It also contains a thumbnail field for the different thumbnail resolutions
 #[derive(Deserialize, Debug)]
-pub struct VideoDetails {
-    pub title: String,
-    pub author: String,
-    pub thumbnail: Thumbnails,
+struct VideoDetails {
+    title: String,
+    author: String,
+    thumbnail: Thumbnails,
 }
 
 /// This struct contains multiple thumbnail streams with different resolutions
 #[derive(Deserialize, Debug)]
-pub struct Thumbnails {
-    pub thumbnails: Vec<ThumbnailStream>,
+struct Thumbnails {
+    thumbnails: Vec<ThumbnailStream>,
 }
 
 /// thumbnail streams are stored in the thumbnail struct
@@ -78,12 +78,12 @@ struct PlayabilityStatus {
     reason: Option<String>,
 }
 
-// TODO: This is useless right now
+// TODO: This is useless right now, maybe use this later?
 /// This struct contains more statuses than the normal response status.
 /// It tries to deserialize the raw response into on of these variants
 #[derive(Deserialize, Debug, Clone, Copy, PartialEq, Eq)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
-pub enum PlayabilityStatusValue {
+enum PlayabilityStatusValue {
     Ok,
     LoginRequired,
     Error,
