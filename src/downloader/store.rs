@@ -93,16 +93,6 @@ impl DownloadedStore {
         Ok(title.as_str())
     }
 
-    /// Pushes a finished task on the media storage
-    pub fn push(&mut self, finished: FinishedTask) {
-        self.media.push(finished);
-    }
-
-    /// Pushes a finished bundle task on the bundle storage
-    pub fn push_bundle(&mut self, finished: FinishedBundleTask) {
-        self.bundle.push(finished);
-    }
-
     /// Pushes a vec of finished tasks on the media storage
     pub fn push_vec(&mut self, finished: Vec<FinishedTask>) {
         self.media.extend(finished);
