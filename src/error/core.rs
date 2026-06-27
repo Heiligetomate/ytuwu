@@ -61,6 +61,7 @@ pub enum YtuwuError {
 
     ReqwestError(String),
     CaptchaBypassFailed(u16),
+    /// Used when the youtube api returned an error and / or the response was invalid or unexpected
     YoutubeAPIReturn,
 
     Tokio(String),
@@ -110,7 +111,10 @@ impl Display for YtuwuError {
             Self::CaptchaBypassFailed(e) => {
                 write!(f, "The captcha bypass failed after {} tries.", e)
             }
-            Self::YoutubeAPIReturn => write!(f, "Youtube API gave an unexpected reply."),
+
+            // Response / Request related
+            Self::YoutubeAPIReturn => write!(f, "The Youtube API returned an unexpected or invalid response. This could be caused by invalid ids or other parameters."),
+
             Self::Deserialize(e) => write!(f, "Could not deserialize the response. {e}"),
             Self::NoLowerItagFound => write!(f, "Could not find any lower itag."),
             Self::NoMatchingStream => write!(f, "No matching stream found for this itag."),
