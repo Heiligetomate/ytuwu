@@ -85,7 +85,9 @@ pub enum YtuwuError {
     /// Normally only gets toggled when the itag is completely invalid for the media  
     NoLowerItagFound,
 
-    NoMatchingStream,
+    /// Used when the url stream for the itag does not exist
+    /// Holds the itag that was used for extraction as String.
+    NoMatchingStream(String),
     NoMatchingThumbnail,
 }
 
@@ -137,7 +139,7 @@ impl Display for YtuwuError {
                 f,
                 "Already at the bottom of the itag order, no valid itag for downloading is existent. This normally only occurs when there was the wrong itag used for the media."
             ),
-            Self::NoMatchingStream => write!(f, "No matching stream found for this itag."),
+            Self::NoMatchingStream(e) => write!(f, "The media did not contain the stream for the following itag: {e}"),
             Self::NoMatchingThumbnail => write!(f, "No matching thumbnail found"),
         }
     }
