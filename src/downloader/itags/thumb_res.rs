@@ -6,15 +6,17 @@ use crate::{
     itags::{AnyItag, Itag},
 };
 
-// TODO: put thumbnail resolutions as comments
-// TODO: Use this as itag maybe
 /// This enum defines the different resolutions for the thumbnails
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum ThumbRes {
     Highest,
+    /// 120x90
     Low,
+    /// 320x180
     Medium,
+    /// 480x360
     High,
+    /// 640x480
     VeryHigh,
 }
 
