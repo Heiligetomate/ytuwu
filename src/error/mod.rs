@@ -7,6 +7,6 @@ mod storage;
 pub use core::YtuwuError;
 pub use helper::ErrInf;
 pub use helper::Result;
-pub use helper::get_id_err;
+pub(crate) use helper::get_id_err;
 pub use response_data::ResponseDataError;
 pub use storage::StorageError;
