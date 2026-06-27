@@ -59,6 +59,8 @@ pub enum YtuwuError {
     ResponseData(ResponseDataError),
 
     ReqwestError(String),
+    /// Used when all tries were used for bypassing the youtube captcha
+    /// Holds the total amount of tries that were used for trying to bypass the captcha.
     CaptchaBypassFailed(u16),
     /// Used when the youtube api returned an error and / or the response was invalid or unexpected
     YoutubeAPIReturn,
