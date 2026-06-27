@@ -34,6 +34,24 @@ pub enum YtuwuError {
     /// Holds a StorageError
     Storage(StorageError),
 
+    // Url related stuff
+    //
+    /// Used for url parsing related errors
+    /// Holds a short description of what went wrong
+    UrlParsing(String),
+
+    /// Used for missing ids that were expected because of specific segments
+    /// Holds the id type that was missing and the segments in the url that define the id type that
+    /// should be extracted
+    UrlSegmentExtraction(&'static str, &'static str),
+
+    /// Used for invalid urls or missing elements in the url
+    /// Holds a small description
+    InvalidUrl(String),
+
+    /// Used when the url was completely empty and did not contain any valid id
+    EmptyUrl,
+
     BrowseDataNotFound(&'static str),
     PlayerDataNotFound(&'static str),
     ChannelDataNotFound(&'static str),
@@ -41,8 +59,6 @@ pub enum YtuwuError {
     ReqwestError(String),
     Deserialize(String),
     Tokio(String),
-
-    UrlParsing(&'static str),
 
     NoThumbnail,
     NoLowerItagFound,
@@ -75,6 +91,12 @@ impl Display for YtuwuError {
             // Storage related
             Self::Storage(e) => write!(f, "Storage error: {}", e.to_string()),
 
+            // Url related
+            Self::UrlParsing(e) => write!(f, "Error while parsing the url: {e}"),
+            Self::UrlSegmentExtraction(e, s) => write!(f, "Url with segments '{s}' did not contain the expected id: {e}"),
+            Self::InvalidUrl(e) => write!(f, "Invalid url: {e}"),
+            Self::EmptyUrl => write!(f, "The url did not contain any valid id meaning the id collection is empty"),
+
             Self::EmptyMediaBundle => write!(f, "media bundle was empty"),
             Self::Tokio(e) => write!(f, "tokio error: {}", e),
             Self::BrowseDataNotFound(e) => write!(f, "Could not get data from response: {}.", e),
@@ -91,7 +113,6 @@ impl Display for YtuwuError {
             Self::NoLowerItagFound => write!(f, "Could not find any lower itag."),
             Self::NoMatchingStream => write!(f, "No matching stream found for this itag."),
             Self::UrlSizeExtract => write!(f, "Failed to extract the size from the url."),
-            Self::UrlParsing(e) => write!(f, "Error while parsing the url: {e}"),
             Self::SongInPlaylistNotFound => write!(f, "Song was not found"),
             Self::NoMatchingThumbnail => write!(f, "No matching thumbnail found"),
             Self::NoThumbnail => write!(f, "No Thumbnail"),

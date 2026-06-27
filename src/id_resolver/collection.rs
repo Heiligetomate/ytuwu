@@ -49,7 +49,7 @@ impl Host {
             "youtube.com" | "youtube-nocookie.com" => Ok(Self::YoutubeDotCom),
             "music.youtube.com" => Ok(Self::MusicYoutubeDotCom),
             "youtu.be" => Ok(Self::YoutubeDotBe),
-            _ => Err(YtuwuError::UrlParsing("invalid host")),
+            _ => Err(YtuwuError::InvalidUrl(format!("{} is not a valid host. Valid hosts: are youtube.com, youtube-nocookie.com, music.youtube.com and youtu.be", host))),
         }
     }
 }
@@ -103,11 +103,11 @@ impl IdCollection {
     /// Takes an url, extracts all ids from it and returns an IdCollection containing the ids
     pub fn from_url<T: Into<String>>(raw_url: T) -> Result<Self> {
         let url_string: String = raw_url.into();
-        let url = Url::parse(&url_string).map_err(|_| YtuwuError::UrlParsing("could not parse the url"))?;
+        let url = Url::parse(&url_string)?;
 
         let host = Host::parse(
             url.host_str()
-                .ok_or(YtuwuError::UrlParsing("host not found"))?,
+                .ok_or(YtuwuError::InvalidUrl("The url did not contain any host.".into()))?,
         )?;
 
         let result = match host {
@@ -117,7 +117,7 @@ impl IdCollection {
         };
 
         if result.is_empty() {
-            return Err(YtuwuError::UrlParsing("url contains no valid id"));
+            return Err(YtuwuError::EmptyUrl);
         }
 
         Ok(result)
@@ -132,7 +132,7 @@ impl IdCollection {
             .path_segments()
             .and_then(|mut s| s.next())
             .filter(|s| !s.is_empty())
-            .ok_or(YtuwuError::UrlParsing("no video id in youtu.be url"))?;
+            .ok_or(YtuwuError::UrlSegmentExtraction("videoId", "youtu.be url"))?;
 
         Ok(Self::with_video(VideoId::new(id)?))
     }
@@ -147,32 +147,32 @@ impl IdCollection {
 
         match first {
             "shorts" => {
-                let id = Self::id_from_segments(segments, 1).ok_or(YtuwuError::UrlParsing("no short id found"))?;
+                let id = Self::id_from_segments(segments, 1).ok_or(YtuwuError::UrlSegmentExtraction("shortId", "shorts"))?;
                 Ok(Self::with_short(ShortId::new(id)?))
             }
 
             "embed" | "v" | "e" => {
-                let id = Self::id_from_segments(segments, 1).ok_or(YtuwuError::UrlParsing("no video id found"))?;
+                let id = Self::id_from_segments(segments, 1).ok_or(YtuwuError::UrlSegmentExtraction("videoId", "embed / v / e"))?;
                 Ok(Self::with_video(VideoId::new(id)?))
             }
 
             "channel" => {
-                let id = Self::id_from_segments(segments, 1).ok_or(YtuwuError::UrlParsing("no channel id found"))?;
+                let id = Self::id_from_segments(segments, 1).ok_or(YtuwuError::UrlSegmentExtraction("channelId", "channel"))?;
                 Ok(Self::with_channel(ChannelId::new(id)?))
             }
 
             s if s.starts_with('@') => {
-                let id = Self::id_from_segments(segments, 0).ok_or(YtuwuError::UrlParsing("no channel id found"))?;
+                let id = Self::id_from_segments(segments, 0).ok_or(YtuwuError::UrlSegmentExtraction("channelId", "empty"))?;
                 Ok(Self::with_channel(ChannelId::new(id)?))
             }
             "c" | "user" => {
-                let id = Self::id_from_segments(segments, 1).ok_or(YtuwuError::UrlParsing("no channel id found"))?;
+                let id = Self::id_from_segments(segments, 1).ok_or(YtuwuError::UrlSegmentExtraction("channelId", "c / user"))?;
                 Ok(Self::with_channel(ChannelId::new(id)?))
             }
 
             "watch" | "playlist" | "" => Self::from_query_params(url),
 
-            _ => Err(YtuwuError::UrlParsing("invalid url path")),
+            _ => Err(YtuwuError::InvalidUrl("youtube.com url did not contain a valid url path (segments)".into())),
         }
     }
 
@@ -186,23 +186,23 @@ impl IdCollection {
 
         match first {
             "browse" => {
-                let id = Self::id_from_segments(segments, 1).ok_or(YtuwuError::UrlParsing("no browse id found"))?;
+                let id = Self::id_from_segments(segments, 1).ok_or(YtuwuError::UrlSegmentExtraction("browseId", "browse"))?;
                 Ok(Self::handle_browse(id)?)
             }
 
             "channel" => {
-                let id = Self::id_from_segments(segments, 1).ok_or(YtuwuError::UrlParsing("no channel id found"))?;
+                let id = Self::id_from_segments(segments, 1).ok_or(YtuwuError::UrlSegmentExtraction("channelId", "channel"))?;
                 Ok(Self::with_channel(ChannelId::new(id)?))
             }
 
             s if s.starts_with('@') => {
-                let id = Self::id_from_segments(segments, 0).ok_or(YtuwuError::UrlParsing("no channel id name found"))?;
+                let id = Self::id_from_segments(segments, 0).ok_or(YtuwuError::UrlSegmentExtraction("channelId", "@"))?;
                 Ok(Self::with_channel(ChannelId::new(id)?))
             }
 
             "watch" | "playlist" | "" => Self::from_query_params(url),
 
-            _ => Err(YtuwuError::UrlParsing("invalid url path")),
+            _ => Err(YtuwuError::InvalidUrl("music.youtube.com url did not contain a valid url path (segments)".into())),
         }
     }
 

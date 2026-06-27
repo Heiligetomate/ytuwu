@@ -29,3 +29,9 @@ impl From<tokio::sync::AcquireError> for YtuwuError {
         Self::Tokio(value.to_string())
     }
 }
+
+impl From<url::ParseError> for YtuwuError {
+    fn from(value: url::ParseError) -> Self {
+        Self::UrlParsing(value.to_string())
+    }
+}
