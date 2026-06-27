@@ -13,8 +13,8 @@ use crate::{
 /// ids
 #[derive(Debug)]
 pub struct EmptyBuilder {
-    pub downloader: Arc<Downloader>,
-    pub ids: IdCollection,
+    pub(crate) downloader: Arc<Downloader>,
+    pub(crate) ids: IdCollection,
 }
 
 impl EmptyBuilder {
