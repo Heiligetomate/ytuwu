@@ -76,13 +76,12 @@ impl DwnBundelChannel {
         Ok(())
     }
 
-    // TODO: Path is not created, not good
     /// Calls self.save with the given path but adds channel name to the path
     /// Faild if the creation of the directory failed or any of the saving failed
     pub fn save_with_dir(&self, path: &Path) -> Result<()> {
         let mut full_path = PathBuf::from(path);
         full_path.push(&self.metadata.name);
-
+        create_dir_all(&full_path).map_err(|_| YtuwuError::CreateDir(Some("failed to create the directory to save the channel bundle".into())))?;
         self.save(&full_path)
     }
 }
