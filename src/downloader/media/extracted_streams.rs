@@ -48,7 +48,6 @@ impl ExtractedStreams {
         Self { streams }
     }
 
-    // TODO: why is this returning option but the funciton above a result
     /// Takes the itag and tries to get the url stream for that itag by going throgh all streams and
     /// checking if the itag int matches the stream itag int
     /// Returns None if there was no matchign stream found
