@@ -22,7 +22,7 @@ struct ErrorResponse {}
 /// It implements the Response trait and it also implements the BrowseResponse trait
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct FullResponse {
+struct FullResponse {
     single_column_browse_results_renderer: ResultRenderer,
 }
 
@@ -82,7 +82,7 @@ struct AlbumTitle {
 }
 
 #[derive(Deserialize, Debug)]
-pub struct PlaylistVideoListRenderer {
+struct PlaylistVideoListRenderer {
     contents: Vec<PlaylistContent>,
 }
 
