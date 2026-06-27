@@ -94,7 +94,7 @@ fn test_save_thumbnail() {
     let path = dir.path();
     let bytes = Bytes::from("meow");
     let expected_path = path.join("thumbnail.png");
-    let mut stream = Thumbnail::from_bytes(bytes);
+    let stream = Thumbnail::from_bytes(bytes);
     stream.save(path, "thumbnail").unwrap();
     assert!(expected_path.exists());
     assert_eq!(
