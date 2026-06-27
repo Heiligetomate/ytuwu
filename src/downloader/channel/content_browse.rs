@@ -15,6 +15,7 @@ use crate::{
     types::{BrowseId, ChannelPlaylistId},
 };
 
+// TODO: Complete the commenets for the std::mem::take and mut borrorw
 // TODO: There should be an additional step i think (half browse looks wrong here)
 
 /// This struct gets created after a channel was browsed and contains a vec of singles, eps and
@@ -44,13 +45,7 @@ impl ChannelContentBrowse {
     /// A Template is created that contains all ep, single and album ids. This template then gets
     /// pushed on the downloader shared storage with the own channel id as key.
     /// Fails if the browsing of the eps, albums or singles failes.
-    pub async fn add_tasks(self, itag: AnyItag) -> Result<()> {
-        let mut task_pool = self
-            .downloader
-            .task_handler
-            .lock()
-            .await;
-
+    pub async fn add_tasks(mut self, itag: AnyItag) -> Result<()> {
         let singles = self.half_browse_singles().await?;
         let eps = self.half_browse_eps().await?;
         let albums = self.half_browse_albums().await?;
@@ -60,6 +55,12 @@ impl ChannelContentBrowse {
         let mut album_ids = Vec::with_capacity(self.albums.len());
 
         let channel_id = Some(self.id);
+
+        let mut task_pool = self
+            .downloader
+            .task_handler
+            .lock()
+            .await;
 
         for single in singles {
             single_ids.push(single.id);
@@ -103,13 +104,7 @@ impl ChannelContentBrowse {
     /// A Template is created that contains all ep, single and album ids. This template then gets
     /// pushed on the downloader shared storage with the own channel id as key.
     /// Fails if the browsing of the eps, albums or singles failes.
-    pub async fn add_bundle_tasks(self, itags: &'static [AnyItag]) -> Result<()> {
-        let mut task_pool = self
-            .downloader
-            .task_handler
-            .lock()
-            .await;
-
+    pub async fn add_bundle_tasks(mut self, itags: &'static [AnyItag]) -> Result<()> {
         let singles = self.half_browse_singles().await?;
         let eps = self.half_browse_eps().await?;
         let albums = self.half_browse_albums().await?;
@@ -119,6 +114,12 @@ impl ChannelContentBrowse {
         let mut album_ids = Vec::with_capacity(self.albums.len());
 
         let channel_id = Some(self.id);
+
+        let mut task_pool = self
+            .downloader
+            .task_handler
+            .lock()
+            .await;
 
         for single in singles {
             single_ids.push(single.id);
@@ -156,15 +157,17 @@ impl ChannelContentBrowse {
     /// Creates a tokio task for every single contained in self.singles.
     /// Only browses so far to get the media browses which contain the needed video id by creating a
     /// new playlist browse with the ChannelBrowseId
+    /// Borrows self mut to take the singles out of self leaving an empty vec in its place
     /// Because those are singles, the first song is extracted.
     /// Awaits all of those tasks, collects and returns them
     /// Fails if any of the tasks failed to browse.
-    async fn half_browse_singles(&self) -> Result<Vec<MediaBrowse>> {
+    async fn half_browse_singles(&mut self) -> Result<Vec<MediaBrowse>> {
         let mut browse_tasks = Vec::new();
+        let mut singles = std::mem::take(&mut self.singles);
 
-        for single in self.singles.iter() {
+        for single in singles.drain(..) {
             let downloader = Arc::clone(&self.downloader);
-            browse_tasks.push(tokio::spawn(PlaylistBrowse::new(BrowseId::ChannelBrowseId(single.clone()), downloader, Uuid::new_v4()).browse()));
+            browse_tasks.push(tokio::spawn(PlaylistBrowse::new(BrowseId::ChannelBrowseId(single), downloader, Uuid::new_v4()).browse()));
         }
 
         let mut browse_results = Vec::with_capacity(browse_tasks.len());
@@ -179,7 +182,7 @@ impl ChannelContentBrowse {
     /// Calls half_browse to get the media browses and creates a task for every extracted single
     /// media browse which is awaited and collected afterwards.
     /// Fails if the half browse failed or if any of the medias failed to browse afterwards.
-    pub async fn browse_singles(&self) -> Result<Vec<Media>> {
+    pub async fn browse_singles(&mut self) -> Result<Vec<Media>> {
         let browse_results = self.half_browse_singles().await?;
 
         let mut content_browse_tasks = Vec::with_capacity(browse_results.len());
@@ -202,13 +205,13 @@ impl ChannelContentBrowse {
     /// browse id and a newly generated uuid.
     /// Awaits all of those tasks afterwards and returns a vec of PlaylistContentBrowse
     /// Fails if any of the browsing failed
-    async fn half_browse_eps(&self) -> Result<Vec<PlaylistContentBrowse>> {
-        // TODO: Dont clone
+    async fn half_browse_eps(&mut self) -> Result<Vec<PlaylistContentBrowse>> {
         let mut tasks = Vec::with_capacity(self.eps.len());
+        let mut eps = std::mem::take(&mut self.eps);
 
-        for ep in self.eps.iter() {
+        for ep in eps.drain(..) {
             let downloader = Arc::clone(&self.downloader);
-            let ep = PlaylistBrowse::new(BrowseId::ChannelBrowseId(ep.clone()), downloader, Uuid::new_v4()).browse();
+            let ep = PlaylistBrowse::new(BrowseId::ChannelBrowseId(ep), downloader, Uuid::new_v4()).browse();
             tasks.push(tokio::spawn(ep));
         }
 
@@ -225,7 +228,7 @@ impl ChannelContentBrowse {
     /// so that a vec of full browsed playlist gets created. This is achieved by spawning multiple
     /// tasks and awaiting them afterwards.
     /// This fails if any of the browse tasks fails.
-    pub async fn browse_eps(&self) -> Result<Vec<Playlist>> {
+    pub async fn browse_eps(&mut self) -> Result<Vec<Playlist>> {
         let mut ep_tasks = Vec::new();
 
         let half = self.half_browse_eps().await?;
@@ -247,13 +250,13 @@ impl ChannelContentBrowse {
     /// browse id and a newly generated uuid.
     /// Awaits all of those tasks afterwards and returns a vec of PlaylistContentBrowse
     /// Fails if any of the browsing failed
-    async fn half_browse_albums(&self) -> Result<Vec<PlaylistContentBrowse>> {
-        // TODO: Dont clone
+    async fn half_browse_albums(&mut self) -> Result<Vec<PlaylistContentBrowse>> {
         let mut tasks = Vec::with_capacity(self.eps.len());
+        let mut albums = std::mem::take(&mut self.albums);
 
-        for album in self.albums.iter() {
+        for album in albums.drain(..) {
             let downloader = Arc::clone(&self.downloader);
-            let album = PlaylistBrowse::new(BrowseId::ChannelBrowseId(album.clone()), downloader, Uuid::new_v4()).browse();
+            let album = PlaylistBrowse::new(BrowseId::ChannelBrowseId(album), downloader, Uuid::new_v4()).browse();
             tasks.push(tokio::spawn(album));
         }
 
@@ -270,7 +273,7 @@ impl ChannelContentBrowse {
     /// so that a vec of full browsed playlist gets created. This is achieved by spawning multiple
     /// tasks and awaiting them afterwards.
     /// This fails if any of the browse tasks fails.
-    pub async fn browse_albums(&self) -> Result<Vec<Playlist>> {
+    pub async fn browse_albums(&mut self) -> Result<Vec<Playlist>> {
         let mut tasks = Vec::new();
 
         let half = self.half_browse_albums().await?;
@@ -293,7 +296,7 @@ impl ChannelContentBrowse {
     /// of playlists
     /// Creates a new Channel instance afterwards with the browsed data, the already existing title,
     /// id and downloader.
-    pub async fn browse(self) -> Result<Channel> {
+    pub async fn browse(mut self) -> Result<Channel> {
         let albums = self.browse_albums().await?;
         let eps = self.browse_eps().await?;
         let singles = self.browse_singles().await?;
