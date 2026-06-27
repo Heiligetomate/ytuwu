@@ -8,14 +8,12 @@ mod request;
 
 #[cfg(test)]
 mod tests;
-pub use downloader::itags;
-pub use downloader::progress;
-// pub use downloader::media::extracted_streams::ThumbRes;
-// pub use downloader::progress;
-// pub use downloader::streams;
-// pub use downloader::{channel::downloaded::*, core::Downloader, media::downloaded::*, metadata, playlist::downloaded::*};
+
 pub use downloader::Downloader;
+pub use downloader::channel;
+pub use downloader::itags;
+pub use downloader::media;
+pub use downloader::playlist;
+pub use downloader::progress;
 pub use error::Result;
 pub use id_resolver::types;
-
-// TODO: better pub use

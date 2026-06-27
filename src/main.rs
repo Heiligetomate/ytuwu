@@ -1,25 +1,14 @@
-use std::{path::Path, time::SystemTime};
-
-use ytuwu::{Downloader, Result};
+use ytuwu::{
+    id_resolver::Id,
+    itags::{ThumbRes, VideoItag},
+    types::VideoId,
+};
 
 #[tokio::main]
-async fn main() -> Result<()> {
-    let url = "https://music.youtube.com/channel/UCSM02YABF__s7_3et2UommA";
-
-    let downloader = Downloader::default();
-
-    let start_time = SystemTime::now();
-
-    let dwn = downloader
-        .from_url(url)?
-        .as_channel()?
-        .dual()
-        .download()
+async fn main() -> ytuwu::Result<()> {
+    let dwnld = ytuwu::Downloader::default();
+    dwnld
+        .download_media(VideoId::new("asd")?, VideoItag::MP4720p, Some(ThumbRes::Medium))
         .await?;
-
-    dwn.save(Path::new("teehee"))?;
-
-    println!("download took {:?}", start_time.elapsed().unwrap());
-
     Ok(())
 }
