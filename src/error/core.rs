@@ -74,7 +74,10 @@ pub enum YtuwuError {
     /// Used when the playlist at an index was empty and did not contain the whished media
     /// Holds the playlist length and the index that was used for getting the song
     MediaNotContained(u8, u8),
-    EmptyMediaBundle,
+
+    /// Used when there was an error when merging two bundle medias
+    /// Holds a short description of what went wrong
+    BundleMerge(&'static str),
 
     NoLowerItagFound,
     NoMatchingStream,
@@ -121,7 +124,7 @@ impl Display for YtuwuError {
 
             Self::Deserialize(e) => write!(f, "Could not deserialize the response. {e}"),
 
-            Self::EmptyMediaBundle => write!(f, "media bundle was empty"),
+            Self::BundleMerge(e) => write!(f, "Error while merging media bundles: {}", e),
             Self::NoThumbnail(e) => write!(f, "Tried to get the thumbnail for media '{}' but did not find any. Download with thumbnail to actually be able to extract it", e),
             Self::MediaNotContained(l, i) => write!(f, "Playlist did not contain the song at the index. Playlist length: {} Index: {}", l, i),
 

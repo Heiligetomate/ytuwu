@@ -121,7 +121,7 @@ impl DwnBundleMedia {
         let mut iter = medias.into_iter();
         let first = iter
             .next()
-            .ok_or(YtuwuError::EmptyMediaBundle)?;
+            .ok_or(YtuwuError::BundleMerge("Vec of downloaded media was empty."))?;
         let metadata = first.metadata;
         let mut thumbnail = first.thumbnail;
         let mut streams = vec![first.stream];
