@@ -2,6 +2,17 @@
 name = "ytuwu"
 version = "0.1.0"
 edition = "2024"
+authors = ["Heiligetomate"]
+description = "Ytuwu is a library for downloading youtube media, playlists and channels in different quality and formats"
+readme = "README.md"
+repository = "https://github.com/Heiligetomate/ytuwu"
+license = "GPL-3"
+keywords = ["youtube", "downloading", "streaming"]
+include = ["/src", "LICENSE", "README.md"]
+exclude = ["/teehee", "/target"]
+
+[lints.rust]
+unsafe_code = "forbid"
 
 [lib]
 path = "src/lib.rs"
@@ -14,7 +25,6 @@ tokio = { version = "1", features = ["full"] }
 bytes = "1"
 url = "2.5.8"
 uuid = { version = "1.23.2", features = ["v4"] }
-
 
 # just for tests
 tempfile = "3.27.0"
