@@ -52,13 +52,13 @@ impl ExtractedStreams {
     /// Takes the itag and tries to get the url stream for that itag by going throgh all streams and
     /// checking if the itag int matches the stream itag int
     /// Returns None if there was no matchign stream found
-    pub fn get_url_by_itag(&self, itag: &impl Itag) -> Option<&str> {
+    pub fn get_url_by_itag(&self, itag: &impl Itag) -> Result<&str> {
         for stream in self.streams.iter() {
             if stream.itag == itag.to_int() {
-                return Some(&stream.url);
+                return Ok(&stream.url);
             }
         }
-        None
+        Err(YtuwuError::NoMatchingStream)
     }
 
     /// Gets the best stream for that itag "category".
@@ -71,18 +71,16 @@ impl ExtractedStreams {
     /// just streams in short format available.
     pub fn get_best_stream<I: Itag>(&self, itag: &I) -> Result<&str> {
         if !itag.is_highest() {
-            return self
-                .get_url_by_itag(itag)
-                .ok_or(YtuwuError::NoMatchingStream);
+            return self.get_url_by_itag(itag);
         }
 
         let mut current_itag = *itag;
-        let mut url: Option<&str> = self.get_url_by_itag(&current_itag);
-        while url.is_none() {
+        let mut url: Result<&str> = self.get_url_by_itag(&current_itag);
+        while url.is_err() {
             current_itag = current_itag.next_best()?;
             url = self.get_url_by_itag(&current_itag);
         }
-        Ok(url.ok_or(YtuwuError::NoMatchingStream)?)
+        url
     }
 }
 
