@@ -36,8 +36,13 @@ impl MediaStream for Thumbnail {
 }
 
 impl Thumbnail {
-    /// Creates a new empty Thumbnail stream
+    /// Creates a new Thumbnail stream by creating a new bytes object
     pub fn new() -> Self {
         Self { data: BytesMut::new() }
+    }
+
+    /// Taskes Bytes, converts them to BytesMut and returns Self  
+    pub fn from_bytes(data: Bytes) -> Self {
+        Self { data: data.into() }
     }
 }

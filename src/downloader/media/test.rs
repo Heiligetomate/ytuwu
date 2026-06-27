@@ -139,7 +139,7 @@ async fn test_extracted_streams() {
 #[test]
 fn test_save_normal_media_full() {
     let metadata = MediaMetadata::new("a", "b");
-    let thumbnail = Thumbnail::new(Bytes::from("rawr"));
+    let thumbnail = Thumbnail::from_bytes(Bytes::from("rawr"));
     let mut stream = AudioStream::new(AudioItag::OpusLow);
     stream.push_data(Bytes::from("meow"));
 
@@ -199,7 +199,7 @@ fn test_save_normal_media_stream() {
 #[test]
 fn test_save_bundle_media_full() {
     let metadata = MediaMetadata::new("a", "b");
-    let thumbnail = Thumbnail::new(Bytes::from("rawr"));
+    let thumbnail = Thumbnail::from_bytes(Bytes::from("rawr"));
 
     let mut stream_one = AudioStream::new(AudioItag::OpusLow);
     stream_one.push_data(Bytes::from("meow1"));

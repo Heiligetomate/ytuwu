@@ -5,7 +5,7 @@ use crate::{
         itags::{audio::AudioItag, muxed::MuxedItag, short::ShortItag, video::VideoItag},
         streams::AnyStream,
     },
-    itags::Itag,
+    itags::{Itag, ThumbRes},
 };
 
 /// This enum holds a variant of any Itag.
@@ -18,6 +18,7 @@ pub enum AnyItag {
     Video(VideoItag),
     Short(ShortItag),
     Muxed(MuxedItag),
+    Thumbnail(ThumbRes),
 }
 
 impl Itag for AnyItag {
@@ -29,6 +30,7 @@ impl Itag for AnyItag {
             Self::Audio(i) => i.to_int(),
             Self::Short(i) => i.to_int(),
             Self::Muxed(i) => i.to_int(),
+            Self::Thumbnail(i) => i.to_int(),
         }
     }
 
@@ -38,6 +40,7 @@ impl Itag for AnyItag {
             Self::Audio(i) => i.is_highest(),
             Self::Short(i) => i.is_highest(),
             Self::Muxed(i) => i.is_highest(),
+            Self::Thumbnail(i) => i.is_highest(),
         }
     }
 
@@ -50,6 +53,9 @@ impl Itag for AnyItag {
             Self::Audio(i) => i.next_best().map(|i| Self::Audio(i)),
             Self::Short(i) => i.next_best().map(|i| Self::Short(i)),
             Self::Muxed(i) => i.next_best().map(|i| Self::Muxed(i)),
+            Self::Thumbnail(i) => i
+                .next_best()
+                .map(|i| Self::Thumbnail(i)),
         }
     }
 
@@ -59,6 +65,7 @@ impl Itag for AnyItag {
             Self::Audio(i) => AnyStream::Audio(i.new_stream()),
             Self::Short(i) => AnyStream::Short(i.new_stream()),
             Self::Muxed(i) => AnyStream::Muxed(i.new_stream()),
+            Self::Thumbnail(i) => AnyStream::Thumbnail(i.new_stream()),
         }
     }
 
@@ -68,6 +75,7 @@ impl Itag for AnyItag {
             Self::Audio(i) => i.get_mime_type(),
             Self::Short(i) => i.get_mime_type(),
             Self::Muxed(i) => i.get_mime_type(),
+            Self::Thumbnail(i) => i.get_mime_type(),
         }
     }
 
@@ -90,6 +98,7 @@ impl Display for AnyItag {
             AnyItag::Video(video_itag) => video_itag.to_string(),
             AnyItag::Short(short_itag) => short_itag.to_string(),
             AnyItag::Muxed(muxed_itag) => muxed_itag.to_string(),
+            AnyItag::Thumbnail(thumb_res) => thumb_res.to_string(),
         };
         write!(f, "Any: {}", raw)
     }

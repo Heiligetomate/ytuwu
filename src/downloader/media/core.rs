@@ -139,7 +139,7 @@ impl Media {
         let client = &self.downloader.client;
 
         let bytes = request::download_bytes(url, &client).await?;
-        Ok(Thumbnail::new(bytes))
+        Ok(Thumbnail::from_bytes(bytes))
     }
 
     /// Downloads all streams for the given itags by matching against every of the itags
@@ -157,6 +157,7 @@ impl Media {
                 AnyItag::Video(i) => AnyStream::Video(self.download_stream(*i).await?),
                 AnyItag::Short(i) => AnyStream::Short(self.download_stream(*i).await?),
                 AnyItag::Muxed(i) => AnyStream::Muxed(self.download_stream(*i).await?),
+                AnyItag::Thumbnail(i) => AnyStream::Thumbnail(self.download_stream(*i).await?),
             };
             streams.push(stream);
         }
