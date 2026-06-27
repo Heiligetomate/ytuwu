@@ -117,7 +117,7 @@ impl<M: MediaStream + Debug> DwnChannel<M> {
     pub fn save_with_dir(&self, path: &Path) -> Result<()> {
         let mut full_path = PathBuf::from(path);
         full_path.push(&self.metadata.name);
-
+        create_dir_all(&full_path).map_err(|_| YtuwuError::CreateDir(Some("failed to create the directory to save the channel".into())))?;
         self.save(&full_path)
     }
 }
