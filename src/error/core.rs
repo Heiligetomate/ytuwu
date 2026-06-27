@@ -1,4 +1,4 @@
-use crate::error::{ErrInf, StorageError, helper::fmt_err_inf};
+use crate::error::{ErrInf, ResponseDataError, StorageError, helper::fmt_err_inf};
 use std::{error::Error, fmt::Display};
 
 // TODO: documents this
@@ -55,9 +55,9 @@ pub enum YtuwuError {
     /// Used when the extraction of the media size from the url failed
     UrlSizeExtract,
 
-    BrowseDataNotFound(&'static str),
-    PlayerDataNotFound(&'static str),
-    ChannelDataNotFound(&'static str),
+    /// Used for any missing response data
+    /// Holds a ResponseDataError each holding a variant for the correct client   
+    ResponseData(ResponseDataError),
 
     ReqwestError(String),
     CaptchaBypassFailed(u16),
@@ -100,13 +100,12 @@ impl Display for YtuwuError {
             Self::EmptyUrl => write!(f, "The url did not contain any valid id meaning the id collection is empty"),
             Self::UrlSizeExtract => write!(f, "Failed to extract the size from the url."),
 
+            // Response data related
+            Self::ResponseData(e) => write!(f, "Missing response data: {}", e.to_string()),
+
             Self::EmptyMediaBundle => write!(f, "media bundle was empty"),
             Self::Tokio(e) => write!(f, "tokio error: {}", e),
-            Self::BrowseDataNotFound(e) => write!(f, "Could not get data from response: {}.", e),
-            Self::PlayerDataNotFound(e) => {
-                write!(f, "Could not get data from player response: {}.", e)
-            }
-            Self::ChannelDataNotFound(e) => write!(f, "Could not get data from response: {}", e),
+
             Self::ReqwestError(e) => write!(f, "Reqwest failed: {e}"),
             Self::CaptchaBypassFailed(e) => {
                 write!(f, "The captcha bypass failed after {} tries.", e)
