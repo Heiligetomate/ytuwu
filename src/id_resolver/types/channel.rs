@@ -16,9 +16,9 @@ use serde::{Deserialize, Serialize};
 /// When creating a new ChannelId, it tries to create all different channel ids
 /// This works because all Channel ids have a different format
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
-pub struct ChannelId {
-    id: Option<ChannelRawId>,
-    name: Option<ChannelNameId>,
+pub enum ChannelId {
+    Id(ChannelRawId),
+    Name(ChannelNameId),
 }
 
 impl ChannelId {
@@ -27,12 +27,9 @@ impl ChannelId {
     /// Panics if both channel name and channel id are none because that should never even be
     /// possible, invalid state
     pub fn info(&self) -> &str {
-        if self.id.is_some() {
-            "channelId"
-        } else if self.name.is_some() {
-            "channelName"
-        } else {
-            panic!("invalid state")
+        match &self {
+            Self::Id(_) => "ChannelId",
+            Self::Name(_) => "ChannelName",
         }
     }
 
@@ -40,16 +37,15 @@ impl ChannelId {
     /// This function returns self if id is Some
     /// This function uses the ChannelNameId client to convert the name to an id if name is Some
     pub async fn make_valid(self, client: &reqwest::Client) -> Result<Self> {
-        let id = if let Some(id) = self.id {
-            id.get_id()
-        } else if let Some(name) = self.name {
-            let response = api_request(&name, client).await?;
-            response.get_id()?.to_owned()
-        } else {
-            panic!("Channel id did not contain anything. Invalid state");
-        };
+        match self {
+            ChannelId::Id(_) => Ok(self),
+            ChannelId::Name(name) => {
+                let response = api_request(&name, client).await?;
+                let id = response.get_id()?;
 
-        Ok(Self { id: Some(ChannelRawId::new(id)?), name: None })
+                Ok(Self::Id(ChannelRawId::new(id)?))
+            }
+        }
     }
 }
 
@@ -58,34 +54,31 @@ impl Id for ChannelId {
 
     fn new<T: Into<String>>(id: T) -> Result<Self> {
         let raw_id = id.into();
+
         if let Ok(id) = ChannelRawId::new(raw_id.as_str()) {
-            return Ok(Self { id: Some(id), name: None });
+            return Ok(Self::Id(id));
         } else if let Ok(name_id) = ChannelNameId::new(raw_id.as_str()) {
-            return Ok(Self { id: None, name: Some(name_id) });
+            return Ok(Self::Name(name_id));
         } else {
             return Err(YtuwuError::IdCreationError(Some("Creating a channel id from the raw id was not possible because no format matched".into())));
         }
     }
 
     fn get_id(self) -> String {
-        let extracted = if let Some(id) = self.id {
-            id.get_id()
-        } else if let Some(name) = self.name {
-            name.get_id()
-        } else {
-            panic!("Channel id did not contain anything. Invalid state");
+        let extracted = match self {
+            ChannelId::Id(id) => id.get_id(),
+            ChannelId::Name(name) => name.get_id(),
         };
+
         extracted
     }
 
     fn as_str(&self) -> &str {
-        let extracted = if let Some(id) = self.id.as_ref() {
-            id.as_str()
-        } else if let Some(name) = self.name.as_ref() {
-            name.as_str()
-        } else {
-            panic!("Channel id did not contain anything. Invalid state");
+        let extracted = match self {
+            ChannelId::Id(id) => id.as_str(),
+            ChannelId::Name(name) => name.as_str(),
         };
+
         extracted
     }
 }
