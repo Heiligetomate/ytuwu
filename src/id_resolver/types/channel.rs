@@ -11,13 +11,16 @@ use crate::{
 
 use serde::{Deserialize, Serialize};
 
-// TODO: Maybe enum?
+/// Enum holding all possible channel ids.
 /// This is a wrapper for all Channel ids which is needed for a clean .get_id() in the api
 /// When creating a new ChannelId, it tries to create all different channel ids
 /// This works because all Channel ids have a different format
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub enum ChannelId {
+    /// For raw channel ids as they are in the url when browsing an artist (occurs behund /channel)
     Id(ChannelRawId),
+    /// For an account name like ntomusic. Does not have a fixed format and therefore will never
+    /// fail to create.
     Name(ChannelNameId),
 }
 
