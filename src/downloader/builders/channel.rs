@@ -119,10 +119,7 @@ where
 
         let downloader = self.downloader;
 
-        let task_handler = std::mem::take(&mut *downloader.task_handler.lock().await);
-        task_handler
-            .work(Arc::clone(&downloader))
-            .await;
+        downloader.work().await;
 
         let channel = downloader
             .storage
@@ -151,10 +148,7 @@ impl MultipleChannelBuilder {
 
         let downloader = self.downloader;
 
-        let task_handler = std::mem::take(&mut *downloader.task_handler.lock().await);
-        task_handler
-            .work(Arc::clone(&downloader))
-            .await;
+        downloader.work().await;
 
         let channel = downloader
             .storage

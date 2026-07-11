@@ -69,8 +69,8 @@ impl Downloader {
         })
     }
 
-    // TODO: either dont use this at all or use it for all
     /// Works all tasks in the current task storage and put the result into the downloaded storage.
+    /// A wrapper for the work() method of TaskHandler
     pub async fn work(self: &Arc<Self>) {
         let handler = std::mem::take(&mut *self.task_handler.lock().await);
         handler.work(Arc::clone(&self)).await;
