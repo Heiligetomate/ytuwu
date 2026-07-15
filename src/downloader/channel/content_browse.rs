@@ -62,6 +62,8 @@ impl ChannelContentBrowse {
             .lock()
             .await;
 
+        let mut storage = self.downloader.storage.lock().await;
+
         for single in singles {
             single_ids.push(single.id);
             task_pool.push(single.video_id, None, channel_id, single.id, itag);
@@ -70,6 +72,7 @@ impl ChannelContentBrowse {
         for ep in eps {
             ep_ids.push(ep.id);
             let ep_id = Some(ep.id);
+            storage.insert_list_title(ep.id, &ep.title);
             for media in ep.media {
                 task_pool.push(media.video_id, ep_id, channel_id, media.id, itag);
             }
@@ -78,6 +81,7 @@ impl ChannelContentBrowse {
         for album in albums {
             album_ids.push(album.id);
             let album_id = Some(album.id);
+            storage.insert_list_title(album.id, &album.title);
             for media in album.media {
                 task_pool.push(media.video_id, album_id, channel_id, media.id, itag);
             }
