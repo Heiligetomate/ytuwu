@@ -90,11 +90,7 @@ impl ChannelContentBrowse {
         let metadata = ChannelMetadata::new(&self.title);
         let template = ChannelTemplate::new(metadata, ep_ids, album_ids, single_ids);
 
-        self.downloader
-            .storage
-            .lock()
-            .await
-            .insert_channel_template(self.id, template);
+        storage.insert_channel_template(self.id, template);
 
         Ok(())
     }

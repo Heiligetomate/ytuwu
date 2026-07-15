@@ -116,7 +116,6 @@ where
             .await?
             .add_tasks(self.itag.to_any())
             .await?;
-
         let downloader = self.downloader;
 
         downloader.work().await;
