@@ -2,35 +2,35 @@
 #[derive(Debug, Default)]
 pub struct DwnConfig {
     /// Holds all options that are used when downloading a full channel.
-    channel: ChannelConfig,
+    pub(crate) channel: ChannelConfig,
 }
 
 #[derive(Debug)]
 pub struct ChannelConfig {
     /// Controls wether albums in channels should be downloaded or not.
     /// Set to true by default.
-    albums: bool,
+    pub(crate) albums: bool,
     /// Controls wether singles in channels should be downloaded or not.
     /// Set to true by default.
-    singles: bool,
+    pub(crate) singles: bool,
     /// Controls wether eps in channels should be downloaded or not.
     /// Set to true by default.
-    eps: bool,
+    pub(crate) eps: bool,
     /// Controls how many albums in channels should be downloaded.
     /// Always starts from the beginning.
     /// Set to max of u16 by default.
-    max_albums: u16,
+    pub(crate) max_albums: u16,
     /// Controls how many singles in channels should be downloaded.
     /// Always starts from the beginning.
     /// Set to max of u16 by default.
-    max_singles: u16,
+    pub(crate) max_singles: u16,
     /// Controls how many eps in channels should be downloaded.
     /// Always starts from the beginning.
     /// Set to max of u16 by default.
-    max_eps: u16,
+    pub(crate) max_eps: u16,
     /// Conrtols wether all eps, singles and albums should be merged into one big list of songs.
     /// Set to false by default.
-    merge_songs: bool,
+    pub(crate) merge_songs: bool,
 }
 
 impl Default for ChannelConfig {

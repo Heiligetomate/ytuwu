@@ -12,7 +12,7 @@ async fn main() -> ytuwu::Result<()> {
 
     let downloader = downloader.config(config);
     downloader
-        .from_url("https://music.youtube.com/@ntomusic")?
+        .from_url("https://music.youtube.com/@Kanonenfieber.official")?
         .as_channel()?
         .audio()
         .download()

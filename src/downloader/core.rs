@@ -53,7 +53,7 @@ pub struct Downloader {
     pub(crate) client: Client,
     pub(crate) task_handler: Mutex<TaskHandler>,
     pub(crate) storage: Mutex<DownloadedStore>,
-    pub config: DwnConfig,
+    pub(crate) config: DwnConfig,
 }
 
 impl Downloader {

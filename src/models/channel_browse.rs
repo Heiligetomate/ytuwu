@@ -180,10 +180,11 @@ impl ChannelBrowseResponse {
                 .unwrap_or("")
                 .to_lowercase();
 
+            let config = &downloader.config.channel;
             match type_text.as_str() {
-                "album" => albums.push(playlist_id),
-                "ep" => eps.push(playlist_id),
-                "single" => singles.push(playlist_id),
+                "album" if config.albums => albums.push(playlist_id),
+                "ep" if config.eps => eps.push(playlist_id),
+                "single" if config.singles => singles.push(playlist_id),
                 _ => {}
             }
         }
