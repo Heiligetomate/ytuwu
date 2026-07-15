@@ -11,6 +11,7 @@ mod tests;
 
 pub use downloader::Downloader;
 pub use downloader::channel;
+pub use downloader::config;
 pub use downloader::itags;
 pub use downloader::media;
 pub use downloader::playlist;

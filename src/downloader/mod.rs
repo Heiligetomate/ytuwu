@@ -7,6 +7,7 @@ pub mod progress;
 pub mod streams;
 
 mod builders;
+pub mod config;
 mod core;
 mod mime_types;
 mod store;
