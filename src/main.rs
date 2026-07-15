@@ -1,3 +1,5 @@
+use std::path::Path;
+
 use ytuwu::{Downloader, config::DwnConfig};
 
 #[tokio::main]
@@ -6,16 +8,21 @@ async fn main() -> ytuwu::Result<()> {
 
     let config = DwnConfig::default().channel(|chn| {
         chn.singles(false)
-            .eps(false)
-            .max_albums(3)
+            .eps(true)
+            .albums(false)
+            .max_albums(1)
+            .max_eps(1)
+            .max_singles(1)
     });
 
     let downloader = downloader.config(config);
-    downloader
+    let dwn = downloader
         .from_url("https://music.youtube.com/@Kanonenfieber.official")?
         .as_channel()?
         .audio()
         .download()
         .await?;
+
+    dwn.save_with_dir(Path::new("teehee"))?;
     Ok(())
 }

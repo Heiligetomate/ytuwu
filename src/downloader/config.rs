@@ -1,3 +1,5 @@
+use std::usize;
+
 /// Holds all important config option that are important for configuring the downloader.
 #[derive(Debug, Default)]
 pub struct DwnConfig {
@@ -18,16 +20,16 @@ pub struct ChannelConfig {
     pub(crate) eps: bool,
     /// Controls how many albums in channels should be downloaded.
     /// Always starts from the beginning.
-    /// Set to max of u16 by default.
-    pub(crate) max_albums: u16,
+    /// Set to max of usize by default.
+    pub(crate) max_albums: usize,
     /// Controls how many singles in channels should be downloaded.
     /// Always starts from the beginning.
-    /// Set to max of u16 by default.
-    pub(crate) max_singles: u16,
+    /// Set to max of usize by default.
+    pub(crate) max_singles: usize,
     /// Controls how many eps in channels should be downloaded.
     /// Always starts from the beginning.
-    /// Set to max of u16 by default.
-    pub(crate) max_eps: u16,
+    /// Set to max of usize by default.
+    pub(crate) max_eps: usize,
     /// Conrtols wether all eps, singles and albums should be merged into one big list of songs.
     /// Set to false by default.
     pub(crate) merge_songs: bool,
@@ -39,9 +41,9 @@ impl Default for ChannelConfig {
             albums: true,
             singles: true,
             eps: true,
-            max_eps: u16::MAX,
-            max_singles: u16::MAX,
-            max_albums: u16::MAX,
+            max_eps: usize::MAX,
+            max_singles: usize::MAX,
+            max_albums: usize::MAX,
             merge_songs: false,
         }
     }
@@ -82,21 +84,21 @@ impl ChannelConfig {
 
     /// Consumes self as mutable and takes the number of albums that should be downloaded.
     /// Changes max_albums to the given max value and returns self.
-    pub fn max_albums(mut self, max: u16) -> Self {
+    pub fn max_albums(mut self, max: usize) -> Self {
         self.max_albums = max;
         self
     }
 
     /// Consumes self as mutable and takes the number of singles that should be downloaded.
     /// Changes max_singles to the given max value and returns self.
-    pub fn max_singles(mut self, max: u16) -> Self {
+    pub fn max_singles(mut self, max: usize) -> Self {
         self.max_singles = max;
         self
     }
 
     /// Consumes self as mutable and takes the number of eps that should be downloaded.
     /// Changes max_eps to the given max value and returns self.
-    pub fn max_eps(mut self, max: u16) -> Self {
+    pub fn max_eps(mut self, max: usize) -> Self {
         self.max_eps = max;
         self
     }

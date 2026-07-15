@@ -158,6 +158,8 @@ impl ChannelBrowseResponse {
             .get(0)
             .ok_or(YtuwuError::ResponseData(ResponseDataError::ChannelBrowse("empty contents")))?;
 
+        let config = &downloader.config.channel;
+
         for item in &section.grid_renderer.items {
             let renderer = &item.music_two_row_item_renderer;
 
@@ -180,11 +182,10 @@ impl ChannelBrowseResponse {
                 .unwrap_or("")
                 .to_lowercase();
 
-            let config = &downloader.config.channel;
             match type_text.as_str() {
-                "album" if config.albums => albums.push(playlist_id),
-                "ep" if config.eps => eps.push(playlist_id),
-                "single" if config.singles => singles.push(playlist_id),
+                "album" if config.albums && config.max_albums > albums.len() => albums.push(playlist_id),
+                "ep" if config.eps && config.max_eps > eps.len() => eps.push(playlist_id),
+                "single" if config.singles && config.max_singles > singles.len() => singles.push(playlist_id),
                 _ => {}
             }
         }
