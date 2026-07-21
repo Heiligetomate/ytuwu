@@ -308,6 +308,7 @@ impl ChannelContentBrowse {
             eps,
             singles,
             id: self.id,
+            merged: None,
         })
     }
 }

@@ -22,7 +22,7 @@ const MAX_MEDIA_AT_ONCE: usize = 8;
 #[derive(Debug)]
 pub struct Playlist {
     title: String,
-    media: Vec<Media>,
+    pub(crate) media: Vec<Media>,
     id: Uuid,
     downloader: Arc<Downloader>,
 }

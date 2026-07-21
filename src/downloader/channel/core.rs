@@ -16,7 +16,9 @@ use crate::{
 
 /// This is the final stage before fully downloading a channel. It contains all fully browsed
 /// singles, eps and albums, an uuid for identification, a title and an arc downlaoder for shared
-/// data.
+/// data. It also contains a merged field which is used when the merge() function is called on the
+/// Channel which merges all singles, albums and eps and creates a new playlist containing all of
+/// these extracted songs.
 #[derive(Debug)]
 pub struct Channel {
     pub title: String,
@@ -25,6 +27,7 @@ pub struct Channel {
     pub albums: Vec<Playlist>,
     pub eps: Vec<Playlist>,
     pub id: Uuid,
+    pub merged: Option<Playlist>,
 }
 
 impl Channel {
@@ -206,6 +209,39 @@ impl Channel {
                 .await?,
             metadata: ChannelMetadata::new(self.title.as_str()),
         })
+    }
+
+    /// Takes all singles, eps and albums and merges them into one big list.
+    /// This list is then stored in the merged field as a Playlist.
+    /// The new Playlist has the title "merged".
+    pub fn merge(&mut self) {
+        let mut extracted = Vec::with_capacity(self.singles.len() + self.albums.len() + self.eps.len());
+
+        extracted.extend(self.singles.drain(..));
+
+        let mut eps: Vec<Vec<Media>> = self
+            .eps
+            .drain(..)
+            .map(|p| p.media)
+            .collect();
+
+        for ep in eps.drain(..) {
+            extracted.extend(ep);
+        }
+
+        let mut albums: Vec<Vec<Media>> = self
+            .albums
+            .drain(..)
+            .map(|p| p.media)
+            .collect();
+
+        for album in albums.drain(..) {
+            extracted.extend(album);
+        }
+
+        let merged = Playlist::new("merged", extracted, Arc::clone(&self.downloader));
+
+        self.merged = Some(merged)
     }
 }
 
