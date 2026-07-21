@@ -1,7 +1,7 @@
 use std::{fmt::Debug, sync::Arc};
 
 use crate::{
-    config::DwnConfig,
+    config::Config,
     downloader::{
         builders::EmptyBuilder,
         channel::{ChannelBrowse, DwnBundelChannel, DwnChannel},
@@ -53,7 +53,7 @@ pub struct Downloader {
     pub(crate) client: Client,
     pub(crate) task_handler: Mutex<TaskHandler>,
     pub(crate) storage: Mutex<DownloadedStore>,
-    pub(crate) config: DwnConfig,
+    pub(crate) config: Config,
 }
 
 impl Downloader {
@@ -68,14 +68,14 @@ impl Downloader {
             client: Client::new(),
             task_handler: Mutex::new(TaskHandler::default()),
             storage: Mutex::new(DownloadedStore::default()),
-            config: DwnConfig::default(),
+            config: Config::default(),
         })
     }
 
     /// Builds a new downloader from the old downloader and adds the given config.
     /// Panics if there are currently more than one instances of the downloader which happens when
     /// there is currently downloading something or the user cloned the downloader.
-    pub fn config(self: Arc<Self>, config: DwnConfig) -> Arc<Self> {
+    pub fn config(self: Arc<Self>, config: Config) -> Arc<Self> {
         if let Ok(mut inner) = Arc::try_unwrap(self) {
             inner.config = config;
             return Arc::new(inner);
