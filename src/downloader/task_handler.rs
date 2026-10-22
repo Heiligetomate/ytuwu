@@ -86,9 +86,18 @@ impl TaskHandler {
         let mut results = Vec::new();
 
         for handle in handles {
-            if let Ok(Ok(media)) = handle.await {
-                results.push(media);
-            }
+            // if let Ok(Ok(media)) = handle.await {
+            //     results.push(media);
+            // }
+            //
+            //
+            match handle.await {
+                Ok(a) => match a {
+                    Ok(b) => results.push(b),
+                    Err(e) => println!("{e}"),
+                },
+                Err(e) => println!("{:#?}", e),
+            };
         }
 
         let mut bundle_results = Vec::new();

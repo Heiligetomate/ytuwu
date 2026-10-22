@@ -7,8 +7,7 @@ use crate::{
     },
 };
 
-const USER_AGENT: &str =
-    "User-Agent: Mozilla/5.0 (Linux; Android 10; Quest 2) AppleWebKit/537.36 (KHTML, like Gecko) OculusBrowser/32.0.0.3.65 SamsungBrowser/4.3 Chrome/137.0.7151.61 Mobile VR Safari/537.36";
+const USER_AGENT: &str = "User-Agent: Mozilla/5.0 (Linux; Android 10; Quest 2) AppleWebKit/537.36 (KHTML, like Gecko) OculusBrowser/32.0.0.3.65 SamsungBrowser/4.3 Chrome/137.0.7151.61 Mobile VR Safari/537.36";
 const X_CLIENT_NAME: &str = "28";
 const X_CLIENT_VERSION: &str = "1.60.19";
 
@@ -39,6 +38,7 @@ impl ClientWithHeaders for BrowseClient {
         super::body::RequestBody {
             context: super::body::Context {
                 client: super::body::ClientBody {
+                    android_sdk_version: None,
                     client_name: CLIENT_NAME,
                     client_version: CLIENT_VERSION,
                     device_make: Some(DEVICE_MAKE),

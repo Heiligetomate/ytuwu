@@ -38,4 +38,5 @@ pub struct ClientBody<'de> {
     pub visitor_data: Option<String>,
     pub time_zone: &'de str,
     pub utc_offset_minutes: &'de str,
+    pub android_sdk_version: Option<u32>,
 }
