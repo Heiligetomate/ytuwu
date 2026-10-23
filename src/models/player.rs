@@ -37,8 +37,8 @@ struct ResponseContext {
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 struct StreamingData {
-    formats: Vec<Stream>,
-    adaptive_formats: Vec<Stream>,
+    formats: Option<Vec<Stream>>,
+    adaptive_formats: Option<Vec<Stream>>,
 }
 
 /// A stream always contains an itag for identifying what kind of stream it is and an url that
@@ -101,8 +101,14 @@ impl PlayerResponse {
             .streaming_data
             .ok_or(YtuwuError::ResponseData(ResponseDataError::Player("Streaming data")))?;
 
-        let mut extracted_streams = streaming_data.formats;
-        extracted_streams.extend(streaming_data.adaptive_formats);
+        let mut extracted_streams = streaming_data
+            .formats
+            .unwrap_or(Vec::new());
+        extracted_streams.extend(
+            streaming_data
+                .adaptive_formats
+                .unwrap_or(Vec::new()),
+        );
         let media_streams = ExtractedStreams::new(extracted_streams);
 
         let video_details = self

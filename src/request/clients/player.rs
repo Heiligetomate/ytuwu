@@ -6,14 +6,16 @@ use crate::{
         shared_params::{CLIENT_NAME_HEADER_NAME, CLIENT_VERSION_HEADER_NAME, CONTENT_TYPE_HEADER, GL, HL, ORIGIN_HEADER, TIME_ZONE, USER_AGENT_HEADER_NAME, UTC_OFFSET_MINUTES},
     },
 };
-const USER_AGENT: &str = "com.google.android.apps.youtube.vr.oculus/1.65.10 (Linux; U; Android 12L; eureka-user Build/SQ3A.220605.009.A1) gzip";
+const USER_AGENT: &str = "Mozilla/5.0 (Macintosh; Intel Mac OS X 15_7_3) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0 Safari/605.1.15";
 const X_CLIENT_NAME: &str = "3";
-const X_CLIENT_VERSION: &str = "1.65.10";
+const X_CLIENT_VERSION: &str = "1.02";
 
-const CLIENT_NAME: &str = "ANDROID_VR";
-const CLIENT_VERSION: &str = "1.65.10";
-const DEVICE_MAKE: &str = "Oculus";
-const DEVICE_MODEL: &str = "Quest 3";
+const CLIENT_NAME: &str = "VISIONOS";
+const CLIENT_VERSION: &str = "1.02";
+const DEVICE_MAKE: &str = "Apple";
+const DEVICE_MODEL: &str = "RealityDevice17,1";
+
+
 
 /// This client is for getting the streams to download media
 /// It should be used with the Video Id

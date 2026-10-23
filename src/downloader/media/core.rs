@@ -1,3 +1,4 @@
+use core::panic;
 use std::{fmt::Debug, sync::Arc};
 
 use crate::{
@@ -54,7 +55,9 @@ impl DownloadTask {
     /// Fails if anything went wrong while downloading
     async fn download(&self, client: &reqwest::Client) -> Result<Bytes> {
         let chunk_url = format!("{}&range={}-{}", self.url, self.from, self.to);
+        println!("{}", chunk_url);
         let chunk = request::download_bytes(&chunk_url, client).await?;
+        // println!("nyaaa{:?}", chunk);
         Ok(chunk)
     }
 }
@@ -84,6 +87,7 @@ impl Media {
 
         let size = extract_size(url)?;
         let total_chunks = size.div_ceil(CHUNK_SIZE);
+        println!("size: {}, total chunks: {}, size: {}", size, total_chunks, CHUNK_SIZE);
         let mut current_position: u32 = 0;
 
         let mut downloaded_stream = itag.new_stream();
@@ -97,7 +101,8 @@ impl Media {
         let completed = Arc::new(AtomicU32::new(0));
 
         let semaphore = Arc::new(tokio::sync::Semaphore::new(MAX_TASKS));
-        for _ in 0..total_chunks {
+        for i in 0..total_chunks {
+            println!("index: {i}");
             let op = DownloadTask::new(current_position, current_position + CHUNK_SIZE, url);
             let completed = Arc::clone(&completed);
             let id = self.id;
@@ -116,7 +121,14 @@ impl Media {
         }
 
         for task in tasks {
-            downloaded_stream.push_data(task.await??);
+            match task.await {
+                Ok(a) => match a {
+                    Ok(b) => downloaded_stream.push_data(b),
+                    Err(_) => panic!("heil israel"),
+                },
+                Err(e) => panic!("heil israel"),
+            }
+            // downloaded_stream.push_data(task.await??);
         }
 
         self.downloader

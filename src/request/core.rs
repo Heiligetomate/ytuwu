@@ -30,7 +30,7 @@ where
     let headers = I::Client::build_headers(client);
     let body = I::Client::build_body(id.as_str(), visitor_data);
 
-    println!("headers: {:#?}\nbody: {:#?}", &headers, &body);
+    // println!("headers: {:#?}\nbody: {:#?}", &headers, &body);
     let response: &str = &headers
         .json(&body)
         .send()
@@ -38,7 +38,7 @@ where
         .text()
         .await?;
 
-    println!("resp: {}", response);
+    // println!("resp: {}", response);
 
     let result: <<I as Id>::Client as ClientWithHeaders>::Response = serde_json::from_str(&response)?;
     Ok(result)
@@ -73,9 +73,9 @@ where {
     while tries < max_tries {
         tries += 1;
         let vd = visitor_data.lock().await.clone();
-        println!("{:?}", vd);
+        // println!("{:?}", vd);
         let resp: PlayerResponse = make_request(id, vd, client).await?;
-        println!("{:#?}", resp);
+        // println!("{:#?}", resp);
         match resp.get_status() {
             Status::Error => return Err(YtuwuError::YoutubeAPIReturn),
             Status::Success => return Ok(resp),
