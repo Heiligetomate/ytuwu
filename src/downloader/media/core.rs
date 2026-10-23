@@ -55,7 +55,6 @@ impl DownloadTask {
     /// Fails if anything went wrong while downloading
     async fn download(&self, client: &reqwest::Client) -> Result<Bytes> {
         let chunk_url = format!("{}&range={}-{}", self.url, self.from, self.to);
-        println!("{}", chunk_url);
         let chunk = request::download_bytes(&chunk_url, client).await?;
         // println!("nyaaa{:?}", chunk);
         Ok(chunk)
@@ -87,7 +86,6 @@ impl Media {
 
         let size = extract_size(url)?;
         let total_chunks = size.div_ceil(CHUNK_SIZE);
-        println!("size: {}, total chunks: {}, size: {}", size, total_chunks, CHUNK_SIZE);
         let mut current_position: u32 = 0;
 
         let mut downloaded_stream = itag.new_stream();
@@ -102,7 +100,6 @@ impl Media {
 
         let semaphore = Arc::new(tokio::sync::Semaphore::new(MAX_TASKS));
         for i in 0..total_chunks {
-            println!("index: {i}");
             let op = DownloadTask::new(current_position, current_position + CHUNK_SIZE, url);
             let completed = Arc::clone(&completed);
             let id = self.id;
