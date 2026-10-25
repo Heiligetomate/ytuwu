@@ -25,7 +25,7 @@ pub enum ThumbRes {
 
 /// Order containing every ThumbRes variant.
 /// Used for next best.
-const THUMBNAIL_ORDER: [ThumbRes; 5] = [ThumbRes::Highest, ThumbRes::VeryHigh, ThumbRes::High, ThumbRes::Medium, ThumbRes::Low];
+const THUMBNAIL_ORDER: [ThumbRes; 6] = [ThumbRes::Highest, ThumbRes::UltraHigh, ThumbRes::VeryHigh, ThumbRes::High, ThumbRes::Medium, ThumbRes::Low];
 
 impl Itag for ThumbRes {
     type Stream = Thumbnail;
