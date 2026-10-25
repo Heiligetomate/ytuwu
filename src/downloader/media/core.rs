@@ -121,9 +121,9 @@ impl Media {
             match task.await {
                 Ok(a) => match a {
                     Ok(b) => downloaded_stream.push_data(b),
-                    Err(_) => panic!("heil israel"),
+                    Err(_) => panic!("task failed to finish"),
                 },
-                Err(e) => panic!("heil israel"),
+                Err(e) => panic!("task failed to finish"),
             }
             // downloaded_stream.push_data(task.await??);
         }
