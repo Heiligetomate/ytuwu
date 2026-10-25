@@ -30,6 +30,9 @@ However, I've never heard of anyone actually getting in trouble for using the in
 - better error handling (crashes when there are is no thumbnail for example)
 - downloader config
 
+> [!WARNING] 
+> thumbnails with the normals api do not work right now.
+
 ## Example usages (high level api): 
 
 ### download media (audio/video/both/thumbnail): 
@@ -41,7 +44,8 @@ let dwn = downloader
     .from_url(url)?
     .as_media()?
     .audio() // or .video() for video and .dual() for both 
-    .thumbnail() // if you want to download the thumbnail 
+    .thumbnail() // if you want to download the thumbnail
+    .download()
     .await?;
 
 dwn.save_media_stream(Path::new("silly_path"))?; // save fn can be different depending on what you downloaded
@@ -58,6 +62,7 @@ let dwn = downloader
     .as_list()?
     .audio() // or .video() for video and .dual() for both 
     .thumbnail() // if you want to download the thumbnail 
+    .download()
     .await?;
 
 dwn.save_with_dir(Path::new("silly_path"))?; 
@@ -73,7 +78,8 @@ let dwn = downloader
     .from_url(url)?
     .as_channel()?
     .audio() // or .video() for video and .dual() for both 
-    .thumbnail() // if you want to download the thumbnail 
+    .thumbnail() // if you want to download the thumbnail
+    .download()
     .await?;
 
 dwn.save_with_dir(Path::new("silly_path"))?; 
