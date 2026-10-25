@@ -30,35 +30,35 @@ pub struct DwnConfig {
 impl DwnConfig {
     /// Consumes self as mutable and takes the new chunk size.
     /// Sets the chunk_size value to the given chunk size and returns self.
-    fn chunk_size(mut self, chunk_size: u64) -> Self {
+    pub fn chunk_size(mut self, chunk_size: u64) -> Self {
         self.chunk_size = chunk_size;
         self
     }
 
     /// Consumes self as mutable and takes the new number of concurrent chunks.
     /// Sets the concurrent_chunks value to the given concurrent chunks and returns self.
-    fn concurrent_chunks(mut self, concurrent_chunks: u8) -> Self {
+    pub fn concurrent_chunks(mut self, concurrent_chunks: u8) -> Self {
         self.concurrent_chunks = concurrent_chunks;
         self
     }
 
     /// Consumes self as mutable and takes the new number of concurrent streams.
     /// Sets the concurrent_streams value to the given number of concurrent streams and returns self.
-    fn concurrent_streams(mut self, concurrent_streams: u8) -> Self {
+    pub fn concurrent_streams(mut self, concurrent_streams: u8) -> Self {
         self.concurrent_streams = concurrent_streams;
         self
     }
 
     /// Consumes self as mutable and takes a bool that controls wether the chunk size should be
     /// randomized or not.
-    fn randomize_size(mut self, randomize: bool) -> Self {
+    pub fn randomize_size(mut self, randomize: bool) -> Self {
         self.randomize_size = randomize;
         self
     }
 
     /// Consumes self as mutable and takes the new chunk size randomize range.
     /// Sets the range value to the given range value and returns self.
-    fn randomize_range(mut self, range: u32) -> Self {
+    pub fn randomize_range(mut self, range: u32) -> Self {
         self.randomize_range = range;
         self
     }
