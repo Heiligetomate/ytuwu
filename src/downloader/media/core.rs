@@ -1,5 +1,4 @@
-use core::panic;
-use std::{fmt::Debug, sync::Arc};
+use std::{fmt::Debug, sync::Arc, time::Duration};
 
 use crate::{
     downloader::{
@@ -12,7 +11,7 @@ use crate::{
         metadata::MediaMetadata,
         streams::{AnyStream, MediaStream, Thumbnail},
     },
-    error::Result,
+    error::{Result, YtuwuError},
     itags::{AnyItag, Itag, ThumbRes},
     request,
 };
@@ -24,6 +23,8 @@ use uuid::Uuid;
 const CHUNK_SIZE: u32 = 1024 * 1024;
 /// This determines the number of chunks downloaded at the same time.
 const MAX_TASKS: usize = 8;
+/// How often a single chunk is tried before the whole download fails.
+const MAX_ATTEMPTS: u32 = 4;
 
 /// This struct contains all downloadable media streams, thumbnail streams, an arc of the
 /// downloader and an uuid for identification.
@@ -39,25 +40,37 @@ pub struct Media {
 /// This struct holds the stream url and the range of what it has to download.
 /// It is used for downloading chunks of media which is needed for better and faster downloads.
 struct DownloadTask {
-    from: u32,
-    to: u32,
+    from: u64,
+    to: u64,
     url: String,
 }
 
 impl DownloadTask {
-    /// Creates a new Task.
-    fn new(from: u32, to: u32, url: &str) -> Self {
+    /// Creates a new Task
+    fn new(from: u64, to: u64, url: &str) -> Self {
         Self { from, to, url: url.to_owned() }
     }
 
     /// Uses a reference to a client to download.
-    /// Downloads the task and returns the downloaded bytes.
-    /// Fails if anything went wrong while downloading.
+    /// Downloads the task and returns the downloaded bytes
+    /// Fails if anything went wrong while downloading or if the server returned a different
+    /// amount of bytes than requested.
     async fn download(&self, client: &reqwest::Client) -> Result<Bytes> {
         let chunk_url = format!("{}&range={}-{}", self.url, self.from, self.to);
-        let chunk = request::download_bytes(&chunk_url, client).await?;
-        // println!("nyaaa{:?}", chunk);
-        Ok(chunk)
+        let expected = self.to - self.from + 1;
+        let mut last_err = YtuwuError::YoutubeAPIReturn;
+
+        for attempt in 1..=MAX_ATTEMPTS {
+            match request::download_bytes(&chunk_url, client).await {
+                Ok(chunk) if chunk.len() as u64 == expected => return Ok(chunk),
+                Ok(_) => last_err = YtuwuError::YoutubeAPIReturn,
+                Err(e) => last_err = e,
+            }
+            if attempt < MAX_ATTEMPTS {
+                tokio::time::sleep(Duration::from_millis(300 * attempt as u64)).await;
+            }
+        }
+        Err(last_err)
     }
 }
 
@@ -84,48 +97,43 @@ impl Media {
             .media_streams
             .get_best_stream(&itag)?;
 
-        let size = extract_size(url)?;
-        let total_chunks = size.div_ceil(CHUNK_SIZE);
-        let mut current_position: u32 = 0;
+        let size = extract_size(url)? as u64;
+        let chunk_size = CHUNK_SIZE as u64;
+        let total_chunks = size.div_ceil(chunk_size) as u32;
 
         let mut downloaded_stream = itag.new_stream();
-
-        let mut tasks = Vec::new();
 
         self.downloader
             .progress_handler
             .on_download_start(&self.metadata.title, self.id, total_chunks);
 
         let completed = Arc::new(AtomicU32::new(0));
-
         let semaphore = Arc::new(tokio::sync::Semaphore::new(MAX_TASKS));
-        for i in 0..total_chunks {
-            let op = DownloadTask::new(current_position, current_position + CHUNK_SIZE, url);
+        let mut tasks = Vec::with_capacity(total_chunks as usize);
+
+        for i in 0..total_chunks as u64 {
+            // Inclusive, non overlapping ranges. The last chunk is clamped to the stream size.
+            let from = i * chunk_size;
+            let to = (from + chunk_size - 1).min(size - 1);
+            let op = DownloadTask::new(from, to, url);
             let completed = Arc::clone(&completed);
             let id = self.id;
             let cloned = Arc::clone(&self.downloader);
             let permit = Arc::clone(&semaphore);
             tasks.push(tokio::spawn(async move {
                 let _permit = permit.acquire().await?;
-                let result = op.download(&cloned.client).await;
+                let result = op.download(&cloned.client).await?;
                 let done = completed.fetch_add(1, Ordering::Relaxed) + 1;
                 cloned
                     .progress_handler
                     .on_chunk_downloaded(id, done);
-                result
+                Ok::<Bytes, YtuwuError>(result)
             }));
-            current_position += CHUNK_SIZE + 1;
         }
 
+        // Awaited in spawn order so the chunks are appended in the right order.
         for task in tasks {
-            match task.await {
-                Ok(a) => match a {
-                    Ok(b) => downloaded_stream.push_data(b),
-                    Err(_) => panic!("task failed to finish"),
-                },
-                Err(e) => panic!("task failed to finish"),
-            }
-            // downloaded_stream.push_data(task.await??);
+            downloaded_stream.push_data(task.await??);
         }
 
         self.downloader

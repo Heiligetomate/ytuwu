@@ -13,7 +13,8 @@ use ytuwu::{
 
 #[tokio::main]
 async fn main() -> ytuwu::Result<()> {
-    let downloader = Downloader::new(Arc::new(EmptyHandler {}));
+    // let downloader = Downloader::new(Arc::new(EmptyHandler {}));
+    let downloader = Downloader::default();
     // let config = Config::default().channel(|chn| {
     //     chn.singles(false)
     //         .eps(true)
@@ -27,7 +28,7 @@ async fn main() -> ytuwu::Result<()> {
     let dwn = downloader
         .from_url("https://music.youtube.com/watch?v=-206erZYyBo")?
         .as_media()?
-        .audio()
+        .video()
         .thumbnail()
         .download()
         .await?;
