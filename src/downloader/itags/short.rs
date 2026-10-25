@@ -18,8 +18,8 @@ pub enum ShortItag {
     High, // 780
 }
 
-/// Order containing every ShortItag variant
-/// Used for next best
+/// Order containing every ShortItag variant.
+/// Used for next best.
 const SHORT_LONG_VIDEO_ORDER: [ShortItag; 3] = [ShortItag::Highest, ShortItag::High, ShortItag::Low];
 
 impl Itag for ShortItag {

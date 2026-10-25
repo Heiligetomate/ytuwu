@@ -32,10 +32,10 @@ pub struct Channel {
 
 impl Channel {
     // TODO: Semaphore
-    /// Downloads all singles leaving the self with an empty vec for the singles
-    /// Returns a vec of DwnMedia with the Stream of the given Itag
-    /// Creates a task for every single which gets awaited and collected afterwards
-    /// Fails if any of the downloads failed which will cause the singles to stay untouched
+    /// Downloads all singles leaving the self with an empty vec for the singles.
+    /// Returns a vec of DwnMedia with the Stream of the given Itag.
+    /// Creates a task for every single which gets awaited and collected afterwards.
+    /// Fails if any of the downloads failed which will cause the singles to stay untouched.
     pub async fn download_singles<I>(&mut self, itag: I) -> Result<Vec<DwnMedia<I::Stream>>>
     where
         I: Itag + Copy + 'static,
@@ -56,10 +56,10 @@ impl Channel {
         Ok(downloaded)
     }
 
-    /// Downloads all singles as bundles leaving the self with an empty vec for the singles
-    /// Returns a vec of DwnBundleMedia with all downloaded streams for the itags  
-    /// Creates a task for every single which gets awaited and collected afterwards
-    /// Fails if any of the downloads failed which will cause the singles to stay untouched
+    /// Downloads all singles as bundles leaving the self with an empty vec for the singles.
+    /// Returns a vec of DwnBundleMedia with all downloaded streams for the itags.
+    /// Creates a task for every single which gets awaited and collected afterwards.
+    /// Fails if any of the downloads failed which will cause the singles to stay untouched.
     pub async fn download_bundle_singles(&mut self, itags: &'static [AnyItag]) -> Result<Vec<DwnBundleMedia>> {
         let singles = std::mem::take(&mut self.singles);
         let mut tasks = Vec::new();
@@ -77,10 +77,10 @@ impl Channel {
         Ok(downloaded)
     }
 
-    /// Downloads all eps leaving the self with an empty vec for the eps
+    /// Downloads all eps leaving the self with an empty vec for the eps.
     /// Returns a vec of Dwnlist with the stream of the given itag as stream.
-    /// Creates a task for every ep which gets awaited and collected afterwards
-    /// Fails if any of the downloads failed which will cause the eps to stay untouched
+    /// Creates a task for every ep which gets awaited and collected afterwards.
+    /// Fails if any of the downloads failed which will cause the eps to stay untouched.
     pub async fn download_eps<I>(&mut self, itag: I) -> Result<Vec<DwnList<I::Stream>>>
     where
         I: Itag + 'static,
@@ -103,10 +103,10 @@ impl Channel {
         Ok(downloaded)
     }
 
-    /// Downloads all eps leaving the self with an empty vec for the eps
-    /// Returns a vec of DwnBundleList with all downloaded streams for the itags  
-    /// Creates a task for every ep which gets awaited and collected afterwards
-    /// Fails if any of the downloads failed which will cause the eps to stay untouched
+    /// Downloads all eps leaving the self with an empty vec for the eps.
+    /// Returns a vec of DwnBundleList with all downloaded streams for the itags.  
+    /// Creates a task for every ep which gets awaited and collected afterwards.
+    /// Fails if any of the downloads failed which will cause the eps to stay untouched.
     pub async fn download_bundle_eps(&mut self, itags: &'static [AnyItag]) -> Result<Vec<DwnBundleList>> {
         let eps = std::mem::take(&mut self.eps);
         let len = eps.len();
@@ -126,10 +126,10 @@ impl Channel {
         Ok(downloaded_eps)
     }
 
-    /// Downloads all albums leaving the self with an empty vec for the albums
+    /// Downloads all albums leaving the self with an empty vec for the albums.
     /// Returns a vec of Dwnlist with the stream of the given itag as stream.
-    /// Creates a task for every album which gets awaited and collected afterwards
-    /// Fails if any of the downloads failed which will cause the albums to stay untouched
+    /// Creates a task for every album which gets awaited and collected afterwards.
+    /// Fails if any of the downloads failed which will cause the albums to stay untouched.
     pub async fn download_albums<I>(&mut self, itag: I) -> Result<Vec<DwnList<I::Stream>>>
     where
         I: Itag + 'static,
@@ -152,10 +152,10 @@ impl Channel {
         Ok(downloaded)
     }
 
-    /// Downloads all albums leaving the self with an empty vec for the albums
-    /// Returns a vec of DwnBundleList with all downloaded streams for the itags  
-    /// Creates a task for every album which gets awaited and collected afterwards
-    /// Fails if any of the downloads failed which will cause the albums to stay untouched
+    /// Downloads all albums leaving the self with an empty vec for the albums.
+    /// Returns a vec of DwnBundleList with all downloaded streams for the itags.  
+    /// Creates a task for every album which gets awaited and collected afterwards.
+    /// Fails if any of the downloads failed which will cause the albums to stay untouched.
     pub async fn download_bundle_albums(&mut self, itags: &'static [AnyItag]) -> Result<Vec<DwnBundleList>> {
         let albums = std::mem::take(&mut self.albums);
         let len = albums.len();
@@ -175,7 +175,7 @@ impl Channel {
         Ok(downloaded)
     }
 
-    /// Consumes itself and downloads all singles, all eps and all albums for the given itag and returns a DwnChannel
+    /// Consumes itself and downloads all singles, all eps and all albums for the given itag and returns a DwnChannel.
     /// with the stream of the given itag.
     /// Creates the metadata from the title.
     /// Fails if any download fails.
@@ -194,7 +194,7 @@ impl Channel {
         })
     }
 
-    /// Consumes itself and downloads all singles, all eps and all albums for all given itags and returns a DwnBundelChanne
+    /// Consumes itself and downloads all singles, all eps and all albums for all given itags and returns a DwnBundelChannel.
     /// with the streams of the given itags.
     /// Creates the metadata from the title.
     /// Fails if any download fails.

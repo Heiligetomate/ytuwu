@@ -22,11 +22,11 @@ use uuid::Uuid;
 
 /// This is the chunk size used for downloading chunks.
 const CHUNK_SIZE: u32 = 1024 * 1024;
-/// This determines the number of chunks downloaded at the same time
+/// This determines the number of chunks downloaded at the same time.
 const MAX_TASKS: usize = 8;
 
 /// This struct contains all downloadable media streams, thumbnail streams, an arc of the
-/// downloader and an uuid for identification  
+/// downloader and an uuid for identification.
 #[derive(Debug)]
 pub struct Media {
     downloader: Arc<Downloader>,
@@ -37,7 +37,7 @@ pub struct Media {
 }
 
 /// This struct holds the stream url and the range of what it has to download.
-/// It is used for downloading chunks of media which is needed for better and faster downloads
+/// It is used for downloading chunks of media which is needed for better and faster downloads.
 struct DownloadTask {
     from: u32,
     to: u32,
@@ -45,14 +45,14 @@ struct DownloadTask {
 }
 
 impl DownloadTask {
-    /// Creates a new Task
+    /// Creates a new Task.
     fn new(from: u32, to: u32, url: &str) -> Self {
         Self { from, to, url: url.to_owned() }
     }
 
     /// Uses a reference to a client to download.
-    /// Downloads the task and returns the downloaded bytes
-    /// Fails if anything went wrong while downloading
+    /// Downloads the task and returns the downloaded bytes.
+    /// Fails if anything went wrong while downloading.
     async fn download(&self, client: &reqwest::Client) -> Result<Bytes> {
         let chunk_url = format!("{}&range={}-{}", self.url, self.from, self.to);
         let chunk = request::download_bytes(&chunk_url, client).await?;
@@ -63,7 +63,7 @@ impl DownloadTask {
 
 impl Media {
     /// Takes ExtractedStreams, ExtractedThumbnails, MediaMetadata, an Arc to a downloader and an
-    /// unique Uuid for identification
+    /// unique Uuid for identification.
     pub fn new(media_streams: ExtractedStreams, thumbnail_streams: ExtractedThumbnails, metadata: MediaMetadata, downloader: Arc<Downloader>, id: Uuid) -> Self {
         Self {
             downloader,
@@ -74,9 +74,9 @@ impl Media {
         }
     }
 
-    /// Downloads a single stream with the given Itag
-    /// Gets the best available Itag if the Itag is Itag::Highest
-    /// Returns the Stream of the Itag I::Stream
+    /// Downloads a single stream with the given Itag.
+    /// Gets the best available Itag if the Itag is Itag::Highest.
+    /// Returns the Stream of the Itag I::Stream.
     /// Returns Err if the itag does not exist, something went wrong while downloading or the
     /// acquire of the permit went wrong.
     pub async fn download_stream<I: Itag>(&self, itag: I) -> Result<I::Stream> {
@@ -135,10 +135,10 @@ impl Media {
         Ok(downloaded_stream)
     }
 
-    /// Extracts the stream with the correct thumbnail resolution
-    /// Downloads the thumbnail with the extracted url
-    /// Returns the downloaded thumbnail
-    /// Returns Err if something went wrong while sending the requests
+    /// Extracts the stream with the correct thumbnail resolution.
+    /// Downloads the thumbnail with the extracted url.
+    /// Returns the downloaded thumbnail.
+    /// Returns Err if something went wrong while sending the requests.
     pub async fn download_thumbnail(&self, resolution: ThumbRes) -> Result<Thumbnail> {
         let url = self
             .thumbnail_streams
@@ -150,11 +150,11 @@ impl Media {
         Ok(Thumbnail::from_bytes(bytes))
     }
 
-    /// Downloads all streams for the given itags by matching against every of the itags
-    /// Downloads the thumbnail if there was a thumbnail passed into the function
+    /// Downloads all streams for the given itags by matching against every of the itags.
+    /// Downloads the thumbnail if there was a thumbnail passed into the function.
     /// Returns DwnBundleMedia if everything worked well.
-    /// Uses the already existing metadata on self for the DwnBundleMedia
-    /// Returns Err if something went wrong while downloading
+    /// Uses the already existing metadata on self for the DwnBundleMedia.
+    /// Returns Err if something went wrong while downloading.
     pub async fn download_bundle(self, itags: &[AnyItag], thumb_res: Option<ThumbRes>) -> Result<DwnBundleMedia> {
         let mut thumbnail = None;
         let mut streams = vec![];
@@ -183,12 +183,12 @@ impl Media {
         })
     }
 
-    /// This funciton downloads the media stream with the given itag
-    /// Downloads the thumbnail if there was a thumbnail passed into the function
-    /// Uses the already existing metadata for DwnMedia
+    /// This funciton downloads the media stream with the given itag.
+    /// Downloads the thumbnail if there was a thumbnail passed into the function.
+    /// Uses the already existing metadata for DwnMedia-
     /// Returns DwnMedia with the itags stream containing the thumbnail if existent, the mediastream
-    /// and the metadata
-    /// Returns Err if something went wrong while downloadign the streams or the thumbnail
+    /// and the metadata.
+    /// Returns Err if something went wrong while downloadign the streams or the thumbnail.
     pub async fn download<I: Itag>(self, itag: I, thumb_res: Option<ThumbRes>) -> Result<DwnMedia<I::Stream>>
 where {
         let mut thumbnail = None;

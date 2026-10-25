@@ -15,11 +15,9 @@ const CLIENT_VERSION: &str = "1.02";
 const DEVICE_MAKE: &str = "Apple";
 const DEVICE_MODEL: &str = "RealityDevice17,1";
 
-
-
-/// This client is for getting the streams to download media
-/// It should be used with the Video Id
-/// It returns a PlayerResponse
+/// This client is for getting the streams to download media.
+/// It should be used with the Video Id.
+/// It returns a PlayerResponse.
 pub struct PlayerClient {}
 
 impl ClientWithHeaders for PlayerClient {

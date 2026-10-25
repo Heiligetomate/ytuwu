@@ -11,9 +11,9 @@ use crate::{
     itags::{Itag, ShortItag},
 };
 
-/// Holds data as Bytes and mime type
-/// Gets created when ShortItag gets used
-/// Implements MediaStream
+/// Holds data as Bytes and mime type.
+/// Gets created when ShortItag gets used.
+/// Implements MediaStream.
 #[derive(Debug, PartialEq, Eq)]
 pub struct ShortStream {
     data: BytesMut,
@@ -46,7 +46,7 @@ impl From<ShortStream> for AnyStream {
 }
 
 impl ShortStream {
-    /// Takes a ShortItag and creates a new ShortStream from that
+    /// Takes a ShortItag and creates a new ShortStream from that.
     pub fn new(itag: ShortItag) -> Self {
         Self {
             data: BytesMut::new(),

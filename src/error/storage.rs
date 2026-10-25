@@ -2,7 +2,7 @@ use std::fmt::Display;
 
 use uuid::Uuid;
 
-/// This enum gets used inside the Storage variant in the YtuwuError enum
+/// This enum gets used inside the Storage variant in the YtuwuError enum.
 /// Holds multiple different types of things that can go wrong in the downlaoder storage for
 /// downloaded media and media bundles.
 #[derive(Debug, Clone)]

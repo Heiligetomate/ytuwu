@@ -1,19 +1,19 @@
 use crate::{error::YtuwuError, id_resolver::IdCollection};
 
-/// Custom restul for ytuwu which should be used for every funciton in this library that returns a
+/// Custom result for ytuwu which should be used for every funciton in this library that returns a
 /// result.
-/// Holds a generic value T and a variant of the enum YtuwuError
+/// Holds a generic value T and a variant of the enum YtuwuError.
 pub type Result<T> = std::result::Result<T, YtuwuError>;
 
 /// This type is for errors and should be used with the fmt_err_inf function to implement Display
 /// cleanly.
-/// This allows the usage of the errors without forcing an extra error message
+/// This allows the usage of the errors without forcing an extra error message.
 pub type ErrInf = Option<String>;
 
 /// Adds a colon with space infront of the error message if it is Some, returns a . if the error
 /// message is None.
 /// Use this for implementing Display and do not add a . at the end of the first part of the error
-/// message because this would break the format
+/// message because this would break the format.
 pub(super) fn fmt_err_inf(opt_err: &ErrInf) -> String {
     match opt_err {
         Some(e) => format!(": {}", e),
@@ -21,9 +21,9 @@ pub(super) fn fmt_err_inf(opt_err: &ErrInf) -> String {
     }
 }
 
-/// Builds a clean error message stating what id was expected and what ids are available
-/// Always returns YtuwuError::NoIdFound
-/// Example
+/// Builds a clean error message stating what id was expected and what ids are available.
+/// Always returns YtuwuError::NoIdFound.
+/// Example:
 ///```rust
 //#impl GetId<VideoId> for IdCollection {
 //#    fn get_id(&self) -> Result<VideoId> {

@@ -12,13 +12,13 @@ use crate::{
     itags::{AnyItag, Itag, ThumbRes},
 };
 
-/// This controls how many medias there should be downloaded concurrently
-/// Should not be too many at once because youtube might rate limit
+/// This controls how many medias there should be downloaded concurrently.
+/// Should not be too many at once because youtube might rate limit.
 const MAX_MEDIA_AT_ONCE: usize = 8;
 
 /// This struct is the pre stage for downloading the full playlist.
 /// It contains a vec of already browsed media, the title of the playlist, an arc downloader for
-/// shared data and an uuid for identification
+/// shared data and an uuid for identification.
 #[derive(Debug)]
 pub struct Playlist {
     title: String,
@@ -28,7 +28,7 @@ pub struct Playlist {
 }
 
 impl Playlist {
-    /// TODO: Why is there a new uuid generated here? major bug
+    // TODO: Why is there a new uuid generated here? huge bug
     /// Creates a new playlist from the given parameters.
     /// Takes ownership if the title.
     pub fn new(title: &str, media: Vec<Media>, downloader: Arc<Downloader>) -> Self {
@@ -41,7 +41,7 @@ impl Playlist {
         }
     }
 
-    /// Returns a vec with all titles of the browsed medias in self.media
+    /// Returns a vec with all titles of the browsed medias in self.media.
     pub fn get_titles(&self) -> Vec<&str> {
         let mut collected = Vec::new();
         for media in self.media.iter() {
@@ -51,11 +51,11 @@ impl Playlist {
     }
 
     // TODO: Maybe add an option to just download the playlist thumbnail?
-    /// Consumes itself and returns a DwnList with the Stream of the given itag
+    /// Consumes itself and returns a DwnList with the Stream of the given itag.
     /// Creates a task for each media in self.media and collects them all in a vec of tasks which
     /// then get awaited with a semaphore afterwards using the max tasks const.
-    /// Downloads a thumbnail for each media if there was a thumbnail resolution given
-    /// Creates a DwnPlaylist with the downloaded media and the already existing metadata
+    /// Downloads a thumbnail for each media if there was a thumbnail resolution given.
+    /// Creates a DwnPlaylist with the downloaded media and the already existing metadata.
     /// Fails if any of the tasks failed to download or the acquiring of the semaphore failed.
     pub async fn download<I>(mut self, itag: I, thumb_res: Option<ThumbRes>) -> Result<DwnList<I::Stream>>
     where
@@ -97,10 +97,10 @@ impl Playlist {
     /// Consumes itself and returns a DwnBundleList.
     /// Downloads all medias in self.media as a bundle meaning the streams for all the itags get
     /// downlaoded. Downloads a thumbnail for every media if thumb_res is not None.
-    /// Creates a tokio spawn task for every media, awaits them afterwards and collectts them
+    /// Creates a tokio spawn task for every media, awaits them afterwards and collectts them.
     /// After that the DwnBundleList gets created with the already existing metadata and the
-    /// downloaded bundle media
-    /// Fails if any of the downloads for the media failed
+    /// downloaded bundle media.
+    /// Fails if any of the downloads for the media failed.
     pub async fn download_bundle(mut self, itags: &[AnyItag], thumb_res: Option<ThumbRes>) -> Result<DwnBundleList> {
         let mut downloaded = Vec::new();
 
@@ -125,8 +125,8 @@ impl Playlist {
     }
 
     // TODO: not needed i think
-    /// Consumes itself and returns the first element in self.media
-    /// Returns Err if self.media is empty
+    /// Consumes itself and returns the first element in self.media.
+    /// Returns Err if self.media is empty.
     pub fn first(mut self) -> Result<Media> {
         let len = self.media.len() as u8;
         self.media

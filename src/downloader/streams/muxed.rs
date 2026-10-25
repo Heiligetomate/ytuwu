@@ -11,9 +11,9 @@ use crate::{
     itags::{Itag, MuxedItag},
 };
 
-/// Holds data as Bytes and mime type
-/// Gets created when MuxedItag gets used
-/// Implements MediaStream
+/// Holds data as Bytes and mime type.
+/// Gets created when MuxedItag gets used.
+/// Implements MediaStream.
 #[derive(Debug, PartialEq, Eq)]
 pub struct MuxedStream {
     data: BytesMut,
@@ -46,7 +46,7 @@ impl From<MuxedStream> for AnyStream {
 }
 
 impl MuxedStream {
-    /// Takes a MuxedItag and creates a new MuxedStream from that
+    /// Takes a MuxedItag and creates a new MuxedStream from that.
     pub fn new(itag: MuxedItag) -> Self {
         Self {
             data: BytesMut::new(),

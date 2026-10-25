@@ -9,8 +9,8 @@ use crate::{
     types::VideoId,
 };
 
-/// This struct is used for browsing media with a video id
-/// Holds the video id and an uuid for identification
+/// This struct is used for browsing media with a video id.
+/// Holds the video id and an uuid for identification.
 #[derive(Debug, PartialEq, Eq)]
 pub struct MediaBrowse {
     pub video_id: VideoId,
@@ -18,7 +18,7 @@ pub struct MediaBrowse {
 }
 
 impl MediaBrowse {
-    /// Creates a new media browse
+    /// Creates a new media browse.
     pub fn new(video_id: VideoId, id: Uuid) -> Self {
         Self { video_id, id }
     }

@@ -10,7 +10,7 @@ use crate::{
 
 /// VideoItag contains all pure Video streams.
 /// It also contains a Highest variant which should be used if the stream quality should be
-/// downgraded to avoid non existent streams
+/// downgraded to avoid non existent streams.
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone, Copy)]
 pub enum VideoItag {
     Highest,
@@ -37,8 +37,8 @@ pub enum VideoItag {
     Webm144p,       // 278
 }
 
-/// Order containing every VideoItag variant
-/// Used for next best
+/// Order containing every VideoItag variant.
+/// Used for next best.
 const LONG_VIDEO_ORDER: [VideoItag; 21] = [
     VideoItag::Highest,
     VideoItag::Webm2160p60HDR,

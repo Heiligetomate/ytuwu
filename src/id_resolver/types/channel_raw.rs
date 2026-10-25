@@ -2,10 +2,10 @@ use serde::{Deserialize, Serialize};
 
 use crate::{Result, error::YtuwuError, id_resolver::id::Id, request::clients::ChannelClient};
 
-/// This id is used for browsing channels
-/// This struct holds the channel id which, unlike channel names, does not have to be converted
+/// This id is used for browsing channels.
+/// This struct holds the channel id which, unlike channel names, does not have to be converted.
 /// When creating a new channel id, it should start with MPADUC or with UC. MPAD will be added to if
-/// it starts with UC. After that add, the id should have a len of 28
+/// it starts with UC. After that add, the id should have a len of 28.
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct ChannelRawId {
     id: String,
@@ -14,8 +14,8 @@ pub struct ChannelRawId {
 impl Id for ChannelRawId {
     type Client = ChannelClient;
 
-    // we need this so that we can get the correct id (the normal uc id is not really compatible
-    // with the albums singles and eps we want to extract)
+    /// We need this so that we can get the correct id (the normal uc id is not really compatible
+    /// with the albums singles and eps we want to extract).
     fn new<T: Into<String>>(id: T) -> Result<Self> {
         let raw_id = id.into();
         let id_with_prfx = {

@@ -2,6 +2,7 @@ use std::fmt::Debug;
 
 use uuid::Uuid;
 
+// TODO: Add a on fail event or smth
 pub trait HandleProgress: Send + Sync + Debug {
     fn on_download_start(&self, title: &str, id: Uuid, total_chunks: u32);
     fn on_chunk_downloaded(&self, id: Uuid, done: u32);

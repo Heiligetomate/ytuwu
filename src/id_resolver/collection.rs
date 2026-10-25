@@ -13,7 +13,7 @@ use crate::{
 
 /// An IdCollection hold all different Id types which are not publically exposed.
 /// Getting the ids is achieved by calling get_id() which should automatically return the correct
-/// type
+/// type.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct IdCollection {
     /// regular video id
@@ -26,7 +26,7 @@ pub struct IdCollection {
     pub(super) browse_id: Option<BrowseId>,
 }
 
-/// Enum for the different youtube hosts
+/// Enum for the different youtube hosts.
 enum Host {
     /// www.youtube.com
     YoutubeDotCom,
@@ -37,8 +37,8 @@ enum Host {
 }
 
 impl Host {
-    /// takes the raw url and tries to parse it to one of the varients
-    /// Returns Err if the host is invalid
+    /// takes the raw url and tries to parse it to one of the varients.
+    /// Returns Err if the host is invalid.
     fn parse(raw: &str) -> Result<Self> {
         let host = raw
             .strip_prefix("www.")
@@ -56,9 +56,9 @@ impl Host {
 
 impl IdCollection {
     /// Goes through all ids on the id collection and checks if the id is Some.
-    /// Returns a String containing the name of all existing id types
-    /// Seperates them with a comma
-    /// Good for debugging and clean error messages
+    /// Returns a String containing the name of all existing id types.
+    /// Seperates them with a comma.
+    /// Good for debugging and clean error messages.
     pub fn info(&self) -> String {
         let mut existing_ids = Vec::new();
 
@@ -94,13 +94,13 @@ impl IdCollection {
 
         info_string
     }
-    /// returns true if all values of self are None
-    /// returns false if any value of self is Some()
+    /// returns true if all values of self are None.
+    /// returns false if any value of self is Some().
     pub fn is_empty(&self) -> bool {
         return self.video_id.is_none() && self.browse_id.is_none() && self.channel_id.is_none() && self.short_id.is_none();
     }
 
-    /// Takes an url, extracts all ids from it and returns an IdCollection containing the ids
+    /// Takes an url, extracts all ids from it and returns an IdCollection containing the ids.
     pub fn from_url<T: Into<String>>(raw_url: T) -> Result<Self> {
         let url_string: String = raw_url.into();
         let url = Url::parse(&url_string)?;
@@ -124,9 +124,9 @@ impl IdCollection {
     }
 
     /// This gets the video id from any youtu.be url.
-    /// This could be a short id but its impossible to know wether its a normal id or a short id
-    /// Returns an IdCollection containing the video ID
-    /// Fails if the Video id could not be created or if the parsing of the url failed
+    /// This could be a short id but its impossible to know wether its a normal id or a short id.
+    /// Returns an IdCollection containing the video ID.
+    /// Fails if the Video id could not be created or if the parsing of the url failed.
     fn from_youtu_be(url: &Url) -> Result<Self> {
         let id = url
             .path_segments()
@@ -139,8 +139,9 @@ impl IdCollection {
 
     /// This function handles any youtube.com url and returns an IdCollection containing all
     /// extracted Ids.
-    /// It handles /shorts, /embed, /v, /e, /channel, /c, /user, /watch, /playlist and channel names
-    /// Returns Err if either the creation of the Id failed or if there was nothing that matched
+    /// It handles /shorts, /embed, /v, /e, /channel, /c, /user, /watch, /playlist and channel
+    /// names.
+    /// Returns Err if either the creation of the Id failed or if there was nothing that matched.
     fn from_youtube_com(url: &Url) -> Result<Self> {
         let segments = Self::path_segments(url);
         let first = segments.first().copied().unwrap_or("");
@@ -176,10 +177,10 @@ impl IdCollection {
         }
     }
 
-    /// Handles music.youtube.com urls
-    /// Extracts all Ids and returns an IdCollection containing the ids
-    /// Handles /browse /channel /watch /playlist and channel names
-    /// Returns Err if either the creation of the Id failed or if there was nothing that matched
+    /// Handles music.youtube.com urls.
+    /// Extracts all Ids and returns an IdCollection containing the ids.
+    /// Handles /browse /channel /watch /playlist and channel names.
+    /// Returns Err if either the creation of the Id failed or if there was nothing that matched.
     fn from_music_youtube_com(url: &Url) -> Result<Self> {
         let segments = Self::path_segments(url);
         let first = segments.first().copied().unwrap_or("");
@@ -206,12 +207,12 @@ impl IdCollection {
         }
     }
 
-    /// Takes an url and returns an IdCollection containing the extracted Ids
-    /// handles both ?v and ?list
+    /// Takes an url and returns an IdCollection containing the extracted Ids.
+    /// Handles both ?v and ?list.
     /// This function exists because there are urls containing both a video id and a playlist id
-    /// which is handled here
-    /// example: https://music.youtube.com/watch?v=HPG7gYoqpHM&list=OLAK5uy_mgi7GF3ptCZvPbGOBICaqmMQlHCH7p0Uk
-    /// Returns Err if the creation of the Id
+    /// which is handled here.
+    /// example: https://music.youtube.com/watch?v=HPG7gYoqpHM&list=OLAK5uy_mgi7GF3ptCZvPbGOBICaqmMQlHCH7p0Uk.
+    /// Returns Err if the creation of the Id.
     fn from_query_params(url: &Url) -> Result<Self> {
         let mut result = Self::empty();
         for (key, value) in url.query_pairs() {
@@ -224,14 +225,14 @@ impl IdCollection {
         Ok(result)
     }
 
-    /// Get the urls path segemnts as a vec of &str
+    /// Get the urls path segemnts as a vec of &str.
     fn path_segments(url: &Url) -> Vec<&str> {
         url.path_segments()
             .map(|s| s.collect())
             .unwrap_or_default()
     }
 
-    /// Takes the url segments and an index and returns the segment at that index
+    /// Takes the url segments and an index and returns the segment at that index.
     fn id_from_segments(segments: Vec<&str>, index: usize) -> Option<&str> {
         let id = segments
             .get(index)
@@ -239,8 +240,8 @@ impl IdCollection {
         id.copied()
     }
 
-    /// Returns an IdCollection where every field is None
-    /// This is needed as a "filler"
+    /// Returns an IdCollection where every field is None.
+    /// This is needed as a "filler".
     fn empty() -> Self {
         Self {
             video_id: None,
@@ -251,9 +252,9 @@ impl IdCollection {
     }
 
     // TODO: Cant we use BrowseId::new() here?
-    /// Inserts a browse id in self
-    /// Checks the start of the id and creates the correct Browse id
-    /// Returns Err if id failed to create
+    /// Inserts a browse id in self.
+    /// Checks the start of the id and creates the correct Browse id.
+    /// Returns Err if id failed to create.
     fn change_browses(&mut self, raw: &str) -> Result<()> {
         if raw.starts_with("RDCLAK5uy") || raw.starts_with("PL") {
             self.browse_id = Some(BrowseId::PlaylistId(PlaylistId::new(raw)?))
@@ -264,8 +265,8 @@ impl IdCollection {
         Ok(())
     }
 
-    /// Takes a raw id and returns an IdCollection with the correct BrowseId
-    /// Returns Err if id failed to create
+    /// Takes a raw id and returns an IdCollection with the correct BrowseId.
+    /// Returns Err if id failed to create.
     fn handle_browse(id: &str) -> Result<Self> {
         if id.starts_with("UC") || id.starts_with("MPADUC") {
             Ok(Self::with_channel(ChannelId::new(id)?))
@@ -278,22 +279,22 @@ impl IdCollection {
         }
     }
 
-    /// Creates a new IdCollection with just a videoId
+    /// Creates a new IdCollection with just a videoId.
     fn with_video(id: VideoId) -> Self {
         Self { video_id: Some(id), ..Self::empty() }
     }
 
-    /// Creates a new IdCollection with just a browseId
+    /// Creates a new IdCollection with just a browseId.
     fn with_browse(id: BrowseId) -> Self {
         Self { browse_id: Some(id), ..Self::empty() }
     }
 
-    /// Creates a new IdCollection with just a channelId
+    /// Creates a new IdCollection with just a channelId.
     fn with_channel(id: ChannelId) -> Self {
         Self { channel_id: Some(id), ..Self::empty() }
     }
 
-    /// Creates a new IdCollection with just a shortId
+    /// Creates a new IdCollection with just a shortId.
     fn with_short(id: ShortId) -> Self {
         Self { short_id: Some(id), ..Self::empty() }
     }

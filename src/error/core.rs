@@ -19,49 +19,49 @@ pub enum YtuwuError {
     /// IdCollection did not contain the wanted id.
     IdNotContained(ErrInf),
     /// Creating the id went wrong. This is used for the enums "channelId" and "browseId" in the
-    /// IdCollection
+    /// IdCollection.
     IdCreationError(ErrInf),
     /// The id creation failed because the length was invalid. Holds the id type and the expected
     /// id length.
     InvalidIdLength((&'static str, u16)),
     /// The id creation failed because the format was invalid. Holds the id type and the expected
-    /// format
+    /// format.
     InvalidIdFormat((&'static str, &'static str)),
 
-    /// Used for any storage related error
-    /// Holds a StorageError
+    /// Used for any storage related error.
+    /// Holds a StorageError.
     Storage(StorageError),
 
     // Url related stuff
     //
-    /// Used for url parsing related errors
-    /// Holds a short description of what went wrong
+    /// Used for url parsing related errors.
+    /// Holds a short description of what went wrong.
     UrlParsing(String),
 
-    /// Used for missing ids that were expected because of specific segments
+    /// Used for missing ids that were expected because of specific segments.
     /// Holds the id type that was missing and the segments in the url that define the id type that
-    /// should be extracted
+    /// should be extracted.
     UrlSegmentExtraction(&'static str, &'static str),
 
-    /// Used for invalid urls or missing elements in the url
-    /// Holds a small description
+    /// Used for invalid urls or missing elements in the url.
+    /// Holds a small description.
     InvalidUrl(String),
 
-    /// Used when the url was completely empty and did not contain any valid id
+    /// Used when the url was completely empty and did not contain any valid id.
     EmptyUrl,
 
-    /// Used when the extraction of the media size from the url failed
+    /// Used when the extraction of the media size from the url failed.
     UrlSizeExtract,
 
-    /// Used for any missing response data
-    /// Holds a ResponseDataError each holding a variant for the correct client   
+    /// Used for any missing response data.
+    /// Holds a ResponseDataError each holding a variant for the correct client.
     ResponseData(ResponseDataError),
 
     ReqwestError(String),
-    /// Used when all tries were used for bypassing the youtube captcha
+    /// Used when all tries were used for bypassing the youtube captcha.
     /// Holds the total amount of tries that were used for trying to bypass the captcha.
     CaptchaBypassFailed(u16),
-    /// Used when the youtube api returned an error and / or the response was invalid or unexpected
+    /// Used when the youtube api returned an error and / or the response was invalid or unexpected.
     YoutubeAPIReturn,
 
     Tokio(String),
@@ -70,30 +70,30 @@ pub enum YtuwuError {
     // Media extraction related errors
     //
     /// Use this when the thumbnail was tried to be extracted in a media even though it does not
-    /// contain a thumbnail
-    /// Holds the name of the media for better debugging
+    /// contain a thumbnail.
+    /// Holds the name of the media for better debugging.
     NoThumbnail(String),
 
-    /// Used when the playlist at an index was empty and did not contain the whished media
-    /// Holds the playlist length and the index that was used for getting the song
+    /// Used when the playlist at an index was empty and did not contain the whished media.
+    /// Holds the playlist length and the index that was used for getting the song.
     MediaNotContained(u8, u8),
 
-    /// Used when there was an error when merging two bundle medias
-    /// Holds a short description of what went wrong
+    /// Used when there was an error when merging two bundle medias.
+    /// Holds a short description of what went wrong.
     BundleMerge(&'static str),
 
     // Itag and thumbnail resolution identification related errors
     //
-    /// Used when the current itag is already at the bottom of the itag order
-    /// Normally only gets toggled when the itag is completely invalid for the media  
+    /// Used when the current itag is already at the bottom of the itag order.
+    /// Normally only gets toggled when the itag is completely invalid for the media.
     NoLowerItagFound,
 
-    /// Used when the url stream for the itag does not exist
+    /// Used when the url stream for the itag does not exist.
     /// Holds the itag that was used for extraction as String.
     NoMatchingStream(String),
 
-    /// Used when the thumbnail streamd for the thumbnail resolution did not exist
-    /// Holds the thumbnail resolution that was used for extraction as String  
+    /// Used when the thumbnail streamd for the thumbnail resolution did not exist.
+    /// Holds the thumbnail resolution that was used for extraction as String.
     NoMatchingThumbnail(String),
 }
 

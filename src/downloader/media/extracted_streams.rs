@@ -5,30 +5,30 @@ use crate::{
     models::{Stream, ThumbnailStream},
 };
 
-/// This struct is used for storing the extracted downloadable streams of a player response
-/// Holds a vec of Stream which all contain the stream url and an itag for identification
+/// This struct is used for storing the extracted downloadable streams of a player response.
+/// Holds a vec of Stream which all contain the stream url and an itag for identification.
 #[derive(Debug)]
 pub struct ExtractedStreams {
     streams: Vec<Stream>,
 }
 
-/// This struct is used for storing the extracted downloadable thumbnail streams of a player response
-/// Holds a vec of thumbnail stream which all contain the stream url and the width for identification
+/// This struct is used for storing the extracted downloadable thumbnail streams of a player response.
+/// Holds a vec of thumbnail stream which all contain the stream url and the width for identification.
 #[derive(Debug)]
 pub struct ExtractedThumbnails {
     streams: Vec<ThumbnailStream>,
 }
 
 impl ExtractedThumbnails {
-    /// Creates a new instance of itself with the given streams
+    /// Creates a new instance of itself with the given streams.
     pub fn new(streams: Vec<ThumbnailStream>) -> Self {
         println!("{:#?}", &streams);
         Self { streams }
     }
 
     /// Takes the resolution as ThumbRes and tries to get the url stream for that by going throgh
-    /// all streams and looking at the width
-    /// Returns Err if there was no match on the passed resolution
+    /// all streams and looking at the width.
+    /// Returns Err if there was no match on the passed resolution.
     pub fn get_thumbnail_url_by_res(&self, resolution: &ThumbRes) -> Result<&str> {
         for thumbnail in self.streams.iter() {
             if let Some(thumbnail_resolution) = ThumbRes::from_width(thumbnail.width) {
@@ -44,14 +44,14 @@ impl ExtractedThumbnails {
 }
 
 impl ExtractedStreams {
-    /// Creates a new instance of itself with the given streams
+    /// Creates a new instance of itself with the given streams.
     pub fn new(streams: Vec<Stream>) -> Self {
         Self { streams }
     }
 
     /// Takes the itag and tries to get the url stream for that itag by going throgh all streams and
-    /// checking if the itag int matches the stream itag int
-    /// Returns None if there was no matchign stream found
+    /// checking if the itag int matches the stream itag int.
+    /// Returns None if there was no matchign stream found.
     pub fn get_url_by_itag(&self, itag: &impl Itag) -> Result<&str> {
         for stream in self.streams.iter() {
             if stream.itag == itag.to_int() {
@@ -62,8 +62,8 @@ impl ExtractedStreams {
     }
 
     /// Gets the best stream for that itag "category".
-    /// This will only trigger if the itag has the variant HIGHEST
-    /// If the variant is not highest, it will try to get the resolution for that exact Itag
+    /// This will only trigger if the itag has the variant HIGHEST.
+    /// If the variant is not highest, it will try to get the resolution for that exact Itag.
     /// If the Itag is hightes, it will try to get the hightest stream and will continue if that
     /// failed until it finds a valid stream.
     /// Returns Err if the stream for the specific itag does not exist or the full itag order was

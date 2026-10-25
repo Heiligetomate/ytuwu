@@ -31,8 +31,8 @@ pub struct DwnBundleList {
 }
 
 impl DwnBundleList {
-    /// takes the downloaded media bundles and a title and returns a new DwnBundleList  
-    /// Creates new metadata from the title and the len of the given media
+    /// Takes the downloaded media bundles and a title and returns a new DwnBundleList.
+    /// Creates new metadata from the title and the len of the given media.
     pub fn new(media: Vec<DwnBundleMedia>, title: &str) -> Self {
         let metadata = PlaylistMetadata::new(title, media.len() as u16);
         Self { media, metadata }
@@ -40,8 +40,8 @@ impl DwnBundleList {
 
     // TODO: This fails if there is no thumbnail even tho this function jsut says save
     /// Goes over every downloaded media bundle contained in self.media and saves that media with
-    /// the given path
-    /// Fails if any of the mediasave failed
+    /// the given path.
+    /// Fails if any of the mediasave failed.
     pub fn save(&self, path: &Path) -> Result<()> {
         for media in self.media.iter() {
             media.save_full(path)?;
@@ -50,10 +50,10 @@ impl DwnBundleList {
     }
 
     /// Creates a new folder with the given path with the name of the playlist which is found in
-    /// self.metadata.title
-    /// Calles self.save after that with the new created folder path to save every media in that
-    /// path
-    /// Failes if either the folder was not created or any media failed to save
+    /// self.metadata.title.
+    /// Calls self.save after that with the new created folder path to save every media in that
+    /// path.
+    /// Failes if either the folder was not created or any media failed to save.
     pub fn save_with_dir(&self, path: &Path) -> Result<()> {
         let mut full_path = PathBuf::from(path);
         full_path.push(&self.metadata.title);
@@ -65,16 +65,16 @@ impl DwnBundleList {
 }
 
 impl<M: MediaStream + Debug> DwnList<M> {
-    /// takes the downloaded media bundles and a title and returns a new Dwnlist
-    /// Creates new metadata from the title and the len of the given media  
+    /// Takes the downloaded media bundles and a title and returns a new Dwnlist.
+    /// Creates new metadata from the title and the len of the given media.
     pub fn new(media: Vec<DwnMedia<M>>, title: &str) -> Self {
         let metadata = PlaylistMetadata::new(title, media.len() as u16);
         Self { media, metadata }
     }
 
     /// Goes over every media in self.media and calls save_media_stream on it which saves the
-    /// mediastream to the given path
-    /// Fails if any of the media stream failed to save
+    /// mediastream to the given path.
+    /// Fails if any of the media stream failed to save.
     pub fn save(&self, path: &Path) -> Result<()> {
         for media in self.media.iter() {
             media.save_media_stream(path)?
@@ -83,10 +83,11 @@ impl<M: MediaStream + Debug> DwnList<M> {
     }
 
     /// Creates a new directory at the given path with the name of the playlist which can be found
-    /// under self.metadata.title
+    /// under self.metadata.title.
     /// After that, it calls self.save which saves every mediastream of the playlist to the given
-    /// path which is the new created directory
-    /// Failes if the creation of the directory failed or any of the media steams could not be saved
+    /// path which is the new created directory.
+    /// Failes if the creation of the directory failed or any of the media steams could not be
+    /// saved.
     pub fn save_with_dir(&self, path: &Path) -> Result<()> {
         let mut full_path = PathBuf::from(path);
         full_path.push(&self.metadata.title);

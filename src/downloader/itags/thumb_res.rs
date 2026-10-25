@@ -6,8 +6,8 @@ use crate::{
     itags::{AnyItag, Itag},
 };
 
-/// TODO: better naming
-/// This enum defines the different resolutions for the thumbnails
+// TODO: better naming
+/// This enum defines the different resolutions for the thumbnails.
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum ThumbRes {
     Highest,
@@ -23,8 +23,8 @@ pub enum ThumbRes {
     UltraHigh,
 }
 
-/// Order containing every ThumbRes variant
-/// Used for next best
+/// Order containing every ThumbRes variant.
+/// Used for next best.
 const THUMBNAIL_ORDER: [ThumbRes; 5] = [ThumbRes::Highest, ThumbRes::VeryHigh, ThumbRes::High, ThumbRes::Medium, ThumbRes::Low];
 
 impl Itag for ThumbRes {
@@ -74,7 +74,7 @@ impl Itag for ThumbRes {
 }
 
 impl ThumbRes {
-    /// matches the given width and returns the correct thumbnail resolution as a variant of self
+    /// Matches the given width and returns the correct thumbnail resolution as a variant of self.
     /// Returns None if there was no matching resolution with that width.
     pub fn from_width(width: u16) -> Option<Self> {
         match width {

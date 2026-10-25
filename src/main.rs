@@ -4,7 +4,7 @@ use std::{path::Path, sync::Arc};
 
 use ytuwu::{
     Downloader,
-    config::{Config, DwnConfig},
+    // config::{Config, DwnConfig},
     progress::EmptyHandler,
 };
 

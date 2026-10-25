@@ -1,31 +1,31 @@
 use std::fmt::Display;
 
-/// Used for any missing response data
-/// Every client has its own variant for better overview
+/// Used for any missing response data.
+/// Every client has its own variant for better overview.
 #[derive(Debug, Clone)]
 pub enum ResponseDataError {
-    /// Used when there was a part of the channel browse response missing
-    /// Holds the data that was expected but missing
+    /// Used when there was a part of the channel browse response missing.
+    /// Holds the data that was expected but missing.
     ChannelBrowse(&'static str),
 
-    /// Used when there was a part of the channel name conversion response missing
-    /// Holds the data that was expected but missing
+    /// Used when there was a part of the channel name conversion response missing.
+    /// Holds the data that was expected but missing.
     ChannelName(&'static str),
 
-    /// Used when there was a part of the fast browse response missing
-    /// Holds the data that was expected but missing
+    /// Used when there was a part of the fast browse response missing.
+    /// Holds the data that was expected but missing.
     FastBrowse(&'static str),
 
-    /// Used when there was a part of the player response missing
-    /// Holds the data that was expected but missing
+    /// Used when there was a part of the player response missing.
+    /// Holds the data that was expected but missing.
     Player(&'static str),
 
-    /// Used when there was a part of the playlist browse response missing
-    /// Holds the data that was expected but missing
+    /// Used when there was a part of the playlist browse response missing.
+    /// Holds the data that was expected but missing.
     Playlist(&'static str),
 
-    /// Used when there was a part of the slow browse response missing
-    /// Holds the data that was expected but missing
+    /// Used when there was a part of the slow browse response missing.
+    /// Holds the data that was expected but missing.
     SlowBrowse(&'static str),
 }
 

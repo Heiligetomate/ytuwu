@@ -36,11 +36,11 @@ pub struct ChannelContentBrowse {
 }
 
 impl ChannelContentBrowse {
-    /// Browses all singles, eps and albums so that there are all video ids available
-    /// Collects all ids from those objects and creates tasks for the task handler
+    /// Browses all singles, eps and albums so that there are all video ids available.
+    /// Collects all ids from those objects and creates tasks for the task handler.
     /// Spawns all of these tasks with the vorrect id which for eps is the playlist id and for all
-    /// of them the normal already existing id and the channel id contained in self
-    /// This is important if the downloaded medias want to be extracted later correctly
+    /// of them the normal already existing id and the channel id contained in self.
+    /// This is important if the downloaded medias want to be extracted later correctly.
     /// The metadata is created from the already existing metadata which contains only a title.
     /// A Template is created that contains all ep, single and album ids. This template then gets
     /// pushed on the downloader shared storage with the own channel id as key.
@@ -95,11 +95,11 @@ impl ChannelContentBrowse {
         Ok(())
     }
 
-    /// Browses all singles, eps and albums so that there are all video ids available
-    /// Collects all ids from those objects and creates tasks for the task handler
+    /// Browses all singles, eps and albums so that there are all video ids available.
+    /// Collects all ids from those objects and creates tasks for the task handler.
     /// Spawns all of these tasks as bundle tasks with the correct id which for eps and albums
-    /// is the playlist id and for all of them the normal already existing id and the channel id contained in self
-    /// This is important if the downloaded medias want to be extracted later correctly
+    /// is the playlist id and for all of them the normal already existing id and the channel id contained in self.
+    /// This is important if the downloaded medias want to be extracted later correctly.
     /// The metadata is created from the already existing metadata which contains only a title.
     /// A Template is created that contains all ep, single and album ids. This template then gets
     /// pushed on the downloader shared storage with the own channel id as key.
@@ -156,10 +156,10 @@ impl ChannelContentBrowse {
 
     /// Creates a tokio task for every single contained in self.singles.
     /// Only browses so far to get the media browses which contain the needed video id by creating a
-    /// new playlist browse with the ChannelBrowseId
-    /// Borrows self mut to take the singles out of self leaving an empty vec in its place
+    /// new playlist browse with the ChannelBrowseId.
+    /// Borrows self mut to take the singles out of self leaving an empty vec in its place.
     /// Because those are singles, the first song is extracted.
-    /// Awaits all of those tasks, collects and returns them
+    /// Awaits all of those tasks, collects and returns them.
     /// Fails if any of the tasks failed to browse.
     async fn half_browse_singles(&mut self) -> Result<Vec<MediaBrowse>> {
         let mut browse_tasks = Vec::new();
@@ -203,8 +203,8 @@ impl ChannelContentBrowse {
 
     /// Creates a tokio task for every ep in self.eps by creating a new playlist browse with the ep
     /// browse id and a newly generated uuid.
-    /// Awaits all of those tasks afterwards and returns a vec of PlaylistContentBrowse
-    /// Fails if any of the browsing failed
+    /// Awaits all of those tasks afterwards and returns a vec of PlaylistContentBrowse.
+    /// Fails if any of the browsing failed.
     async fn half_browse_eps(&mut self) -> Result<Vec<PlaylistContentBrowse>> {
         let mut tasks = Vec::with_capacity(self.eps.len());
         let mut eps = std::mem::take(&mut self.eps);
@@ -248,8 +248,8 @@ impl ChannelContentBrowse {
 
     /// Creates a tokio task for every album in self.albums by creating a new playlist browse with the album
     /// browse id and a newly generated uuid.
-    /// Awaits all of those tasks afterwards and returns a vec of PlaylistContentBrowse
-    /// Fails if any of the browsing failed
+    /// Awaits all of those tasks afterwards and returns a vec of PlaylistContentBrowse.
+    /// Fails if any of the browsing failed.
     async fn half_browse_albums(&mut self) -> Result<Vec<PlaylistContentBrowse>> {
         let mut tasks = Vec::with_capacity(self.eps.len());
         let mut albums = std::mem::take(&mut self.albums);
@@ -291,9 +291,9 @@ impl ChannelContentBrowse {
         Ok(browsed)
     }
 
-    /// Consumes itself and returns a new Channel
+    /// Consumes itself and returns a new Channel.
     /// Browses all albums, all singles and all eps fully so that there is a vec of media and 2 vecs
-    /// of playlists
+    /// of playlists.
     /// Creates a new Channel instance afterwards with the browsed data, the already existing title,
     /// id and downloader.
     pub async fn browse(mut self) -> Result<Channel> {

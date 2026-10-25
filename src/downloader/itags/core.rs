@@ -19,11 +19,11 @@ pub trait Itag: Copy + Debug + Send + Display {
     /// This returns true if the itag is the highest in the itag order.
     /// This returns false if the itag is not the highest in the itag order.
     fn is_highest(&self) -> bool;
-    /// Returns the highest itag in the itag order list
+    /// Returns the highest itag in the itag order list.
     fn highest() -> Self
     where
         Self: Sized;
-    /// Consumes self and returns the next itag in the itag order
+    /// Consumes self and returns the next itag in the itag order.
     /// Returns an Err if the itag is already the lowest.
     fn next_best(self) -> Result<Self>
     where
