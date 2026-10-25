@@ -74,6 +74,19 @@ impl Itag for ThumbRes {
 }
 
 impl ThumbRes {
+    /// Returns the width this resolution aims for.
+    /// Returns None for `Highest`, which has no fixed width and means "the widest available".
+    pub(crate) fn target_width(&self) -> Option<u16> {
+        match self {
+            Self::Highest => None,
+            Self::Low => Some(120),
+            Self::Medium => Some(320),
+            Self::High => Some(480),
+            Self::VeryHigh => Some(640),
+            Self::UltraHigh => Some(1280),
+        }
+    }
+
     /// Matches the given width and returns the correct thumbnail resolution as a variant of self.
     /// Returns None if there was no matching resolution with that width.
     pub fn from_width(width: u16) -> Option<Self> {

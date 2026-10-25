@@ -25,20 +25,26 @@ impl ExtractedThumbnails {
         Self { streams }
     }
 
-    /// Takes the resolution as ThumbRes and tries to get the url stream for that by going throgh
-    /// all streams and looking at the width.
-    /// Returns Err if there was no match on the passed resolution.
+    /// Takes the resolution as ThumbRes and returns the url of the thumbnail whose width is the
+    /// closest to it. `ThumbRes::Highest` returns the widest thumbnail.
+    /// YouTube does not return the same set of widths for every client, so an exact width match
+    /// would fail whenever the sizes differ from the expected ones.
+    /// Returns Err if there are no thumbnails at all.
     pub fn get_thumbnail_url_by_res(&self, resolution: &ThumbRes) -> Result<&str> {
-        for thumbnail in self.streams.iter() {
-            if let Some(thumbnail_resolution) = ThumbRes::from_width(thumbnail.width) {
-                if thumbnail_resolution == *resolution {
-                    return Ok(&thumbnail.url);
-                }
-            } else {
-                continue;
-            }
-        }
-        Err(YtuwuError::NoMatchingThumbnail(resolution.to_string()))
+        let best = match resolution.target_width() {
+            // takes the best
+            None => self
+                .streams
+                .iter()
+                .max_by_key(|t| t.width),
+            // takes the one thats the closest
+            Some(target) => self
+                .streams
+                .iter()
+                .min_by_key(|t| t.width.abs_diff(target)),
+        };
+        best.map(|t| t.url.as_str())
+            .ok_or_else(|| YtuwuError::NoMatchingThumbnail(resolution.to_string()))
     }
 }
 
