@@ -22,7 +22,6 @@ pub struct ExtractedThumbnails {
 impl ExtractedThumbnails {
     /// Creates a new instance of itself with the given streams.
     pub fn new(streams: Vec<ThumbnailStream>) -> Self {
-        println!("{:#?}", &streams);
         Self { streams }
     }
 
