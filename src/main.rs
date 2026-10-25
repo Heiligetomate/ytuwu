@@ -2,7 +2,11 @@
 
 use std::{path::Path, sync::Arc};
 
-use ytuwu::{Downloader, progress::EmptyHandler};
+use ytuwu::{
+    Downloader,
+    config::{Config, DwnConfig},
+    progress::EmptyHandler,
+};
 
 // https://music.youtube.com/@TOOLmusic
 // https://music.youtube.com/watch?v=-206erZYyBo&list=OLAK5uy_m-fARVi6vzn4fK0Xvwu21P6KdhfwtOPEQ
@@ -10,7 +14,7 @@ use ytuwu::{Downloader, progress::EmptyHandler};
 #[tokio::main]
 async fn main() -> ytuwu::Result<()> {
     let downloader = Downloader::new(Arc::new(EmptyHandler {}));
-    // let config = DwnConfig::default().channel(|chn| {
+    // let config = Config::default().channel(|chn| {
     //     chn.singles(false)
     //         .eps(true)
     //         .albums(false)
@@ -24,6 +28,7 @@ async fn main() -> ytuwu::Result<()> {
         .from_url("https://music.youtube.com/watch?v=-206erZYyBo")?
         .as_media()?
         .audio()
+        .thumbnail()
         .download()
         .await?;
 

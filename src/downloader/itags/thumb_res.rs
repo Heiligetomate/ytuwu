@@ -6,6 +6,7 @@ use crate::{
     itags::{AnyItag, Itag},
 };
 
+/// TODO: better naming
 /// This enum defines the different resolutions for the thumbnails
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum ThumbRes {
@@ -18,6 +19,8 @@ pub enum ThumbRes {
     High,
     /// 640x480
     VeryHigh,
+    ///1280x720
+    UltraHigh,
 }
 
 /// Order containing every ThumbRes variant
@@ -66,7 +69,7 @@ impl Itag for ThumbRes {
     where
         Self: Sized,
     {
-        Self::VeryHigh
+        Self::UltraHigh
     }
 }
 
@@ -79,6 +82,7 @@ impl ThumbRes {
             320 => Some(Self::Medium),
             480 => Some(Self::High),
             640 => Some(Self::VeryHigh),
+            1280 => Some(Self::UltraHigh),
             _ => None,
         }
     }
@@ -91,7 +95,8 @@ impl Display for ThumbRes {
             ThumbRes::Low => "Low",
             ThumbRes::Medium => "Medium",
             ThumbRes::High => "High",
-            ThumbRes::VeryHigh => "VeryHigh",
+            ThumbRes::VeryHigh => "Very High",
+            ThumbRes::UltraHigh => "Ultra High",
         };
         write!(f, "Thumbnail resolution: {}", raw)
     }

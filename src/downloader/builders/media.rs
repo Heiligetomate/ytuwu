@@ -135,7 +135,7 @@ impl MultipleMediaBuilder {
     /// Consumes itself and returns a new instance of itself with the thumbnail resolution set to
     /// very high
     pub fn thumbnail(self) -> Self {
-        Self { thumbnail: Some(ThumbRes::VeryHigh), ..self }
+        Self { thumbnail: Some(ThumbRes::Highest), ..self }
     }
 
     /// Downloaded the media for both audio and video and returns the downloaded bundle media
