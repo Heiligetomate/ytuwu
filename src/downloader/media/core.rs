@@ -52,7 +52,7 @@ impl DownloadTask {
     }
 
     /// Uses a reference to a client to download.
-    /// Downloads the task and returns the downloaded bytes
+    /// Downloads the task and returns the downloaded bytes.
     /// Fails if anything went wrong while downloading or if the server returned a different
     /// amount of bytes than requested.
     async fn download(&self, client: &reqwest::Client) -> Result<Bytes> {
@@ -112,7 +112,6 @@ impl Media {
         let mut tasks = Vec::with_capacity(total_chunks as usize);
 
         for i in 0..total_chunks as u64 {
-            // Inclusive, non overlapping ranges. The last chunk is clamped to the stream size.
             let from = i * chunk_size;
             let to = (from + chunk_size - 1).min(size - 1);
             let op = DownloadTask::new(from, to, url);
