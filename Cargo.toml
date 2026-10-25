@@ -1,6 +1,6 @@
 [package]
 name = "ytuwu"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2024"
 authors = ["Heiligetomate"]
 description = "Ytuwu is a library for downloading youtube media, playlists and channels in different quality and formats"
@@ -25,5 +25,5 @@ bytes = "1"
 url = "2.5.8"
 uuid = { version = "1.23.2", features = ["v4"] }
 
-# just for tests
+[dev-dependencies]
 tempfile = "3.27.0"
